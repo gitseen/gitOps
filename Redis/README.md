@@ -14,7 +14,7 @@ Redis是完全开源免费的,遵守BSD协议,是一个高性能的key-value数�
   1、数据类型 redis支持的数据结构更丰富(strings、hashes、lists、sets、zsets)  memcache只支持key-value的存储
   2、存储方式 Memecache把数据全部存在内存之中,断电后会丢失,数据不能超过内存大小。 Redis可以持久化数据
   3、使用底层模型不同,它们之间底层实现方式以及与客户端之间通信的应用协议不一样 Redis直接自己构建了VM机制
-  4、value值大小同 Redis最大可以达到512M; memcache只有1mb
+  4、value值大小同Redis最大可以达到512M; memcache只有1mb
   5、redis的速度比memcache快
   6、Redis支持数据的备份,即master-slave模式的数据备份
   7、redis原生支持集群,memcache没有原生的集群模式  
