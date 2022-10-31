@@ -12,7 +12,7 @@
 ## 11、  CDH、FI、EMR、HDP(spark、yarn、hive、hbase、zk、kafka)
 ## 12、  系统优化、系统安全加固、故障排查大全(套用5W2H方法) 
 
-# ops of seen 20200924
+
 
 #https://blog.csdn.net/qq_37539693/article/details/87605613
 
