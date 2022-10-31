@@ -1,5 +1,5 @@
 #                                             gitOps  
-## 1   Redis    
+## 1   Redis[Redis](https://github.com/gitseen/gitOps/tree/main/Redis)    
 ## 2   MySQL5、MySQL8  
 ## 3   Nginx、Openresty   
 ## 4   Keepalive、HAProxy、LVS 
