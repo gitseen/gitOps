@@ -1,16 +1,16 @@
 #                                             gitOps  
-## 1   [Redis](https://github.com/gitseen/gitOps/tree/main/Redis)    
-## 2   MySQL5、MySQL8  
-## 3   Nginx、Openresty   
-## 4   Keepalive、HAProxy、LVS 
-## 5   Ansible、Chef、SaltStack 
-## 6   ELK、EFK 
-## 7   Kafka、RabbitMQ、Zookeeper 
-## 8   Docker、Kvm、K8s
-## 9   Prometheus、grafana、alertmanager、exporter
-## 10  Devops、CICD、
-## 11  CDH、FI、EMR、HDP(spark、yarn、hive、hbase、zk、kafka)
-## 12  系统优化、系统安全加固、故障排查大全(套用5W2H方法) 
+## 1、   [Redis](https://github.com/gitseen/gitOps/tree/main/Redis)    
+## 2、   MySQL5、MySQL8  
+## 3、   Nginx、Openresty   
+## 4、   Keepalive、HAProxy、LVS 
+## 5、   Ansible、Chef、SaltStack 
+## 6、   ELK、EFK 
+## 7、   Kafka、RabbitMQ、Zookeeper 
+## 8、   Docker、Kvm、K8s
+## 9、  Prometheus、grafana、alertmanager、exporter
+## 10、  Devops、CICD、
+## 11、  CDH、FI、EMR、HDP(spark、yarn、hive、hbase、zk、kafka)
+## 12、  系统优化、系统安全加固、故障排查大全(套用5W2H方法) 
 
 # ops of seen 20200924
 
