@@ -1,0 +1,30 @@
+redis.conf               redis主要配置文件
+  文件参数：
+  bind 0.0.0.0             redis服务监听的IP，默认只能在本机运行，可改为固定某个ip访问，多个IP用空格隔开
+  port 6379                redis的默认工作端口
+  tcp-backlog 511          redis三次握手后，等待全连接队列长度
+  tcp-keepalive 300        tcp连接会话保持时间
+  timeout 0                客户端和服务器连接的超时时间
+  # requirepass foobared   是否设置密码，默认没密码，需要设密码把#删除，后面的foobared就是密码
+  daemonize no             是否在前台运行，默认后台运行
+  pidfile /var/run/redis_6379.pid    PID文件路径
+  logfile /var/log/redis/redis.log   redis日志的存放路径
+  databases 16                       redis数据库总数个数，默认是0-16个
+  save 900 1                         在900秒内有1个key内容发生更改,就执行快照机制
+  save 300 10                        在300秒内有10个key内容发生更改,就执行快照机制
+  save 60 10000                      在60秒内如果有10000个key以上的变化，就自动快照备份
+  stop-writes-on-bgsave-error yes    空间满的时候是否禁止写入redis数据，最好设为no
+  rdbcompression yes                 存放为RDB文件时，是否压缩
+  rdbchecksum yes                    是否校验RDB文件数据
+  dbfilename dump.rdb                RDB快照的文件名
+  dir /var/lib/redis                 RDB快照存放路径
+  repl-timeout 60                    redis复制连接的超时时间
+  cluster-enabled yes                是否开启集群模式，默认为单机
+  replica-read-only yes              是否设置从库只读
+  replica-priority 100               集群优先级设置
+  auto-aof-rewrite-percentage 100    设置是否自动重写AOF log文件，单位为百分比
+  slowlog-log-slower-than 10000      慢查询的查询时间，默认为10ms
+  slowlog-max-len 128                慢查询保存队列总数
+  maxclients 10000                   redis最大客户端连接数
+
+原文链接：https://blog.csdn.net/DLWH_HWLD/article/details/119805406
