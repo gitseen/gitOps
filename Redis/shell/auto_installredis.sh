@@ -1,5 +1,6 @@
 #!/bin/bash
 
+#from https://blog.csdn.net/DLWH_HWLD/article/details/119812990
 #redis5-befroe Ok
 
 #redss6 
