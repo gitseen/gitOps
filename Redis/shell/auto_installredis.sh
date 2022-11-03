@@ -113,6 +113,12 @@ else
         useradd -r -s /sbin/nologin redis
         action "redis 用户创建成功"
 fi
+#tcp-backlog backlog参数控制的是三次握手的时候server接收到client ack确认号之后的队列值
+#vm.overcommit_memory 内核参数说明
+  #0，表示内核将检查是否有足够的可用内存提供进程使用，如果有足够的可用内存，内存允许申请，否则内存申请失败，并将错误返回给应用进程。此为默认值
+  #1，表示内核允许分配所有的物理内存，而不管当前的内存状态如何
+  #2，表示内核允许分配超过所有物理内存和交换空间总和的内存
+#transparent hugepage
 cat >> /etc/sysctl.conf <<EOF
 net.core.somaxconn = 1024
 vm.overcommit_memory = 1
