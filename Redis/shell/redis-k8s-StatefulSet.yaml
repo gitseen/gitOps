@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis
+  namespace: cache
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  serviceName: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+      - name: redis
+        image: 'redis:6.2.5'
+        command:
+          - redis-server
+          - /redis-conf/redis.conf
+        env:
+          - name: MASTER
+            value: 'true'
+        ports:
+          - containerPort: 6379
+        resources:
+          limits:
+            cpu: 800m
+            memory: 800Mi
+          requests:
+            cpu: 400m
+            memory: 800Mi
+        volumeMounts:
+          - mountPath: /data
+            name: data
+          - mountPath: /redis-conf
+            name: config
+      volumes:
+        - name: data
+          hostPath:
+            path: /mnt/redis
+        - name: config
+          configMap:
+            name: redis-config
+            items:
+              - key: redis-config
+                path: redis.conf
+      nodeSelector:
+        redis: server
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-config
+  namespace: cache
+data:
+  redis-config: |
+    maxmemory 512mb
+    maxmemory-policy allkeys-lru
+    dir /data
+    appendonly yes
+    save ""
+    requirepass wOMXxxxxxx=x+xxxxx
+
+--- 
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: cache
+  labels:
+    app: redis
+spec:
+  selector:
+    app: redis
+  type: NodePort
+  ports:
+    - port: 6379
+      nodePort: 32379
+      targetPort: 6379
+#https://www.toutiao.com/article/7161036051883262476/

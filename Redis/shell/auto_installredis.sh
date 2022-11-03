@@ -1,6 +1,5 @@
 #!/bin/bash
 
-#from https://blog.csdn.net/DLWH_HWLD/article/details/119812990
 #redis5-befroe Ok
 
 #redss6 
@@ -163,3 +162,4 @@ fi
 }
 redis_install
 dsl_install
+##from https://blog.csdn.net/DLWH_HWLD/article/details/119812990
