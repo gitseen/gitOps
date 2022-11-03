@@ -1,14 +1,14 @@
 # MySQL
-  MySQL是一个关系型数据库管理系统,由瑞典MySQLAB公司开发,目前属于Oracle旗下公司。
-  MySQL最流行的关系型数据库管理系统(关系数据库将数据保存在不同的表中,而不是将所有数据放在一个大仓库内,这样就增加了速度并提高了灵活性)
-  在WEB应用方面MySQL是最好的RDBMS(Relational Database Management System)关系数据库管理系统) 应用软件之一。
+  MySQL是一个关系型数据库管理系统,由瑞典MySQLAB公司开发,目前属于Oracle旗下公司  
+  MySQL最流行的关系型数据库管理系统(关系数据库将数据保存在不同的表中,而不是将所有数据放在一个大仓库内,这样就增加了速度并提高了灵活性)  
+  在WEB应用方面MySQL是最好的RDBMS(Relational Database Management System)关系数据库管理系统) 应用软件之一  
 
 ## 1、存储引擎
    MyISAMMySQL5.0之前的默认数据库引擎,最为常用。拥有较高的插入,查询速度,但不支持事务  
    InnoDB事务型数据库的首选引擎,MYSQL5.5之后默认引擎为InnoDB;Innodb支持行级锁定、支持ACID事务、支持事物、外键等功能。    
    BDB源自BerkeleyDB,事务型数据库的另一种选择,支持Commit和Rollback等其他事务特性  
-   InnoDB事务型数据库的首选引擎,支持ACID事务ACID包括：
 ```bash
+   InnoDB事务型数据库的首选引擎,支持ACID事务ACID包括
     1 原子性（Atomicity）
     2 一致性（Consistency）
     3 隔离性（Isolation）
