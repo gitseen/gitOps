@@ -122,7 +122,7 @@ mysql官方提供的,多主多从结构
 - MySQL主从复制(一主多从) 
 - MySQLMMM方案(双主多从)  
   MMM是在MySQL Replication的基础上,对其进行优化。MMM(Master Replication Manager for MySQL)是双主多从结构  
-  这是Google的开源项目,使用Perl语言来对MySQL Replication做扩展,提供一套支持双主故障切换和双主日常管理的脚本程序,主要用来监控mysql主主复制并做失败转移  
+  这是Google开源,使用Perl语言来对MySQL Replication做扩展,提供一套支持双主故障切换和双主日常管理的脚本程序,主要用来监控mysql主主复制并做失败转移  
   ```bash
      这里的双主节点,虽然叫做双主复制,但是业务上同一时刻只允许对一个主进行写入,另一台备选主上提供部分读服务,以加速在主主切换时刻备选主的预热 
      优点：
