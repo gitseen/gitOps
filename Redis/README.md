@@ -1,5 +1,5 @@
 # Redis  
-Redis是完全开源免费的,遵守BSD协议,是一个高性能的key-value数据库  
+Redis是完全开源免费的,遵守BSD协议,是一个高性能的key-value数据库[多图深入理解 Redis](https://mp.weixin.qq.com/s/ESOQeQS9q-BCf1jmqAhgfQ)  
 **Redis****特点**
 
 ```bash
