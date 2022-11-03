@@ -27,4 +27,11 @@ redis.conf               redis主要配置文件
   slowlog-max-len 128                慢查询保存队列总数
   maxclients 10000                   redis最大客户端连接数
 
+
+#慢查询
+Slowlog-log-slower-than 1  #指定为超过1us即为慢的指令，默认值为10000us
+Slowlog-max-len 1024     #指定保存1024条慢记录，默认值为128
+Slowlog len
+Slowlog get
+
 原文链接：https://blog.csdn.net/DLWH_HWLD/article/details/119805406
