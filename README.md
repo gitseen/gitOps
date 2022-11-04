@@ -1,6 +1,6 @@
 #                                             gitOps  
 ## 1、   [Redis](https://github.com/gitseen/gitOps/tree/main/Redis)    
-## 2、   [MySQL5](https://github.com/gitseen/gitOps/tree/main/MySQL5)、[MySQL8](https://github.com/gitseen/gitOps/tree/main/MySQL8)  
+## 2、   [MySQL5](https://github.com/gitseen/gitOps/tree/main/MySQL5)、[MySQL8](https://github.com/gitseen/gitOps/tree/main/MySQL8)
 ## 3、   Nginx、Openresty   
 ## 4、   Keepalive、HAProxy、LVS 
 ## 5、   Ansible、Chef、SaltStack 
