@@ -1,11 +1,4 @@
 #!/bin/bash
-#-----------------------------------------------------------------------------#
-#    Copyright @Shanghai Zhizhen JunZhi Technology Co.,Ltd.  2014-2020. All rights reserved.
-#                    版权所有 (C), 2014-202, 上海直真君智科技有限公司
-#
-#    Description: mariadb 安装和初始化
-#    Author: seen
-#-----------------------------------------------------------------------------#
 set -E
 #set -x
 trap '[ "$?" -ne 77 ] ||  exit 77' ERR
