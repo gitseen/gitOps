@@ -147,8 +147,8 @@ MySQL默认采用异步复制方式,这样从节点不用一直访问主服务�
     #首先在master上开启bin-log日志功能,bin-log日志用于记录在Master库中执行的增、删、修改
     #整个过程需要开启3个线程,分别是Master开启IO线程,slave开启IO线程和SQL线程
   ```
-  Mysql主从复制架构图
-  ![Mysql主从复制架构图](https://img-blog.csdnimg.cn/f15462c6736b498f9acd3cf9f676cb9b.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAc2VuZHFtYWls,size_20,color_FFFFFF,t_70,g_se,x_16 "1")
+  Mysql主从复制架构图  
+  ![Mysql主从复制架构图](https://img-blog.csdnimg.cn/f15462c6736b498f9acd3cf9f676cb9b.jpg?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBAc2VuZHFtYWls,size_20,color_FFFFFF,t_70,g_se,x_16 "1")  
   主从复制原理
   ```bash
      1、Master数据库的bin-log(记录所有sql语句)文件只要发生变化,立马记录到Binary log日志文件中
