@@ -124,7 +124,7 @@ mysql官方提供的,多主多从结构
      单向主从模式：Master ——> Slave  
      双向主从模式：Master <====> Master  
      级联主从模式：Master ——> Slave1 ——> Slave2  
-     一主多从模式  
+     一主多从模式：MHA  
      多主一从模式  
   ```
 - 主从复制功能
@@ -207,7 +207,10 @@ MMM是在MySQL Replication的基础上,对其进行优化。MMM(Master Replicati
     1.无法完全保证数据的一致性。如主1挂了,MMM monitor已经切换到主2上来了,而若此时双主复制中,主2数据落后于主1(即还未完全复制完毕),那么此时的主2已经成为主节点,对外提供写服务,从而导致数据不一。
     2.由于是使用虚拟IP浮动技术,类似Keepalived,故RIP(真实IP)要和VIP(虚拟IP)在同一网段。如果是在不同网段也可以,需要用到虚拟路由技术。但是绝对要在同一个IDC机房,不可跨IDC机房组建集群
 ```
-### 3.5.3 MySQLMHA架构(多主多从)  
+### 3.5.3 MySQLMHA架构(一主多从)  
+  目前MHA主要支持一主多从的架构,搭建MHA要求一个[复制集群]中必须[最少]有三台数据库服务器,一主二从,即一台master,一台备用master,另外一台从库。SO至少需要三台服务器，再加上MHAManager一台,可能就需要四台服务器  
+  MHA架构图  
+  ![MHA](https://img-blog.csdnimg.cn/cf8993c007234ad78db98499589bc8f8.png "f")  
 ```bash
    
 ```
