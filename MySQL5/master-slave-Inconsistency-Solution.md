@@ -2,7 +2,7 @@
 
 ## 一、MySQL主从不同步情况
 ### 1.1 网络的延迟
-由于mysql主从复制是基于binlog的一种异步复制
+由于mysql主从复制是基于binlog的一种异步复制  
 通过网络传送binlog文件，理所当然网络延迟是主从不同步的绝大多数的原因，特别是跨机房的数据同步出现这种几率非常的大，所以做读写分离，注意从业务层进行前期设计。  
 
 ### 1.2 主从两台机器的负载不一致
@@ -111,10 +111,11 @@ Slave_SQL_Running: Yes
 如何检查主从延迟的问题,主从延迟判断的方法，通常有两种方法：Seconds_Behind_Master和mk-heartbeat  
 ### 3.2方法1.
 通过监控show slave statusG命令输出的Seconds_Behind_Master参数的值来判断，是否有发生主从延时。  
+  
+mysql> show slave status\G;  
 
-```bash  
-mysql> show slave statusG;
 1. row **
+```bash
  Slave_IO_State: Waiting for master to send event
  Master_Host: 192.168.1.205
  Master_User: repl
@@ -131,8 +132,10 @@ mysql> show slave statusG;
  Replicate_Ignore_DB: 
  Replicate_Do_Table: 
  Replicate_Ignore_Table: 
- Replicate_Wild_Do_Table: 
+ Replicate_Wild_Do_Table:  
+```   
 Replicate_Wild_Ignore_Table:
+```bash
  Last_Errno: 0
  Last_Error: 
  Skip_Counter: 0
@@ -148,12 +151,16 @@ Replicate_Wild_Ignore_Table:
  Master_SSL_Cipher: 
  Master_SSL_Key: 
  Seconds_Behind_Master: 0
+```
 Master_SSL_Verify_Server_Cert: No
+```bash
  Last_IO_Errno: 0
  Last_IO_Error: 
  Last_SQL_Errno: 0
  Last_SQL_Error: 
+```
 Replicate_Ignore_Server_Ids:
+```bash
  Master_Server_Id: 205
  Master_UUID: 7402509d-fd14-11e5-bfd0-000c2963dd15
  Master_Info_File: /home/mysql/data/master.info
@@ -169,14 +176,13 @@ Replicate_Ignore_Server_Ids:
  Retrieved_Gtid_Set: 
  Executed_Gtid_Set: 
  Auto_Position: 0
-1 row in set (0.00 sec)
-复制代码以上是show slave statusG的输出结果，这些结构给我们的监控提供了很多有意义的参数。
+show slave status\G的输出结果，这些结构给我们的监控提供了很多有意义的参数。
 Slave_IO_Running
 该参数可作为io_thread的监控项，Yes表示io_thread的和主库连接正常并能实施复制工作，No则说明与主库通讯异常，多数情况是由主从间网络引起的问题；
 Slave_SQL_Running
-该参数代表sql_thread是否正常，具体就是语句是否执行通过，常会遇到主键重复或是某个表不存在。
+   #该参数代表sql_thread是否正常，具体就是语句是否执行通过，常会遇到主键重复或是某个表不存在。
 Seconds_Behind_Master
-是通过比较sql_thread执行的event的timestamp和io_thread复制好的event的timestamp(简写为ts)进行比较，而得到的这么一个差值；NULL—表示io_thread或是sql_thread有任何一个发生故障，也就是该线程的Running状态是No，而非Yes。0 — 该值为零，是我们极为渴望看到的情况，表示主从复制良好，可以认为lag不存在。
+   #是通过比较sql_thread执行的event的timestamp和io_thread复制好的event的timestamp(简写为ts)进行比较，而得到的这么一个差值；NULL—表示io_thread或是sql_thread有任何一个发生故障，也就是该线程的Running状态是No，而非Yes。0 — 该值为零，是我们极为渴望看到的情况，表示主从复制良好，可以认为lag不存在。
 正值 — 表示主从已经出现延时，数字越大表示从库落后主库越多。负值 — 几乎很少见，我只是听一些资深的DBA说见过，其实，这是一个BUG值，该参数是不支持负值的，也就是不应该出现。
 备注Seconds_Behind_Master的计算方式可能带来的问题
 我们都知道的relay-log和主库的bin-log里面的内容完全一样，在记录sql语句的同时会被记录上当时的ts，所以比较参考的值来自于binlog，其实主从没有必要与NTP进行同步，也就是说无需保证主从时钟的一致。你也会发现，其实比较真正是发生在io_thread与sql_thread之间，而io_thread才真正与主库有关联，于是，问题就出来了，
