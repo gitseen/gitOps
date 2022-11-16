@@ -8,14 +8,15 @@ Oracle发布新版本的MySQL时，直接从5.7.x 跳到了8.0可谓是一个大
   4、 持久化设置。MySQL8.0新增SET PERSIST的命令 #SET PERSIST max_connections = 400  
   5、 事务性数据字典  
   6、 SQL角色。可以创建角色，给用户设置或去除角色，大大方便权限的管理    
-  7、 隐藏索引 
+  7、 隐藏索引   
   8、 UTF-8编码。从MySQL8.0开始，使用utf8mb4作来MySQL的默认字符集  
 
-##1、druid数据源的driver-class-name配置
+## 1、druid数据源的driver-class-name配置
 MySQL5： driver-class-name: com.mysql.jdbc.Driver
+
 MySQL8： driver-class-name: com.mysql.cj.jdbc.Driver
 
-##2、url配置
+## 2、url配置
 MySQL5：url: jdbc:mysql://localhost:3306/数据库名
 
 MySQL8：url: jdbc:mysql://localhost:3306/数据库名**?&serverTimezone=UTC**
