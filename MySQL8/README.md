@@ -21,3 +21,4 @@ MySQL5：url: jdbc:mysql://localhost:3306/数据库名
 
 MySQL8：url: jdbc:mysql://localhost:3306/数据库名**?&serverTimezone=UTC**
 
+## 3、连接驱动jar包使用mysql-connector-java-5.1.49.jar or 官网
