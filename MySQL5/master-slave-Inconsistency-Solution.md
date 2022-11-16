@@ -47,7 +47,8 @@ Slave_SQL_Running: No
 ```
 ### 2.2 解决方法一：忽略错误后，继续同步
 该方法适用于主从库数据相差不大，或者要求数据可以不完全统一的情况，数据要求不严格的情况
-解决：  
+解决： 
+ 
 ```bash
 stop slave;
 复制代码
@@ -59,11 +60,11 @@ start slave;
 Slave_IO_Running: Yes
 Slave_SQL_Running: Yes
 复制代码ok，现在主从同步状态正常了。。。
-```
+```  
 ### 2.3 方式二：重新做主从，完全同步
 该方法适用于主从库数据相差较大，或者要求数据完全统一的情况
 解决步骤如下：  
-````bash
+````bash  
 1.先进入主库，进行锁表，防止数据写入
 使用命令：
 mysql> flush tables with read lock;
@@ -96,8 +97,9 @@ mysql> start slave;
 mysql> show slave statusG 查看：
 Slave_IO_Running: Yes
 Slave_SQL_Running: Yes
-好了，同步完成啦
-```
+好了，同步完成啦  
+
+```  
 ## 三、如何监控mysql主从之间的延迟
 ### 3.1 前言：
 日常工作中，对于MYSQL主从复制的检查有两方面  
@@ -107,7 +109,7 @@ Slave_SQL_Running: Yes
 如何检查主从延迟的问题,主从延迟判断的方法，通常有两种方法：Seconds_Behind_Master和mk-heartbeat  
 ### 3.2方法1.
 通过监控show slave statusG命令输出的Seconds_Behind_Master参数的值来判断，是否有发生主从延时。  
-```bash
+```bash  
 mysql> show slave statusG;
 1. row **
  Slave_IO_State: Waiting for master to send event
@@ -181,7 +183,8 @@ io_thread不能及时复制binlog（没有中断，也在复制），而sql_thre
 这也就是为什么大家要批判用这个参数来监控数据库是否发生延时不准的原因，但是这个值并不是总是不准，
 如果当io_thread与master网络很好的情况下，那么该值也是很有价值的。’‘之前，提到Seconds_Behind_Master这个参数会有负值出现，我们已经知道该值是io_thread的最近跟新的ts与sql_thread执行到的ts差值，
 前者始终是大于后者的，唯一的肯能就是某个event的ts发生了错误，比之前的小了，那么当这种情况发生时，负值出现就成为可能。  
-```
+
+```  
 ## 3.2 方法2.
 mk-heartbeat：Maatkit万能工具包中的一个工具，被认为可以准确判断复制延时的方法。  
 
