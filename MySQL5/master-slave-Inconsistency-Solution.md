@@ -176,22 +176,28 @@ Replicate_Ignore_Server_Ids:
  Retrieved_Gtid_Set: 
  Executed_Gtid_Set: 
  Auto_Position: 0
+```
 show slave status\G的输出结果，这些结构给我们的监控提供了很多有意义的参数。
+```bash
 Slave_IO_Running
-该参数可作为io_thread的监控项，Yes表示io_thread的和主库连接正常并能实施复制工作，No则说明与主库通讯异常，多数情况是由主从间网络引起的问题；
+   #该参数可作为io_thread的监控项，Yes表示io_thread的和主库连接正常并能实施复制工作，No则说明与主库通讯异常，多数情况是由主从间网络引起的问题；
 Slave_SQL_Running
    #该参数代表sql_thread是否正常，具体就是语句是否执行通过，常会遇到主键重复或是某个表不存在。
 Seconds_Behind_Master
-   #是通过比较sql_thread执行的event的timestamp和io_thread复制好的event的timestamp(简写为ts)进行比较，而得到的这么一个差值；NULL—表示io_thread或是sql_thread有任何一个发生故障，也就是该线程的Running状态是No，而非Yes。0 — 该值为零，是我们极为渴望看到的情况，表示主从复制良好，可以认为lag不存在。
-正值 — 表示主从已经出现延时，数字越大表示从库落后主库越多。负值 — 几乎很少见，我只是听一些资深的DBA说见过，其实，这是一个BUG值，该参数是不支持负值的，也就是不应该出现。
-备注Seconds_Behind_Master的计算方式可能带来的问题
-我们都知道的relay-log和主库的bin-log里面的内容完全一样，在记录sql语句的同时会被记录上当时的ts，所以比较参考的值来自于binlog，其实主从没有必要与NTP进行同步，也就是说无需保证主从时钟的一致。你也会发现，其实比较真正是发生在io_thread与sql_thread之间，而io_thread才真正与主库有关联，于是，问题就出来了，
-当主库I/O负载很大或是网络阻塞
-io_thread不能及时复制binlog（没有中断，也在复制），而sql_thread一直都能跟上io_thread的脚本，这时Seconds_Behind_Master的值是0，
-也就是我们认为的无延时，但是，实际上不是，你懂得。
-这也就是为什么大家要批判用这个参数来监控数据库是否发生延时不准的原因，但是这个值并不是总是不准，
+   #是通过比较sql_thread执行的event的timestamp和io_thread复制好的event的timestamp(简写为ts)进行比较，而得到的这么一个差值；NULL—表示io_thread或是sql_thread有任何一个发生故障，也就是该线程的Running状态是No，而非Yes。0 — 该值为零，是我们极为渴望看到的情况，表示主从复制良好，可以认为lag不存在。  
+
+正值 — 表示主从已经出现延时，数字越大表示从库落后主库越多。负值 — 几乎很少见，我只是听一些资深的DBA说见过，其实，这是一个BUG值，该参数是不支持负值的，也就是不应该出现。  
+
+备注Seconds_Behind_Master的计算方式可能带来的问题  
+
+我们都知道的relay-log和主库的bin-log里面的内容完全一样，在记录sql语句的同时会被记录上当时的ts，所以比较参考的值来自于binlog，其实主从没有必要与NTP进行同步，也就是说无需保证主从时钟的一致。你也会发现，其实比较真正是发生在io_thread与sql_thread之间，而io_thread才真正与主库有关联，于是，问题就出来了， 
+
+当主库I/O负载很大或是网络阻塞  
+io_thread不能及时复制binlog（没有中断，也在复制），而sql_thread一直都能跟上io_thread的脚本，这时Seconds_Behind_Master的值是0，  
+也就是我们认为的无延时，但是，实际上不是，你懂得。  
+这也就是为什么大家要批判用这个参数来监控数据库是否发生延时不准的原因，但是这个值并不是总是不准，  
 如果当io_thread与master网络很好的情况下，那么该值也是很有价值的。’‘之前，提到Seconds_Behind_Master这个参数会有负值出现，我们已经知道该值是io_thread的最近跟新的ts与sql_thread执行到的ts差值，
-前者始终是大于后者的，唯一的肯能就是某个event的ts发生了错误，比之前的小了，那么当这种情况发生时，负值出现就成为可能。  
+前者始终是大于后者的，唯一的肯能就是某个event的ts发生了错误，比之前的小了，那么当这种情况发生时，负值出现就成为可能。   
 
 ```  
 ## 3.2 方法2.
