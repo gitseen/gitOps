@@ -60,11 +60,13 @@ start slave;
 Slave_IO_Running: Yes
 Slave_SQL_Running: Yes
 复制代码ok，现在主从同步状态正常了。。。
+
 ```  
-### 2.3 方式二：重新做主从，完全同步
+### 2.3 方式二：重新做主从，完全同步  
 该方法适用于主从库数据相差较大，或者要求数据完全统一的情况
 解决步骤如下：  
-````bash  
+
+```bash  
 1.先进入主库，进行锁表，防止数据写入
 使用命令：
 mysql> flush tables with read lock;
@@ -109,6 +111,7 @@ Slave_SQL_Running: Yes
 如何检查主从延迟的问题,主从延迟判断的方法，通常有两种方法：Seconds_Behind_Master和mk-heartbeat  
 ### 3.2方法1.
 通过监控show slave statusG命令输出的Seconds_Behind_Master参数的值来判断，是否有发生主从延时。  
+
 ```bash  
 mysql> show slave statusG;
 1. row **
