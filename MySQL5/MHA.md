@@ -43,8 +43,8 @@ EOF
 ```
 ### manager管理
    * 启动
-    nohup masterha_manager --conf=/etc/mastermha/app1.cnf --remove_dead_master_conf --ignore_last_failover   >/etc/mastermha/mha.log < /dev/null 2>&1 &
-    nohup masterha_manager --conf=/etc/mastermha/app1.cnf --ignore_last_failover < /dev/null > /etc/mastermha/mha.log 2>&1 &
+    nohup masterha_manager --conf=/etc/mastermha/app1.cnf --remove_dead_master_conf --ignore_last_failover   >/etc/mastermha/mha.log < /dev/null 2>&1 &  
+    nohup masterha_manager --conf=/etc/mastermha/app1.cnf --ignore_last_failover < /dev/null > /etc/mastermha/mha.log 2>&1 &  
    * 健康检测
      ```bash
         #检查环境
@@ -72,5 +72,5 @@ yum -y install mha4mysql-node-0.58-0.el7.centos.noarch.rpm
 ```
 
 
-# MHA 安装文件可以从    https://code.google.com/p/mysql-master-ha 下载
+MHA 安装包获取    https://code.google.com/p/mysql-master-ha 下载
 See https://www.cnblogs.com/liujiacai/p/14833835.html  for details.
