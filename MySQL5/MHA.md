@@ -43,10 +43,10 @@ EOF
 ```
 ### manager管理
    * 启动  
-    ```bash
-    nohup masterha_manager --conf=/etc/mastermha/app1.cnf --remove_dead_master_conf --ignore_last_failover   >/etc/mastermha/mha.log < /dev/null 2>&1 &  
-    nohup masterha_manager --conf=/etc/mastermha/app1.cnf --ignore_last_failover < /dev/null > /etc/mastermha/mha.log 2>&1 &  
-    ```
+     ```bash
+        nohup masterha_manager --conf=/etc/mastermha/app1.cnf --remove_dead_master_conf --ignore_last_failover   >/etc/mastermha/mha.log < /dev/null 2>&1 &  
+        nohup masterha_manager --conf=/etc/mastermha/app1.cnf --ignore_last_failover < /dev/null > /etc/mastermha/mha.log 2>&1 &  
+     ```
    * 健康检测
      ```bash
         #检查环境
