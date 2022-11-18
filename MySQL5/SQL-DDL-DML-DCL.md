@@ -1,5 +1,7 @@
 See https://www.geeksforgeeks.org/sql-ddl-dql-dml-dcl-tcl-commands/  for details.  
 
+SQL-Commands
+  
 ![SQL-Commands](https://media.geeksforgeeks.org/wp-content/uploads/20210920153429/new.png "f") 
  
 # [MySQL-DDL]()
