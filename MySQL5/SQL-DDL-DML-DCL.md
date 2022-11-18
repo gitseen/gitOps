@@ -1,4 +1,4 @@
-# MySQL-DDL
+# [MySQL-DDL]()
 ## 1、什么是DDL
 数据定义语言（DDL：Data Definition Language）：其语句包括动词CREATE,ALTER和DROP。在数据库中创建新表或修改、删除表（CREATE TABLE 或 DROP TABLE）；为表加入索引等。  
 DDL 只操作数据库、表、视图、索引，但是不操作表中的数据  
