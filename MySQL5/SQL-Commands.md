@@ -1,11 +1,10 @@
 See https://www.geeksforgeeks.org/sql-ddl-dql-dml-dcl-tcl-commands/  for details.  
 
-SQL-Commands
+SQL-Commands-Architecture
   
 ![SQL-Commands](https://media.geeksforgeeks.org/wp-content/uploads/20210920153429/new.png "f") 
  
-# MySQL-DDL
-[MySQL-DDL](https://blog.csdn.net/qq_51978429/article/details/126649681?share_token=6986400D-0A70-4239-88AB-001C9BF67F29&tt_from=copy_link&utm_source=copy_link&utm_medium=toutiao_ios&utm_campaign=client_share)
+# [MySQL-DDL](https://blog.csdn.net/qq_51978429/article/details/126649681?share_token=6986400D-0A70-4239-88AB-001C9BF67F29&tt_from=copy_link&utm_source=copy_link&utm_medium=toutiao_ios&utm_campaign=client_share)
 ## 1、什么是DDL
 数据定义语言（DDL：Data Definition Language）：其语句包括动词CREATE,ALTER和DROP。在数据库中创建新表或修改、删除表（CREATE TABLE 或 DROP TABLE）；为表加入索引等。  
 DDL 只操作数据库、表、视图、索引，但是不操作表中的数据  
