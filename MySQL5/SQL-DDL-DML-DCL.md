@@ -1,3 +1,7 @@
+See https://www.geeksforgeeks.org/sql-ddl-dql-dml-dcl-tcl-commands/  for details.  
+
+![SQL-Commands](https://media.geeksforgeeks.org/wp-content/uploads/20210920153429/new.png "f") 
+ 
 # [MySQL-DDL]()
 ## 1、什么是DDL
 数据定义语言（DDL：Data Definition Language）：其语句包括动词CREATE,ALTER和DROP。在数据库中创建新表或修改、删除表（CREATE TABLE 或 DROP TABLE）；为表加入索引等。  
