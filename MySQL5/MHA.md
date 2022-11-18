@@ -51,12 +51,14 @@ EOF
      ```bash
         #检查环境
         masterha_check_ssh --conf=/etc/mastermha/app1.cnf
-        masterha_check_repl --conf=/etc/mastermha/app1.cnf
+        masterha_check_repl --conf=/etc/mastermha/app1.cnf #[报错问题解决](https://www.cnblogs.com/weifeng1463/p/8682636.html)
+            #ln -s /usr/local/mysql/bin/mysqlbinlog /usr/local/bin/mysqlbinlog
+            #ln -s /usr/local/mysql/bin/mysql /usr/local/bin/mysql
         #查看状态
         masterha_check_status --conf=/etc/mastermha/app1.cnf
         masterha_check_ssh 检查MHA的SSH配置状况
         masterha_check_repl 检查MySQL复制状况
-        masterha_manger 启动MHA
+        masterha_manager 启动MHA
         masterha_check_status 检测当前MHA运行状态
         masterha_master_monitor 检测master是否宕机
         masterha_master_switch 故障转移（自动或手动）
