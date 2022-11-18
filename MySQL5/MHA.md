@@ -47,11 +47,12 @@ EOF
         nohup masterha_manager --conf=/etc/mastermha/app1.cnf --remove_dead_master_conf --ignore_last_failover   >/etc/mastermha/mha.log < /dev/null 2>&1 &  
         nohup masterha_manager --conf=/etc/mastermha/app1.cnf --ignore_last_failover < /dev/null > /etc/mastermha/mha.log 2>&1 &  
      ```
-   * 健康检测
+   * 健康检测   
+     [masterha_check_repl报错问题解决](https://www.cnblogs.com/weifeng1463/p/8682636.html) master-salve添加软连接文件  
      ```bash
         #检查环境
         masterha_check_ssh --conf=/etc/mastermha/app1.cnf
-        masterha_check_repl --conf=/etc/mastermha/app1.cnf #[报错问题解决](https://www.cnblogs.com/weifeng1463/p/8682636.html)
+        masterha_check_repl --conf=/etc/mastermha/app1.cnf #[报错问题解决]
             #ln -s /usr/local/mysql/bin/mysqlbinlog /usr/local/bin/mysqlbinlog
             #ln -s /usr/local/mysql/bin/mysql /usr/local/bin/mysql
         #查看状态
