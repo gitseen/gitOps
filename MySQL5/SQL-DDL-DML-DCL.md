@@ -1,15 +1,14 @@
 # MySQL-DDL
 ## 1、什么是DDL
-```bash
-数据定义语言（DDL：Data Definition Language）：其语句包括动词CREATE,ALTER和DROP。在数据库中创建新表或修改、删除表（CREATE TABLE 或 DROP TABLE）；为表加入索引等。
-DDL 只操作数据库、表、视图、索引，但是不操作表中的数据
-``
+数据定义语言（DDL：Data Definition Language）：其语句包括动词CREATE,ALTER和DROP。在数据库中创建新表或修改、删除表（CREATE TABLE 或 DROP TABLE）；为表加入索引等。  
+DDL 只操作数据库、表、视图、索引，但是不操作表中的数据  
 
 
 # MySQL-DML
 ## 1、什么是DML
 DML:数据库操作语言（Data Mainpulation Language）其语句包括动词INSERT、UPDATE和DELETE，分别用于添加修改删除
 ## 2、INSERT
+```bash
 NSERT INTO <表名> （字段1，字段2，...）VALUES (字段1的值，字段2的值，...);
 
 --语法2
