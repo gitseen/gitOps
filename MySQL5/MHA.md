@@ -1,4 +1,4 @@
-# MHA环境
+# MHA环境(master-slave互信)
 | MySQL-role    | ip             | MHA-role |
 | :-----| ----: | :----:         |
 | MySQL-master  | 192.168.32.205 | manager、node |
@@ -8,6 +8,7 @@
 # MHA部署
 ## MHA-manager部署
 ```bash
+notice: "此配置文件的行尾不要加空格等符号"
 yum -y install epel-release && yum clean all && yum makecache fast
 yum -y install perl-Config-Tiny perl-Log-Dispatch perl-Parallel-ForkManager perl-Time-HiRes
 yum -y install perl-ExtUtils-CBuilder perl-ExtUtils-MakeMaker perl-DBD-MySQL perl-devel perl-CPAN
@@ -57,15 +58,15 @@ EOF
             #ln -s /usr/local/mysql/bin/mysql /usr/local/bin/mysql
         #查看状态
         masterha_check_status --conf=/etc/mastermha/app1.cnf
-        masterha_check_ssh 检查MHA的SSH配置状况
-        masterha_check_repl 检查MySQL复制状况
-        masterha_manager 启动MHA
-        masterha_check_status 检测当前MHA运行状态
-        masterha_master_monitor 检测master是否宕机
-        masterha_master_switch 故障转移（自动或手动）
-        masterha_conf_host 添加或删除配置的server信息
-        masterha_stop --conf=app1.cnf 停止MHA
-        masterha_secondary_check 两个或多个网络线路检查MySQL主服务器的可用
+        masterha_check_ssh --conf=/etc/mastermha/app1.cnf  #检查MHA的SSH配置状况
+        masterha_check_repl --conf=/etc/mastermha/app1.cnf #检查MySQL复制状况
+        masterha_manager --conf=/etc/mastermha/app1.cnf    #启动MHA
+        masterha_check_status --conf=/etc/mastermha/app1.cnf #检测当前MHA运行状态
+        masterha_master_monitor --conf=/etc/mastermha/app1.cnf #检测master是否宕机
+        masterha_master_switch --conf=/etc/mastermha/app1.cnf  #故障转移（自动或手动）
+        masterha_conf_host --conf=/etc/mastermha/app1.cnf #添加或删除配置的server信息
+        masterha_stop --conf=app1.cnf #停止MHA
+        masterha_secondary_check --conf=/etc/mastermha/app1.cnf #两个或多个网络线路检查MySQL主服务器的可用
      ```
 
 ## MHA-node部署
