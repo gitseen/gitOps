@@ -14,7 +14,7 @@ Oracle发布新版本的MySQL时，直接从5.7.x 跳到了8.0可谓是一个大
 ## 1、druid数据源的driver-class-name配置
 MySQL5： driver-class-name: com.mysql.jdbc.Driver
 
-MySQL8： driver-class-name: com.mysql.cj.jdbc.Driver
+MySQL8： driver-class-name: com.mysql.jdbc.Driver
 
 ## 2、url配置
 MySQL5：url: jdbc:mysql://localhost:3306/数据库名

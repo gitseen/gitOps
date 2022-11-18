@@ -47,7 +47,7 @@ mysql> PURGE MASTER LOGS TO 'MySQL-bin.004' #删除MySQL-bin.004
 
 
 # 同步所有数据库
-## Master
+## Master(产环境主库不能设置read_only不然业务炸了)
 ```bash
 [mysqld]
 datadir=/var/lib/mysql
