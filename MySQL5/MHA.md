@@ -1,5 +1,5 @@
 # MHA环境(master-slave互信)
-| MySQL-role    | ip             | MHA-role |
+| MySQL-role    | ip-info        | MHA-role |
 | :-----| ----: | :----:         |
 | MySQL-master  | 192.168.32.205 | manager、node |
 | MySQL-salve   | 192.168.32.206 | node |
