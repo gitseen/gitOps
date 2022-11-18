@@ -1,5 +1,5 @@
 # MySQL-DDL
-## 一：什么是DDL
+## 1、什么是DDL
 ```bash
 数据定义语言（DDL：Data Definition Language）：其语句包括动词CREATE,ALTER和DROP。在数据库中创建新表或修改、删除表（CREATE TABLE 或 DROP TABLE）；为表加入索引等。
 DDL 只操作数据库、表、视图、索引，但是不操作表中的数据
@@ -7,9 +7,9 @@ DDL 只操作数据库、表、视图、索引，但是不操作表中的数据
 
 
 # MySQL-DML
-## 什么是DML
+## 1、什么是DML
 DML:数据库操作语言（Data Mainpulation Language）其语句包括动词INSERT、UPDATE和DELETE，分别用于添加修改删除
-### INSERT
+## 2、INSERT
 NSERT INTO <表名> （字段1，字段2，...）VALUES (字段1的值，字段2的值，...);
 
 --语法2
@@ -28,7 +28,7 @@ INSERT INTO t_user VALUES(NULL,'李四','男')
 INSERT INTO t_user (NAME,sex)VALUES('jack','男'),('rose','女')
 
 ```
-### UPDATE
+## 3、UPDATE
 ```bash
    语法：update 表名 set 字段1=值 ,字段2 =值,…[where 条件]
    注意：在更新操作建议要加where子句，否则会导致全表更新
@@ -53,7 +53,7 @@ UPDATE t_user SET NAME = 'jack' , sex='女' WHERE id =1
 SELECT * FROM t_user;
 
 ```
-### DELETE
+## 4、DELETE
 ```bash
    DELETE FROM 表名 [where]
    注意：删除时建议加where子句，避免全表删除
@@ -77,7 +77,7 @@ SELECT * FROM t_user;
 
 
 # MySQL-DCL
-## 什么是DCL
+## 1、什么是DCL
 数据控制语言DCL(Data Control Language)它的语句通过GRANT或REVOKE实现权限控制，确定单个用户和用户组对数据库对象的访问。某些RDBMS可用GRANT或REVOKE控制对表单个列的访问。
 ```bash
 
