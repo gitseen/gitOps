@@ -22,8 +22,8 @@ MYSQL_REMOTE_CONNECT=true
 MYSQL_DATA_PATH=/var/lib/mysql
 MYSQL_INSTALL_PATH=/usr/local/mysql
 MYSQL_FILE=mysql-8.0.30-el7-x86_64
-ZZJZ_DB_USER="zzdevops"
-ZZJZ_DB_PASSWD="ZZDevops_1234"
+ZZJZ_DB_USER="zzjz"
+ZZJZ_DB_PASSWD="wJ6tAgSqJidznI98esvA"
 
 ###########################################################
 #       log function
@@ -44,7 +44,7 @@ function uninstallDB() {
         rpm -qa | grep mariadb | xargs rpm -e --nodeps
         rm -rf /var/log/mysql*
         rm -rf /var/lib/mysql*
-        rm -rf /usr/local/mysql;rm -rf rm -rf /usr/local/mysql-*
+        rm -rf /usr/local/mysql;rm -rf /usr/local/mysql-*
 }
 
 ###########################################################
