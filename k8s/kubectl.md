@@ -15,15 +15,15 @@
 kubectl get no -o json | jq -r '.items | sort_by(.status.capacity.memory)[]|[.metadata.name,.status.capacity.memory]| @tsv'
 ```
 * 各种排序Pod 
-   - 按内存使用排序 
+   *  按内存使用排序 
 ```bash
    kubectl top pods -A | sort --reverse --key 4 --numeric
 ```
-   - 按CPU使用排序
+   * 按CPU使用排序
 ```bash
    kubectl top pods -A | sort --reverse --key 3 --numeric
 ```
-   - 按重启次数排序（需选定命名空间）
+   * 按重启次数排序（需选定命名空间）
 ```bash
    kubectl get pods --sort-by=.status.containerStatuses[0].restartCount
 ```
