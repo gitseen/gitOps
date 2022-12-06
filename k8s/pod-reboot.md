@@ -22,8 +22,8 @@ kubectl scale deployment <deployment name> -n <namespace> --replicas=10
 方法三： kubectl delete pod  
 ```bash
 kubectl delete pod <pod_name> -n <namespace>
-还是多说一句，此时优雅删除的效果还是有的。再多说一句，直接删 rs 效果也挺好。
 ```
+还是多说一句，此时优雅删除的效果还是有的。再多说一句，直接删 rs 效果也挺好。
 
 方法四：kubectl replace  
 ```bash
