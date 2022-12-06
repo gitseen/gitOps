@@ -1,0 +1,105 @@
+# 主要介绍core最外层上下文的mai 配置
+```bash
+本篇主要介绍最外层上下文的 main 配置，即http{}外层配置，如：
+
+user www www;
+worker_processes 2;
+error_log /var/log/nginx-error.log info;
+events {
+    use kqueue;
+    worker_connections 2048;
+}
+...
+nginx的核心配置比较少，但影响比较大。
+
+接下来挨个介绍（注意每个指令的上下文，那是配置它的位置）：
+
+accept_mutex
+语法: accept_mutex on | off;
+
+默认: accept_mutex off;
+
+上下文: events
+
+该配置用于控制工作进程如何处理新连接：on时工作进程会顺序排队，挨个处理新连接；off时新连接会激活所有工作进程，但只有一个工作进程可以处理连接。
+
+项目中，如果服务的QPS很大，那么默认的off会提高性能，但QPS小时，off会引发“惊群效应”，虽然不是很严重，但却是对性能有些影响。
+
+accept_mutex_delay
+语法:	accept_mutex_delay time;
+默认:	accept_mutex_delay 500ms;
+上下文:	events
+当设置accept_mutex off后，一个连接到达时，所有工作进程都会尝试获取该连接，但最终只有一个工作进程会取得连接。那么其他的工作进程将继续进入休眠状态，那么多久才能再次尝试获取新连接？就是该指令配置的，默认500ms。
+
+accept_mutex实际上会激活mutex锁功能，获取连接的work process会持有该锁，其他work process获取不到锁会立即返回（即非阻塞），平均多久尝试一次获取mutex锁，就是这个指令的作用。
+
+daemon
+语法:	daemon on | off;
+默认:	daemon on;
+上下文:	main
+是否启用守护模式。
+
+守护进程大家都比较了解，nginx也是一样的原理，都是不受终端控制的后台进程。
+
+include
+语法:	include file | mask;
+默认:	—
+上下文:	any
+导入其他文件，要求其他文件中的内容必须是由正确的指令或指令块构成，如前文中内外配置文件分离时，就是通过该指令导入内层server配置：
+
+include /etc/nginx/conf.d/*.conf;
+pid
+该指令默认即可，用于指定存储主进程ID的文件，一般不用修改。
+
+user
+在前文介绍过，指定启动nginx进程的用户和组，默认是nginx，有时候会出现403异常，是因为nginx用户没有文件或目录权限导致，修改为 user root即可解决。
+
+work_processes
+语法:	worker_processes number | auto;
+默认:	worker_processes 1;
+上下文:	main
+可见，该配置是配置在main中的，也就是全局的，影响nginx整体的配置。
+
+用于配置工作进程的个数，大家都了解，nginx由控制工作进程的master process和N个work processes构成，真正处理请求的是work process，该指令就是配置wp的数量。
+
+# 执行该指令，查看nginx相关进程
+ps -ef|grep nginx
+# 可见以下输出
+...
+ ... nginx: master process /usr/local/nginx/sbin/nginx -c /usr/local/nginx/conf/nginx.conf
+ ... nginx: worker process
+ ... nginx: worker process
+ ... nginx: worker process
+ ... nginx: worker process
+...
+影响最佳配置的因素较多，比如CPU Cores、存储数据的硬盘驱动器的数量和负载模式等，如果无法确认最佳配置，可设置为auto，这样nginx会根据服务器实际配置自行设置最佳数量。
+
+对于cpu密集型项目，一般也会设置为CPU的数量或者CPU内核数量。
+
+worker_connections
+语法:	worker_connections number;
+默认:	worker_connections 512;
+上下文:	events
+该指令用于设置工作进程最大允许打开的连接数。什么意思呢？一个nginx有多个work processess，但是每个work processes又可以同时处理多个请求，就好比一个进程下允许启用多少线程。
+
+这个连接数不仅仅指的客户端发来的连接请求，还包括代理服务之间的请求，也就是上下游请求都会被统计到。
+
+这个数字也不是越大越好，受限于两个最大文件数的限制：
+
+linux支持最大打开文件数，可以通过ulinit -n查看，默认是1024；
+nginx支持最大打开文件数，可以用下面的worker_rlimit_core指令设置；
+worker_rlimit_core
+更改工作进程的核心文件(RLIMIT_CORE)的最大大小限制。用于在不重新启动主进程的情况下增加限制。
+
+该值不能超过linux的最大文件限制。
+
+error_log
+语法:	error_log file [level];
+默认:	error_log logs/error.log error;
+上下文:	main, http, mail, stream, server, location
+很显然，是配置错误日志。
+
+file：指定日志文件存储的文件
+level：日志级别，可选包括debug, info, notice, warn, error, crit, alert, emerg
+```
+

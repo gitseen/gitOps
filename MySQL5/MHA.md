@@ -181,3 +181,4 @@ MHA 安装包获取    https://code.google.com/p/mysql-master-ha 下载
 See https://www.cnblogs.com/liujiacai/p/14833835.html  for details.
 
 Mysql高可用集群搭建(三) MHA VipHa 故障转移恢复: https://blog.csdn.net/vc33569/article/details/126544383  
+https://blog.csdn.net/houpengchengcsdn/article/details/116167741  
