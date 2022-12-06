@@ -179,3 +179,5 @@ yum -y install mha4mysql-node-0.58-0.el7.centos.noarch.rpm
 
 MHA 安装包获取    https://code.google.com/p/mysql-master-ha 下载  
 See https://www.cnblogs.com/liujiacai/p/14833835.html  for details.
+
+Mysql高可用集群搭建(三) MHA VipHa 故障转移恢复: https://blog.csdn.net/vc33569/article/details/126544383  
