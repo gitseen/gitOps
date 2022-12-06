@@ -14,7 +14,7 @@
 ```bash
 kubectl get no -o json | jq -r '.items | sort_by(.status.capacity.memory)[]|[.metadata.name,.status.capacity.memory]| @tsv'
 ```
-* 各种排序Pod 
+* 各种排序Pod   
    1  按内存使用排序   
 ```bash
    kubectl top pods -A | sort --reverse --key 4 --numeric
