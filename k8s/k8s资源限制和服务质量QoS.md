@@ -1,7 +1,7 @@
 # [k8s资源限制和服务质量QoS](https://www.cnblogs.com/wangxu01/articles/11672212.html)
 ## [k8s资源限制](https://developer.aliyun.com/article/679887)
 ## [k8s服务质量QoS](https://blog.51cto.com/ghostwritten/5345902)
-
+## [k8s-Pod资源控制器限制配置探针方式、重启策略](https://blog.csdn.net/weixin_47151643/article/details/109063601)
 >kubernetes中的内存表示单位Mi和M的区别   
 #https://kubernetes.io/zh/docs/tasks/configure-pod-container/assign-cpu-resource/  
 #https://kubernetes.io/zh/docs/tasks/configure-pod-container/assign-memory-resource/     
