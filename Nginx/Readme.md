@@ -41,5 +41,5 @@ Master负责管理worker进程，worker进程负责处理网络事件。整个�
 # Nginx核心配置Core
 
 # 参考来源
-[1](https://juejin.cn/post/6942607113118023710)  
-[2](https://www.cnblogs.com/ludongguoa/p/15316464.html)  
+[万字总结体系化带你全面认识 Nginx](https://juejin.cn/post/6942607113118023710)  
+[Nginx架构](https://www.cnblogs.com/ludongguoa/p/15316464.html)  
