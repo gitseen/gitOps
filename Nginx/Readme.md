@@ -25,6 +25,7 @@ Nginx是开源、高性能、高可靠的Web和反向代理服务器，而且支
 # Nginx架构
 Nginx是由一个master管理进程，多个worker进程处理工作的多进程模型。基础架构设计如下
 ![如下图所示](https://p3-sign.toutiaoimg.com/pgc-image/53619e18837c4c5fb96e9314dcae038b~noop.image?_iz=58558&from=article.pc_detail&x-expires=1674528628&x-signature=Ds4VpyEHj1R2LpX2Ct14PKVfcPw%3D)  
+![2](https://image.z.itpub.net/zitpub.net/JPG/2021-06-15/E2BB82F07925A570101FDC4A9694062D.jpg)  
 Master负责管理worker进程，worker进程负责处理网络事件。整个框架被设计为一种依赖事件驱动、异步、非阻塞的模式。  
 优点：  
 1、可以充分利用多核机器，增强并发处理能力。  
