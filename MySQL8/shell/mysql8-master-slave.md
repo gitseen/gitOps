@@ -1,10 +1,10 @@
-#MySQL8.0.31主从复制配置
+# MySQL8.0.31主从复制配置
 See https://www.toutiao.com/article/7189143834964656643/  for xx  
 
 2023-01-16 15:09·潇洒sword
 MySQL8.0.31主从复制配置(单机环境下的一主两从架构)
 
-一、主从复制原理  
+## 一、主从复制原理  
 
 MySQL的主从复制中主要有三个线程：master（binlog dump thread）、slave（I/O thread 、SQL thread），Master一条线程和Slave中的两条线程。  
 
@@ -14,7 +14,7 @@ MySQL的主从复制中主要有三个线程：master（binlog dump thread）、
 
 （3）同时主节点为每个I/O线程启动一个dump线程，用于向其发送二进制事件，并保存至从节点本地的中继日志中，从节点将启动SQL线程从中继日志中读取二进制日志，在本地重放，使得其数据和主节点的保持一致，最后I/OThread和SQLThread将进入睡眠状态，等待下一次被唤醒。  
 
-二、环境介绍  
+## 二、环境介绍  
  
 通过在单机环境下三个不同的目录和端口3306、3307、3308来搭建。
 
