@@ -34,9 +34,9 @@ Master负责管理worker进程，worker进程负责处理网络事件。整个�
 
 # [Nginx原理](https://www.cnblogs.com/xiangsikai/p/8438772.html)
  $\color{red}{Nginx由Nginx内核和模块组成，其中内核的设计非常微小和简洁，完成的工作也非常简单}$
- $\color{red}当它接到一个HTTP请求时，它仅仅是通过查找配置文件将此次请求映射到一个location block，而此location中所配置的各个指令则会启动不同的模块去完成工作，}$
- $\color{red}因此模块可以看做Nginx真正的劳动工作者。通常一个location中的指令会涉及一个handler模块和多个filter模块（当然，多个location可以复用同一个模块）。}$
- $\color{red}handler模块负责处理请求，完成响应内容的生成，而filter模块对响应内容进行处理。}$  
+ $\color{red}{当它接到一个HTTP请求时，它仅仅是通过查找配置文件将此次请求映射到一个location block，而此location中所配置的各个指令则会启动不同的模块去完成工作，}$
+ $\color{red}{因此模块可以看做Nginx真正的劳动工作者。通常一个location中的指令会涉及一个handler模块和多个filter模块（当然，多个location可以复用同一个模块）。}$
+ $\color{red}{handler模块负责处理请求，完成响应内容的生成，而filter模块对响应内容进行处理。}$  
 
 用户根据自己的需要开发的模块都属于第三方模块。正是有了这么多模块的支撑，Nginx的功能才会如此强大。
 
