@@ -33,14 +33,16 @@ Master负责管理worker进程，worker进程负责处理网络事件。整个�
 3、Master监控并统一管理worker行为。在worker异常后，可以主动拉起worker进程，从而提升了系统的可靠性。并且由Master进程控制服务运行中的程序升级、配置项修改等操作，从而增强了整体的动态可扩展与热更的能力。    
 
 # [Nginx原理](https://www.cnblogs.com/xiangsikai/p/8438772.html)
-\color{red}{Nginx本身做的工作实际很少，当它接到一个HTTP请求时，它仅仅是通过查找配置文件将此次请求映射到一个location block，而此location中所配置的各个指令则会启动不同的模块去完成工作，因此模块可以看做Nginx真正的劳动工作者。通常一个location中的指令会涉及一个handler模块和多个filter模块（当然，多个location可以复用同一个模块）。handler模块负责处理请求，完成响应内容的生成，而filter模块对响应内容进行处理。} ：  
+Nginx由Nginx内核和模块组成，其中内核的设计非常微小和简洁，完成的工作也非常简单。当它接到一个HTTP请求时，它仅仅是通过查找配置文件将此次请求映射到一个location block，而此location中所配置的各个指令则会启动不同的模块去完成工作，因此模块可以看做Nginx真正的劳动工作者。通常一个location中的指令会涉及一个handler模块和多个filter模块（当然，多个location可以复用同一个模块）。handler模块负责处理请求，完成响应内容的生成，而filter模块对响应内容进行处理。  
+
 用户根据自己的需要开发的模块都属于第三方模块。正是有了这么多模块的支撑，Nginx的功能才会如此强大。
 
-\color{red}{hello} ： Nginx的模块从结构上分为核心模块、基础模块和第三方模块   
+Nginx的模块从结构上分为核心模块、基础模块和第三方模块   
   - 核心模块：HTTP模块、EVENT模块和MAIL模块
   - 基础模块：HTTP Access模块、HTTP FastCGI模块、HTTP Proxy模块和HTTP Rewrite模块
   - 第三方模块：HTTP Upstream Request Hash模块、Notice模块和HTTP Access Key模块  
-\color{red}{xxxx} ： Nginx的模块从功能上分为如下三类  
+  
+Nginx的模块从功能上分为如下三类  
   - Handlers（处理器模块）。此类模块直接处理请求，并进行输出内容和修改headers信息等操作。Handlers处理器模块一般只能有一个
   - Filters （过滤器模块）。此类模块主要对其他处理器模块输出的内容进行修改操作，最后由Nginx输出
   - Proxies （代理类模块）。此类模块是Nginx的HTTP Upstream之类的模块，这些模块主要与后端一些服务比如FastCGI等进行交互，实现服务代理和负载均衡等功能
