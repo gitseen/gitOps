@@ -113,7 +113,7 @@ Nginx的模块从功能上分为如下三类
       upstream backserver {
       server squid1:3128;
       server squid2:3128;
-      hash $request_uri;
+      hash $request_uri;#实现每个url定向到同一个后端服务器
       hash_method crc32;
      }
    ```
