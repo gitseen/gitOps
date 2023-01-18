@@ -67,7 +67,7 @@ Nginx的模块从功能上分为如下三类
    ```bash
       upstream backserver {
       server 192.168.0.14 weight=10;
-      server 192.168.0.15 weight=10
+      server 192.168.0.15 weight=11;
       }
    ```
       
