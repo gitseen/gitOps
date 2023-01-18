@@ -104,7 +104,7 @@ Nginx的模块从功能上分为如下三类
       upstream backserver {
       server server1;
       server server2;
-      fair;
+      fair; #实现响应时间短的优先分配
       }
    ```
    ## url_hash(第三方)
