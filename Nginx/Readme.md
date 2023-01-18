@@ -98,7 +98,25 @@ Nginx的模块从功能上分为如下三类
       server 192.168.0.15:80;
       }
    ```
-      
+   ## fair(第三方)
+   按后端服务器的响应时间来分配请求，响应时间短的优先分配。  
+   ```bash
+      upstream backserver {
+      server server1;
+      server server2;
+      fair;
+      }
+   ```
+   ## url_hash(第三方)
+   按访问url的hash结果来分配请求，使每个url定向到同一个后端服务器，后端服务器为缓存时比较有效。 在upstream中加入hash语句，server语句中不能写入weight等其他的参数，hash_method是使用的hash算法  
+   ```bash
+      upstream backserver {
+      server squid1:3128;
+      server squid2:3128;
+      hash $request_uri;
+      hash_method crc32;
+     }
+   ```
 　****以上便是6种负载均衡策略的实现方式，其中除了轮询和轮询权重外，都是Nginx根据不同的算法实现的。在实际运用中，需要根据不同的场景选择性运用，大都是多种策略结合使用以达到实际需求****   
 
 
