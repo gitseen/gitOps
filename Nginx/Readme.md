@@ -125,3 +125,4 @@ Nginx的模块从功能上分为如下三类
 # 参考来源
 [万字总结体系化带你全面认识 Nginx](https://juejin.cn/post/6942607113118023710)  
 [Nginx架构](https://www.cnblogs.com/ludongguoa/p/15316464.html)  
+[负载均衡](https://www.cnblogs.com/1214804270hacker/p/9325150.html)
