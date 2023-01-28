@@ -117,7 +117,9 @@ Nginx的模块从功能上分为如下三类
       hash_method crc32;
      }
    ```
-　****以上便是6种负载均衡策略的实现方式，其中除了轮询和轮询权重外，都是Nginx根据不同的算法实现的。在实际运用中，需要根据不同的场景选择性运用，大都是多种策略结合使用以达到实际需求****   [Nginx访问如何分流常见情景](https://github.com/gitseen/gitOps/blob/main/Nginx/Nginx%E8%AE%BF%E9%97%AE%E5%A6%82%E4%BD%95%E5%88%86%E6%B5%81%E5%B8%B8%E8%A7%81%E6%83%85%E6%99%AF)  
+　****以上便是6种负载均衡策略的实现方式，其中除了轮询和轮询权重外，都是Nginx根据不同的算法实现的。在实际运用中，需要根据不同的场景选择性运用，大都是多种策略结合使用以达到实际需求****   
+ 
+[Nginx访问如何分流常见情景](https://github.com/gitseen/gitOps/blob/main/Nginx/Nginx%E8%AE%BF%E9%97%AE%E5%A6%82%E4%BD%95%E5%88%86%E6%B5%81%E5%B8%B8%E8%A7%81%E6%83%85%E6%99%AF)  
 
 
 # Nginx核心配置Core
