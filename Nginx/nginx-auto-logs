@@ -53,4 +53,4 @@ curl -H "Content-type:application/json" -X POST -d '{"name":"test"}' http://loca
 总结
 本文介绍了Nginx按日期动态生成日志文件的方法。包括Nginx配置文件设置，目录赋权。
 from: https://www.toutiao.com/article/7168739982771847680/
-from: https://www.toutiao.com/article/7168401363909739019/
+from: https://www.toutiao.com/article/7168401363909739019/   #post埋点
