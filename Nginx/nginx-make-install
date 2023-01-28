@@ -1,0 +1,109 @@
+进入指定目录，下载压缩文件
+[root@begincode src]# wget http://nginx.org/download/nginx-1.23.1.tar.gz
+[root@begincode src]# tar zxvf nginx-1.23.1.tar.gz #解压
+[root@begincode src]# cd nginx-1.23.1
+2、编译安装
+
+ [root@begincode nginx-1.23.1]#./configure --prefix=/usr/local/src/nginx --with-http_stub_status_module --with-http_ssl_module --with-http_image_filter_module 
+
+ [root@begincode nginx-1.23.1]# make && make install
+3、修改配置文件
+
+进入nginx安装目录 
+[root@begincode nginx-1.23.1]# cd /usr/local/src/nginx/conf
+编辑配置文件
+[root@begincode conf]# vi nginx.conf
+worker_processes  2;
+
+events {
+    worker_connections  1024;
+}
+
+
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  logs/access.log  main;
+    sendfile        on;
+    keepalive_timeout  65;
+    gzip  on;
+    upstream api{
+     server 127.0.0.1:端口;
+    }
+    upstream blog{
+     server 127.0.0.1:端口;
+    }
+    server {
+        listen       80;
+        server_name  www.begincode.net;
+	      if ( $host != 'www.begincode.net' ){
+	        return 403;
+	      }
+        location / {
+             proxy_pass http://blog;
+             proxy_redirect off;
+             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+             proxy_set_header X-Real-IP $remote_addr;
+             proxy_set_header Host $http_host;
+        }
+
+       location /api {
+            proxy_pass http://api;
+            proxy_redirect off;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header Host $http_host;
+       }
+
+         location ~* /images/(.+)_(\d+)x(\d+)\.(jpg|jpeg|gif|png)$ {
+            set $w $2;
+            set $h $3;
+            image_filter resize $w $h;
+            image_filter_buffer 30M; #设置图片缓冲区的最大大小，大小超过设定值，服务器将返回错误415
+            image_filter_interlace on;
+            image_filter_jpeg_quality 95;
+            try_files /$1.$4 /notfound.jpg;
+            expires 1d;
+            add_header 'Access-Control-Allow-Origin' '*';
+            add_header 'Access-Control-Allow-Credentials' 'true';
+            alias /图片存储绝对路径 ;
+        }
+
+        location /images {
+          alias  /图片存储绝对路径 ;
+          autoindex on; #打开目录浏览功能
+        }
+
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   html;
+        }
+
+        location ~ /\.ht {
+            deny  all;
+        }
+        location ~ \.cgi {
+            deny all;
+       }
+    }
+}
+4、启动nginx ,进入nginx中的sbin目录
+
+[root@begincode nginx-1.23.1]# cd /usr/local/src/nginx/sbin/
+[root@begincode sbin]# nginx
+五、基本命令：
+
+cd /usr/local/src/nginx/sbin
+#启动
+./nginx
+#重新载入配置文件
+/usr/local/src/nginx/sbin/nginx -s reload 
+#重启服务
+/usr/local/src/nginx/sbin/nginx -s reopen 
+#停止服务
+/usr/local/src/nginx/sbin/nginx -s stop 
