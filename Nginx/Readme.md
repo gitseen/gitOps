@@ -123,8 +123,9 @@ Nginx的模块从功能上分为如下三类
 [Nginx访问如何分流常见情景](https://github.com/gitseen/gitOps/blob/main/Nginx/Nginx%E8%AE%BF%E9%97%AE%E5%A6%82%E4%BD%95%E5%88%86%E6%B5%81%E5%B8%B8%E8%A7%81%E6%83%85%E6%99%AF)  
 
 
-[# Nginx模块详解](https://cloud.tencent.com/developer/article/2057869)
-#https://www.toutiao.com/article/6679950432736903694/?channel=&source=search_tab
+# Nginx模块详解
+[Nginx模块详解](https://cloud.tencent.com/developer/article/2057869)  
+#https://www.toutiao.com/article/6679950432736903694/?channel=&source=search_tab  
 
 
 
