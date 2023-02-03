@@ -17,3 +17,10 @@ kube-proxy iptables模式实现的普通clusterIP类型的service原理，其它
 
 
 kubectl get pod -n kube-system | grep kube-proxy |awk '{system("kubectl delete pod "$1" -n kube-system")}'
+
+
+ #然后编辑这些 ConfigMap，将旧 IP 替换成新的 IP(将oldip更改为newip)
+   kubectl -n kube-system edit cm kubeadm-config
+   kubectl -n kube-system edit cm kube-proxy
+   systemctl restart docker && systemctl restart kubelet.service
+https://www.cnblogs.com/houchaoying/p/14185477.html
