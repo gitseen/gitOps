@@ -13,3 +13,7 @@ kube-proxy默认配置是iptables模式，可以通过修改kube-system命名空
 kube-proxy iptables模式实现的普通clusterIP类型的service原理，其它类型的service原理大家可以参考本文和其它资料自行分析。
 如无特殊场景，下文不再对kube-proxy模式和service类型做特别说明。
 原文链接：https://blog.csdn.net/summer_fish/article/details/124267851
+
+
+
+kubectl get pod -n kube-system | grep kube-proxy |awk '{system("kubectl delete pod "$1" -n kube-system")}'
