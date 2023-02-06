@@ -55,7 +55,7 @@ args
   - shenzhen
   - guangzhou
    ```
-当然Lists的子项也可以是Maps，Maps的子项也可以是List  
+$\color{red}{当然Lists的子项也可以是Maps，Maps的子项也可以是List}$  
 ```
 apiVersion: v1
 kind: Pod
