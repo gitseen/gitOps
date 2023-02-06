@@ -71,4 +71,36 @@ kebectl的子命令非常丰富，涵盖了对kubernetes集群的主要操作，
 ## Kubectl输出格式
 kubectl命令可以用多种格式对结果进行显示，[输出的格式通过-o参数指定](https://p3-sign.toutiaoimg.com/tos-cn-i-tjoges91tu/TTL6iHFF62qpk4~noop.image?_iz=58558&from=article.pc_detail&x-expires=1676272227&x-signature=Ri4mzFxIMaPuuByZ1GJurPFgjvI%3D) 
 
-
+## kubectl操作示例
+```
+1、根据yaml配置文件一次性创建service和rc
+kubectl create -f my-service.yaml -f my-rc.yaml
+2、根据目录下所有.yaml、.yml、.json文件的定义进行创建操作
+kubectl create -f <directory>
+3、查看所有Pod列表
+kubectl get pods
+4、查看rc和service列表
+kubectl get rc,service
+5、显示Node的详细信息
+kubectl describe nodes <node-name>
+6、显示Pod的详细信息
+kubectl describe pods/<pod-name>
+7、显示由RC管理的Pod信息
+kubectl describe pods <rc-name>
+8、删除基于pod.yaml文件定义的Pod
+kubectl delete -f pod.yaml
+9、删除所有包含某个label的Pod和Service
+kubectl delete pods,services -l name=<label-name>
+10、删除所有Pod
+kubectl delete pods --all
+11、在Pod的容器里执行date命令，默认使用Pod中的第1个容器执行
+kubectl exec <pod-name> date
+12、指定Pod中某个容器执行date命令
+kubectl exec <pod-name> -c <container-name> date
+13、以bash方式登陆到Pod中的某个容器里
+kubectl exec -it <pod-name> -c <container-name> /bin/bash
+14、查看容器输出到stdout的日志
+kubectl logs <pod-name>
+15、跟踪查看容器的日志，相当于tail -f命令的结果
+kubectl logs -f <pod-name> -c <container-name>
+```
