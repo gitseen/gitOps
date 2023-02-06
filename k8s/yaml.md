@@ -174,4 +174,45 @@ volumes:                      #在该pod上定义共享存储卷列表
         - key: string
 ```
    ### 2.3.2 yaml格式的service定义文件
+```bash
+apiVersion: v1
+kind: Service
+metadata:                                   #元数据
+  name: string                              #名称
+  namespace: string                         #命名空间
+  labels:                                   #标签信息
+    k8s.kuboard.cn/layer: ''
+    k8s.kuboard.cn/name: string   
+  annotations:                              #注释信息
+    k8s.kuboard.cn/workload: string   
+spec:                                       #定义Service模板
+  clusterIP: ip address                     #指定svcip地址 不指定则随机 
+
+ =================================================================================================
+  #NodePort类型：集群外网络
+  type: NodePort                            #类型为NodePort  
+  ports:
+    - name: string
+      nodePort: 30001                       #当type = NodePort时，指定映射到物理机的端口号
+      port: 80                              #服务监听的端口号
+      protocol: TCP                         #端口协议，支持TCP和UDP，默认TCP
+      targetPort: 80                        #需要转发到后端Pod的端口号
+
+  ==================================================================================================
+  #ClusterIP类型： 集群内网络
+  type: ClusterIP                           #
+  ports:
+    - name: string
+      port: 80
+      protocol: TCP
+      targetPort: 80
+    - name: string
+      port: 22
+      protocol: TCP
+      targetPort: 22
+  selector:                                 #label selector配置，将选择具有label标签的Pod作为管理 
+    k8s.kuboard.cn/layer: ''
+    k8s.kuboard.cn/name: string   
+  sessionAffinity: None                     #是否支持session
+```
    ### 2.3.3 yaml格式的deployment定义文件
