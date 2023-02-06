@@ -13,10 +13,9 @@
 ## 12、  [云原生](https://github.com/rootsongjc/kubernetes-handbook)
 
 ## 13、  系统优化、系统安全加固、故障排查大全(套用5W2H方法) 
-         #https://m.toutiao.com/is/BAHp4sJ/
 
 
-
+#系统安全加固https://www.toutiao.com/article/7196921298063786555
 #https://blog.csdn.net/qq_37539693/article/details/87605613
 
 #http://xianbai.me/learn-md/article/extension/table.html
