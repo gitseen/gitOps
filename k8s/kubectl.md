@@ -49,6 +49,7 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout tls.key -out tls.crt
 kubectl -n myapp create secret tls selfsecret --key tls.key --cert tls.crt
 ```
 # kubectl语法  
+from [原文](https://www.toutiao.com/article/7190147160682267140/)  
 ```bash
 kubectl [command] [Type] [NAME] [flags]
 command: 子命令，用于操作kubernetes集群资源对象的命令，例如：create, delete, describe, get, apply等等
