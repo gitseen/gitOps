@@ -48,5 +48,19 @@ kubectl get nodes -o jsonpath='{.items[*].spec.podCIDR}' | tr " " "\n"
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout tls.key -out tls.crt -subj "/CN=grafana.mysite.ru/O=MyOrganization" 
 kubectl -n myapp create secret tls selfsecret --key tls.key --cert tls.crt
 ```
+# kubectl语法  
+```bash
+kubectl [command] [Type] [NAME] [flags]
+command: 子命令，用于操作kubernetes集群资源对象的命令，例如：create, delete, describe, get, apply等等
+TYPE: 资源对象的类型，区分大小写，能以单数，复数或者简写形式表示。例如以下3中TYPE是等价的。
+kubectl get pod pod1
+kubectl get pods pod1
+kubectl get po pod1
+NAME：资源对象的名称，区分大小写。如果不指定名称，系统则将返回属于TYPE的全部对象的列表，例如：kubectl get pods 将返回所有pod的列表
+flags: kubectl 子命令的可选参数，例如使用 -s 指定api server的url地址而不用默认值。
+```
+[kubectl可操作的资源对象类型以及缩写](https://p3-sign.toutiaoimg.com/tos-cn-i-tjoges91tu/TTL6hPnIEzvwbh~noop.image?_iz=58558&from=article.pc_detail&x-expires=1676272227&x-signature=I33bvWr4TzjAy%2BJ%2F%2BbWMErYFmfc%3D)  
+
+
 
 
