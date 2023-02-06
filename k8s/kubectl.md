@@ -75,8 +75,10 @@ kubectl命令可以用多种格式对结果进行显示，[输出的格式通过
 ```
 1、根据yaml配置文件一次性创建service和rc
 kubectl create -f my-service.yaml -f my-rc.yaml
+
 2、根据目录下所有.yaml、.yml、.json文件的定义进行创建操作
 kubectl create -f <directory>
+
 3、查看所有Pod列表
 kubectl get pods
 4、查看rc和service列表
