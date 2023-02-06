@@ -65,5 +65,10 @@ flags: kubectl 子命令的可选参数，例如使用 -s 指定api server的url
 kebectl的子命令非常丰富，涵盖了对kubernetes集群的主要操作，包括资源对象的创建、删除、查看、修改、配置、运行等  
 [详细的子命令](https://p3-sign.toutiaoimg.com/tos-cn-i-tjoges91tu/TTL6hQKQcQmvz~noop.image?_iz=58558&from=article.pc_detail&x-expires=1676272227&x-signature=AUfWesyvDdOLDlbmN8da%2BWAokpw%3D)  
 
+## kubectl参数列表
+[Kubectl命令行的公共启动参数](https://p3-sign.toutiaoimg.com/tos-cn-i-tjoges91tu/TTL6hQzFlp05vm~noop.image?_iz=58558&from=article.pc_detail&x-expires=1676272227&x-signature=NqtsHt6snI9UZoX3IUp5ljxySP4%3D)   
+
+## Kubectl输出格式
+kubectl命令可以用多种格式对结果进行显示，[输出的格式通过-o参数指定](https://p3-sign.toutiaoimg.com/tos-cn-i-tjoges91tu/TTL6iHFF62qpk4~noop.image?_iz=58558&from=article.pc_detail&x-expires=1676272227&x-signature=Ri4mzFxIMaPuuByZ1GJurPFgjvI%3D) 
 
 
