@@ -47,6 +47,35 @@ Maps的value既能够对应字符串也能够对应一个Maps
        例如，name和labels是相同缩进级别，因此YAML处理器知道他们属于同一map；它知道app是lables的值因为app的缩进更大。  
 ```
    ### 2.1.2 YAML Lists
+   List即列表，说白了就是数组，例如  
+   ```
+args
+  -beijing
+  -shanghai
+  -shenzhen
+  -guangzhou
+   ```
+当然Lists的子项也可以是Maps，Maps的子项也可以是List  
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kube100-site
+  labels:
+    app: web
+spec:
+  containers:
+    - name: front-end
+      image: nginx
+      ports:
+        - containerPort: 80
+    - name: flaskapp-demo
+      image: jcdemo/flaskapp
+      ports: 8080
+
+如上所示，定义一个containers的List对象，每个子项都由name、image、ports组成，每个ports都有一个KEY为containerPort的Map组成
+   ```
+   
+   ```
    ## 2.2 yaml四个必须配置项
    ## 2.3 示例说明
    ### 2.3.1 yaml格式的pod定义文件
