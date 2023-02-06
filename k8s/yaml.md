@@ -28,14 +28,14 @@ Maps
 ```
    ## 2.1 yaml语法格式
    ### 2.1.1 YAML Maps
-       Map指的是字典，即一个Key:Value 的键值对信息。例如：
-       ```
-       apiVersion: v1
-       kind: Pod
-　　   注：---为可选的分隔符 ，当需要在一个文件中定义多个结构的时候需要使用。上述内容表示有两个键apiVersion和kind，分别对应的值为v1和Pod。
-       ```
-       Maps的value既能够对应字符串也能够对应一个Maps
-       ```
+Map指的是字典，即一个Key:Value 的键值对信息。例如：
+```
+apiVersion: v1
+kind: Pod
+注：---为可选的分隔符 ，当需要在一个文件中定义多个结构的时候需要使用。上述内容表示有两个键apiVersion和kind，分别对应的值为v1和Pod。
+```
+Maps的value既能够对应字符串也能够对应一个Maps
+```
        apiVersion: v1
        kind: Pod
        metadata:
@@ -45,7 +45,7 @@ Maps
        注：上述的YAML文件中，metadata这个KEY对应的值为一个Maps，而嵌套的labels这个KEY的值又是一个Map。实际使用中可视情况进行多层嵌套。  
        YAML处理器根据行缩进来知道内容之间的关联。上述例子中，使用两个空格作为缩进，但空格的数据量并不重要，只是至少要求一个空格并且所有缩进保持一致的空格数 。  
        例如，name和labels是相同缩进级别，因此YAML处理器知道他们属于同一map；它知道app是lables的值因为app的缩进更大。  
-       ```
+```
    ### 2.1.2 YAML Lists
    ## 2.2 yaml四个必须配置项
    ## 2.3 示例说明
