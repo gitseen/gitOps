@@ -77,6 +77,11 @@ spec:
    ```
 
    ## 2.2 yaml四个必须配置项
++ apiVersion：表示指定api版本，目前大部分都是写v1,此值不是写死的，此值可以在本机上执行kubectl api-versions命令查看。
++ kind：表示该yaml定义的资源类型，k8s中资源有很多种，包括Pod，Deployment，Job，Services等等。
++ metadata：表示创建的资源的一些元数据，这是个对象类型，里面包含名称、namespace、标签等信息。
++ spec：这也是对象类型，内容包括一些container，storage，volume等。
+这四个部分是k8s的yaml必须存在的配置项，如果没有，k8s是不允许执行的。  
    ## 2.3 示例说明
    ### 2.3.1 yaml格式的pod定义文件
    ### 2.3.2 yaml格式的service定义文件
