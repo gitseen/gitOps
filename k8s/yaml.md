@@ -56,6 +56,7 @@ args
   -guangzhou
    ```
 当然Lists的子项也可以是Maps，Maps的子项也可以是List  
+```
 apiVersion: v1
 kind: Pod
 metadata:
@@ -74,8 +75,7 @@ spec:
 
 如上所示，定义一个containers的List对象，每个子项都由name、image、ports组成，每个ports都有一个KEY为containerPort的Map组成
    ```
-   
-   ```
+
    ## 2.2 yaml四个必须配置项
    ## 2.3 示例说明
    ### 2.3.1 yaml格式的pod定义文件
