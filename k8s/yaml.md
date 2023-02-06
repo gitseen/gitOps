@@ -1,5 +1,6 @@
 from https://www.toutiao.com/article/7196554496028246565  
 # K8S集群中yaml文件说明
+# 1、k8s常用指令
 ```
 kubectl apply -f <文件名>   #根据yaml文件部署
 kubectl delete -f <文件名>  #根据yaml文件删除
@@ -11,7 +12,6 @@ kubectl delete svc <svc名称> -n <命名空间>  #删除svc
 kubectl exec -it <pod名称> -c <容器组空间> -n <命名空间> -- bash   #进入容器内部
 kubectl cp -n <命名空间> <pod名称>:/文件src /本地文件  #容器拷贝文件到本地服务器
 ```
-# 1、k8s常用指令
 # 2、yaml文件配置说明
    ## 2.1 yaml语法格式
    ### 2.1.1 YAML Maps
