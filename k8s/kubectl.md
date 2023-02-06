@@ -81,28 +81,40 @@ kubectl create -f <directory>
 
 3、查看所有Pod列表
 kubectl get pods
+
 4、查看rc和service列表
 kubectl get rc,service
+
 5、显示Node的详细信息
 kubectl describe nodes <node-name>
+
 6、显示Pod的详细信息
 kubectl describe pods/<pod-name>
+
 7、显示由RC管理的Pod信息
 kubectl describe pods <rc-name>
+
 8、删除基于pod.yaml文件定义的Pod
 kubectl delete -f pod.yaml
+
 9、删除所有包含某个label的Pod和Service
 kubectl delete pods,services -l name=<label-name>
+
 10、删除所有Pod
 kubectl delete pods --all
+
 11、在Pod的容器里执行date命令，默认使用Pod中的第1个容器执行
 kubectl exec <pod-name> date
+
 12、指定Pod中某个容器执行date命令
 kubectl exec <pod-name> -c <container-name> date
+
 13、以bash方式登陆到Pod中的某个容器里
 kubectl exec -it <pod-name> -c <container-name> /bin/bash
+
 14、查看容器输出到stdout的日志
 kubectl logs <pod-name>
+
 15、跟踪查看容器的日志，相当于tail -f命令的结果
 kubectl logs -f <pod-name> -c <container-name>
 ```
