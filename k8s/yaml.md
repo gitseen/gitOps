@@ -50,10 +50,10 @@ Maps的value既能够对应字符串也能够对应一个Maps
    List即列表，说白了就是数组，例如  
    ```
 args
-  -beijing
-  -shanghai
-  -shenzhen
-  -guangzhou
+  - beijing
+  - shanghai
+  - shenzhen
+  - guangzhou
    ```
 当然Lists的子项也可以是Maps，Maps的子项也可以是List  
 ```
