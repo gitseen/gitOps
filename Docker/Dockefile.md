@@ -1,3 +1,20 @@
+# Dockerfile的命令
+|  命令     |  作用  |
+|  ----     | ----  |
+| FROM  | 指明当前镜像是基于哪个基础镜像的，第一个指令必须是FROM |
+| MAINTAINER | 镜像维护者的姓名和邮箱地址[废弃] |
+| LABEL | 用于为镜像添加元数据，元数以键值对的形式指定 |
+| RUN  | 构建镜像时需要运行的指令 |
+| EXPOSE | 当前容器对外暴露出的端口号 | 
+| WORKDIR | 指定在创建容器后，终端默认登录进来的工作目录，一个落脚点 | 
+| ENV  | 用来在构建镜像过程中设置环境变量 | 
+| ADD | 将宿主机目录下的文件拷贝进镜像且ADD命令会自动处理URL和解压tar包 | 
+| COPY  | 类似于ADD，拷贝文件和目录到镜像中。将从构建上下文目录中<原路径>的文件/目录复制到新的一层的镜像内的<目标路径>位置 | 
+| VOLUME | 容器数据卷，用于数据保存和持久化工作 | 
+| CMD  | 指定一个容器启动时要运行的命令;Dockerfil中可以有多个CMD指令，但只有最后一个生效，CMD会被docker run之后的参数替换| 
+| ENTRYPOINT | 指定一个容器启动时要运行的命令;ENTRYPOINT的目的和CMD-样,都是在指定容器启动程序及其参数 |
+
+
 # Dockerfile编写说明
 ## 1.1 FROM 命令
 + 基于基础镜像进行构建新的境像。在构建时会自动从docker hub拉取base镜像。必须作为Dockerfile的第一个指令出现
@@ -95,4 +112,31 @@ COPY hom?.txt /mydir/
   WORKDIR tomcat
   ```
 ## 1.11 VOLUME命令
+- 定义匿名数据卷。在启动容器时忘记挂载数据卷，会自动挂载到匿名卷
+- 在启动容器docker run的时候，我们可以通过 -v 参数修改挂载点
+- 作用
+  * 避免重要的数据，因容器重启而丢失，这是非常致命的
+  * 避免容器不断变大
+- 语法：
+```
+VOLUME ["<路径1>", "<路径2>"...]
+VOLUME <路径>
+```
 ## 1.12 ENTRYPOINT命令
+- 类似于CMD指令，但其不会被docker run的命令行参数指定的指令所覆盖，而且这些命令行参数会被当作参数送给ENTRYPOINT指令指定的程序
+- 如果运行docker run时使用--entrypoint 选项，将覆盖ENTRYPOINT 指令指定的程序
+- 优点：在执行docker run的时候可以指定ENTRYPOINT运行所需的参数
+- 注意：如果Dockerfile中如果存在多个ENTRYPOINT指令，仅最后一个生效
+- 语法：
+```
+ENTRYPOINT ["<executeable>","<param1>","<param2>",...]
+```
+- 可以搭配CMD命令使用：一般是变参才会使用CMD，这里的CMD等于是在给ENTRYPOINT传参，例如：
+```
+FROM nginx
+ENTRYPOINT ["nginx", "-c"] # 定参
+CMD ["/etc/nginx/nginx.conf"] # 变参
+
+#不传参运行: docker run  nginx:test 容器内会默认启动主进程nginx -c /etc/nginx/nginx.conf
+#传参运行  : docker run  nginx:test -c /etc/nginx/new.conf 容器内会默认启动主进程nginx -c /etc/nginx/new.conf
+
