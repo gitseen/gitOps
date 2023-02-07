@@ -48,6 +48,46 @@ kubectl get nodes -o jsonpath='{.items[*].spec.podCIDR}' | tr " " "\n"
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout tls.key -out tls.crt -subj "/CN=grafana.mysite.ru/O=MyOrganization" 
 kubectl -n myapp create secret tls selfsecret --key tls.key --cert tls.crt
 ```
+# 5个冷门Kubectl使用技巧
+## 1、打印当前使用的API
+```
+# kubectl的主要作用就是与ApiServer进行交互, 而交互的过程, 我们可以通过下面的方式来打印, 
+# 这个命令尤其适合调试自己的api接口时使用.
+$ kubectl get ns -v=9
+```
+## 2、按状态筛选容器以及删除
+这是我在这里学到的命令：Force Delete Evicted / Terminated Pods in Kubernetes  
+```
+kubectl get pods --all-namespaces --field-selector status.phase=Pending -o json | \
+ jq '.items[] | "kubectl delete pods \(.metadata.name) -n \(.metadata.namespace)"' | \
+ xargs -n 1 bash -c
+
+# 这个命令要拆开来看
+# 首先, 获取所有ns中状态为Pending的pods, 并以json形式输出
+# 这个语句其实由很多变体, 比如,我想查找Failed的状态, 或是某个deployment
+kubectl get pods --all-namespaces --field-selector status.phase=Pending -o json 
+
+# 针对json变量进行处理, 生成可用的脚本
+# 这里是我想介绍的重点, 利用jq以及kubectl的输出, 构建出可用的命令
+jq '.items[] | "kubectl delete pods \(.metadata.name) -n \(.metadata.namespace)"'
+
+# 执行每一条命令
+# 注意, 这种命令一定要好好调试, 删掉预期之外的pod就不好了.
+xargs -n 1 bash -c
+
+# 例如, 下面的语句可以找到所有的Pods并打印可以执行的语句
+kubectl get pods --all-namespaces --field-selector status.phase=Running -o json | \
+ jq '.items[] | "kubectl get pods \(.metadata.name) -o wide -n \(.metadata.namespace)"'
+
+"kubectl get pods metrics-server-6d684c7b5-gtd6q -o wide -n kube-system"
+"kubectl get pods local-path-provisioner-58fb86bdfd-98frc -o wide -n kube-system"
+"kubectl get pods nginx-deployment-574b87c764-xppmx -o wide -n default"
+
+# 当然, 如果只是删除单个NS下面的一些pods, 我会选择下面的方法, 但是它操作多个NS就很不方便了.
+kubectl -n default get pods | grep Completed | awk '{print $1}' | xargs kubectl -n default delete pods
+```
+
+
 # kubectl语法  
 from [原文](https://www.toutiao.com/article/7190147160682267140/)  
 ```bash
