@@ -119,8 +119,23 @@ Nginx的模块从功能上分为如下三类
      }
    ```
 　****以上便是6种负载均衡策略的实现方式，其中除了轮询和轮询权重外，都是Nginx根据不同的算法实现的。在实际运用中，需要根据不同的场景选择性运用，大都是多种策略结合使用以达到实际需求****   
+ ## nginx拉黑IP
+ 在Nginx中，你可以使用deny指令和allow指令来拉黑（或允许）特定的IP地址。这些指令位于Nginx的server块内
+ ```
+    server {
+      listen 80;
+      server_name example.com;
+      location / {
+          deny 192.168.1.1;
+          allow 192.168.0.0/16;
+          # deny all;
+          proxy_pass http://backend;
+      }
+   }
+ ```
  
 [Nginx访问如何分流常见情景](https://github.com/gitseen/gitOps/blob/main/Nginx/Nginx%E8%AE%BF%E9%97%AE%E5%A6%82%E4%BD%95%E5%88%86%E6%B5%81%E5%B8%B8%E8%A7%81%E6%83%85%E6%99%AF)  
+
 
 
 # Nginx模块详解
