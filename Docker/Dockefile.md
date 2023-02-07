@@ -54,8 +54,45 @@ CMD ["<可执行文件或命令>","<param1>","<param2>",...]
 CMD ["<param1>","<param2>",...]  # 该写法是为 ENTRYPOINT 指令指定的程序提供默认参数
 ```
 ## 1.7 WORKDIR命令
+- 用来为Dockefie中的任何RUN, CMD. ENTRYPOINT. COPYADD指令设置工作目录。如果WORKDIR不存在，即使它没有在任何后续Dockerfie指令中使用，它也将被创建。
+- 语法：
+```
+WORKDIR <工作目录路径>
+eg:
+WOEKDIR /data    # 进入/data 目录
+WORKDIR bb       # 进入/data/bb 目录
+```
 ## 1.8 ENV命令
+- 设置环境变量，定义了环境变量，那么在后续的指令中，就可以使用这个环境变量。
+- 语法：
+```
+ENV <key> <value>
+ENV <key1>=<value1> <key2>=<value2>...
+```
 ## 1.9 COPY命令
+- 复制指令，从上下文目录中复制文件或者目录到容器里指定路径
+- 语法：
+```
+COPY [--chown=<user>:<group>] <源路径1>...  <目标路径>
+COPY [--chown=<user>:<group>] ["<源路径1>",...  "<目标路径>"]
+# [--chown=<user>:<group>]：可选参数，用户改变复制到容器内文件的拥有者和属组
+# <源路径>：源文件或者源目录，这里可以是通配符表达式，其通配符规则要满足 Go 的 filepath.Match 规则。例如：
+COPY hom* /mydir/
+COPY hom?.txt /mydir/
+# <目标路径>：容器内的指定路径，该路径不用事先建好，路径不存在的话，会自动创建。
+```
 ## 1.10 ADD命令
+- ADD指令和COPY的使用语法类似（同样需求下，官方推荐使用COPY）。功能也类似，不同之处如下
+  * ADD的优点：在执行<源文件>为tar压缩文件的话，压缩格式为gzip, bzip2以及xz的情况下，会自动复制并解压到 <目标路径>。
+  * ADD的缺点：在不解压的前提下，无法复制tar压缩文件。会令镜像构建缓存失效，从而可能会令镜像构建变得比较缓慢。具体是否使用，可以根据是否需要自动解压来决定。
+  * eg 
+  ```
+  # 解压文件到 /data/bb
+  ADD apache-tomcat-8.5.61.tar.gz /data/bb
+  # 重命名
+  RUN mv apache-tomcat-8.5.61 tomcat
+  # 容器启动时，进入tomcat目录
+  WORKDIR tomcat
+  ```
 ## 1.11 VOLUME命令
 ## 1.12 ENTRYPOINT命令
