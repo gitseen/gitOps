@@ -45,6 +45,14 @@ EXPOSE 80/tcp 如果没有 显示指定则默认暴露都是tcp
 EXPOSE 80/udp
 ```
 ## 1.6 CMD命令
+#注意：如果 Dockerfile 中如果存在多个 CMD 指令，仅最后一个生效。
+- 为启动的容器指定默认要运行的程序，程序运行结束，容器也就结束。CMD指令指定的程序可被 docker run命令行参数中指定要运行的程序所覆盖。
+- 语法：
+```
+CMD <shell 命令> 
+CMD ["<可执行文件或命令>","<param1>","<param2>",...] 
+CMD ["<param1>","<param2>",...]  # 该写法是为 ENTRYPOINT 指令指定的程序提供默认参数
+```
 ## 1.7 WORKDIR命令
 ## 1.8 ENV命令
 ## 1.9 COPY命令
