@@ -1,0 +1,124 @@
+Nginx访问如何分流常见情景
+原创2023-01-15 12:41·正义凛然奶茶XH
+from: https://www.toutiao.com/article/7188733579873075747/
+
+Nginx负载均衡模块原理
+在 Nginx 中，可以使用负载均衡模块 (ngx_http_upstream_module) 实现访问分流。下面是一个示例配置，它将请求分发到两个后端服务器 server_app_01 和 server_app_02：
+
+ http {
+    upstream app_upsream {
+        server server_app_01;
+        server server_app_02;
+    }
+ 
+    server {
+        listen 80;
+ 
+        location / {
+            proxy_pass http://app_upsream;
+        }
+    }
+ }
+ 在上面的配置中，定义了一个名为 "app_upsream" 的上游服务器组，并在其中指定了两个后端服务器 server_app_01 和 server_app_02。然后在 server 段中，使用 proxy_pass 指令将请求转发到 "app_upsream" 组中的后端服务器。
+ 
+ Nginx 默认使用轮询算法来将请求分发到后端服务器，但也可以使用其他算法，如权重轮询，ip_hash等。
+例如使用 ip_hash 算法：
+
+ http {
+    upstream app_upsream {
+        ip_hash;
+        server server_app_01;
+        server server_app_02;
+    }
+ 
+    server {
+        listen 80;
+ 
+        location / {
+            proxy_pass http://app_upsream;
+        }
+    }
+ }
+ 通过使用ip_hash算法, 将请求根据请求的ip地址进行hash，将同一个ip的请求始终发送到同一个后端服务器上。
+ 
+ 还有其他的算法可以根据需求进行选择，每种算法都有其优缺点，根据实际需求进行选择即可。
+##
+
+如何按IP地址段分流？
+在 Nginx 中，可以使用 map 指令根据访问 IP 段将请求分发到不同的后端服务器。
+
+下面是一个示例配置，两个tomcat服务，它将访问 IP 段为 192.168.0.0/24 的请求分发到后端服务器 1，其他请求分发到后端服务器 2：
+
+ http {
+    map $remote_addr $backend {
+        default tomcat_server_02;
+        192.168.0.0/24 tomcat_server_01;
+    }
+    upstream tomcat_server_01 {
+        server tomcat_server_01;
+    }
+    upstream tomcat_server_02 {
+        server tomcat_server_02;
+    }
+    server {
+        listen 80;
+ 
+        location / {
+            proxy_pass http://$backend;
+        }
+    }
+ }
+ 在上面的配置中，使用 map 指令根据 $remote_addr (请求的 IP 地址) 变量将请求分发到 $backend 变量中指定的后端服务器。在这个例子中，对于访问 IP 段为 192.168.0.0/24 的请求，分发到 tomcat_server_01，其余请求分发到tomcat_server_02。
+ 
+ 同时需要注意的是，要在后端tomcat服务器上进行配置，配置tomcat_server_01和tomcat_server_02的地址端口等信息。
+ 
+ 还可以通过配置多个map来实现更多的分流，这样可以更灵活地控制访问流量。
+如何按请求数量分流?
+在 Nginx 中，可以使用负载均衡策略来根据请求数量进行分流。其中一种常用的策略是按请求数量的权重来进行分流。下面是一个示例配置，它将请求按照权重为 2:3 的比例分发到后端服务器 server_app_01 和 server_app_02：
+
+ http {
+    upstream app_upsream {
+        server server_app_01 weight=2;
+        server server_app_02 weight=3;
+    }
+ 
+    server {
+        listen 80;
+ 
+        location / {
+            proxy_pass http://app_upsream;
+        }
+    }
+ }
+ 
+ 在上面的配置中，定义了一个名为 "app_upsream" 的上游服务器组，并在其中指定了两个后端服务器 server_app_01 和 server_app_02，并分别设置了权重为 2 和 3。在这种配置下，Nginx 会按照权重比例将请求分发到两个后端服务器上。
+ 
+ 另外还有其他策略如轮询算法，根据服务器响应时间来进行分流。这些策略都可以根据实际需求进行选择。
+ 
+ 最后需要注意的是，这些策略在不同的场景下表现不同，根据实际需求进行选择。
+如何按访问端口分流？
+在 Nginx 中，可以使用 map 指令根据访问端口将请求分发到不同的后端服务器。下面是一个示例配置，它将访问端口为 80 的请求分发到后端服务器 1，其他请求分发到后端服务器 2：
+
+ http {
+    map $server_port $backend {
+        default tomcat_server_02;
+        80 tomcat_server_01;
+    }
+    upstream tomcat_server_01 {
+        server tomcat_server_01;
+    }
+    upstream tomcat_server_02 {
+        server tomcat_server_02;
+    }
+    server {
+        listen 80;
+ 
+        location / {
+            proxy_pass http://$backend;
+        }
+    }
+ }
+ 
+ 在上面的配置中，使用 map 指令根据 $server_port (请求的端口) 变量将请求分发到 $backend 变量中指定的后端服务器。在这个例子中，对于访问端口为 80 的请求，分发到 tomcat_server_01，其余请求分发到tomcat_server_02。
+ 
+ 同时需要注意的是，要在后端tomcat服

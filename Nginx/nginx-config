@@ -1,0 +1,235 @@
+#from:https://www.toutiao.com/article/7171673677871088135/
+#from:https://www.toutiao.com/article/7172130129995661824/
+
+本篇内容较多，需要沉下心来看，建议亲自尝试每个指令带来的影响，深化了解各个指令的含义。
+
+http{} 指令块的内容很重要，因为大部分时间nginx用于Http服务器，所以掌握了各个指令的含义，才能在实际项目配置的得心应手。
+
+先看看配置的格式
+
+user  nginx;
+worker_processes  auto;
+
+error_log  /var/log/nginx/error.log notice;
+pid        /var/run/nginx.pid;
+
+
+events {
+    worker_connections  1024;
+}
+
+http {
+    include       /etc/nginx/mime.types;
+    default_type  application/octet-stream;
+
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  /var/log/nginx/access.log  main;
+
+    sendfile        on;
+    #tcp_nopush     on;
+
+    keepalive_timeout  65;
+
+    #gzip  on;
+
+    include /etc/nginx/conf.d/*.conf;
+}
+http{}外层的main配置，在上一篇（每天5分钟全面掌握Nginx核心配置Core）已经介绍过，不了解的可以去看看。
+
+指令介绍
+include
+这个其实在上一篇介绍过了，这里是导入了MIME的支持，关于MIME的类型介绍，单独写了篇（搞web技术绕不过去的小知识点MIME类型），有兴趣的可前往查看。
+
+default_type
+语法: 	default_type mime-type;
+默认: 	default_type text/plain;
+上下文: 	http, server, location
+设定该Http服务默认的MIME类型。
+
+如果返回html：default_type text/html，或者json：default_type text/json;
+
+access_log
+和access_log相关的还有2个配置：log_format、open_log_file_cache，放在一起介绍。
+
+语法:	
+1、access_log path [format [buffer=size] [gzip[=level]] [flush=time] [if=condition]];
+2、access_log off;
+默认:	access_log logs/access.log combined;
+上下文:	http, server, location, if in location, limit_except
+用于设定访问日志的路径、格式和缓存。
+
+例如：
+
+access_log /path/to/log.gz combined gzip flush=5m;
+参数 path 使用syslog:前缀可以把日志记录到syslog；
+使用参数 off ，可以关闭所有的访问日志；
+如果使用了 buffer 或 gzip 参数，日志将被缓存；
+写入缓存的日志数据，在下列情况下会被写入日志文件：
+
+- 新的日志无法写入buffer时（默认64K）；
+
+- 执行了flush
+
+- 工作进程重新打开了日志文件或关闭
+
+！！官方虽然允许在 path 中使用变量，但是也有很多限制，所以项目中不建议使用！！
+
+如果启用了 gzip 压缩功能，数据在写入日志文件时会被压缩；压缩级别可以从 1-9 （越来越慢，但压缩比越来越大）之间设置，默认是 1。
+
+gzip 是原子操作，所以可以随时通过 zcat 解压或读取。
+
+log_format
+语法: log_format name [escape=default|json|none] string ...;
+
+默认: log_format combined "...";
+
+上下文: http
+
+用于指定日志格式。
+
+通过上下文可见，这个格式是在http{}配置的，所有server下共享。
+通过默认值可见，如果在access_log中不指定format，默认是comblined。
+关于变量escape：
+
+可选的是 default 和 json，其中默认是default， 从1.13.10版本开始，none不再允许。
+
+default和json对于转义的字符要求不一样，实际上该参数不需要太多了解。
+
+可以使用的变量：
+
+$bytes_sent：发送给客户端的数据大小，单位bytes
+$connection：连接序列号
+$conection_requests：通过当前连接发送的请求数
+$request_length：请求的大小（包括header、body和请求行）
+$request_time：从客户端接收第一个byte到返回给客户端的数据最后一个byte被写入日志，所花费的时间
+$status：response的status
+$time_local：本地时间的通用格式
+open_log_file_cache
+语法:
+
+1、open_log_file_cache max=N [inactive=time] [min_uses=N] [valid=time];
+
+2、open_log_file_cache off;
+
+默认:open_log_file_cache off;
+
+上下文: http, server, location
+
+定义一个缓存，用于存储名称包含变量的常用日志的文件描述符。
+
+该指令有以下参数:
+
+max：设置缓存中描述符的最大数量;如果缓存已满，则关闭最近最少使用(LRU)描述符
+inactive：如果在此期间没有访问，则设置缓存描述符关闭的时间;缺省值是10秒
+min_uses：设置由inactive参数定义的时间内文件使用的最小数量，以使描述符在缓存中保持打开状态;缺省值为1。
+valid：设置检查文件名是否仍然存在的时间;缺省值是60秒
+off：禁用缓存
+示例：
+open_log_file_cache max=1000 inactive=20s valid=1m min_uses=2;
+
+全面掌握Nginx核心配置Core
+本篇主要介绍最外层上下文的 main 配置，即http{}外层配置，如：
+
+user www www;
+worker_processes 2;
+error_log /var/log/nginx-error.log info;
+events {
+    use kqueue;
+    worker_connections 2048;
+}
+...
+nginx的核心配置比较少，但影响比较大。
+
+接下来挨个介绍（注意每个指令的上下文，那是配置它的位置）：
+
+accept_mutex
+语法: accept_mutex on | off;
+
+默认: accept_mutex off;
+
+上下文: events
+
+该配置用于控制工作进程如何处理新连接：on时工作进程会顺序排队，挨个处理新连接；off时新连接会激活所有工作进程，但只有一个工作进程可以处理连接。
+
+项目中，如果服务的QPS很大，那么默认的off会提高性能，但QPS小时，off会引发“惊群效应”，虽然不是很严重，但却是对性能有些影响。
+
+accept_mutex_delay
+语法:	accept_mutex_delay time;
+默认:	accept_mutex_delay 500ms;
+上下文:	events
+当设置accept_mutex off后，一个连接到达时，所有工作进程都会尝试获取该连接，但最终只有一个工作进程会取得连接。那么其他的工作进程将继续进入休眠状态，那么多久才能再次尝试获取新连接？就是该指令配置的，默认500ms。
+
+accept_mutex实际上会激活mutex锁功能，获取连接的work process会持有该锁，其他work process获取不到锁会立即返回（即非阻塞），平均多久尝试一次获取mutex锁，就是这个指令的作用。
+
+daemon
+语法:	daemon on | off;
+默认:	daemon on;
+上下文:	main
+是否启用守护模式。
+
+守护进程大家都比较了解，nginx也是一样的原理，都是不受终端控制的后台进程。
+
+include
+语法:	include file | mask;
+默认:	—
+上下文:	any
+导入其他文件，要求其他文件中的内容必须是由正确的指令或指令块构成，如前文中内外配置文件分离时，就是通过该指令导入内层server配置：
+
+include /etc/nginx/conf.d/*.conf;
+pid
+该指令默认即可，用于指定存储主进程ID的文件，一般不用修改。
+
+user
+在前文介绍过，指定启动nginx进程的用户和组，默认是nginx，有时候会出现403异常，是因为nginx用户没有文件或目录权限导致，修改为 user root即可解决。
+
+work_processes
+语法:	worker_processes number | auto;
+默认:	worker_processes 1;
+上下文:	main
+可见，该配置是配置在main中的，也就是全局的，影响nginx整体的配置。
+
+用于配置工作进程的个数，大家都了解，nginx由控制工作进程的master process和N个work processes构成，真正处理请求的是work process，该指令就是配置wp的数量。
+
+# 执行该指令，查看nginx相关进程
+ps -ef|grep nginx
+# 可见以下输出
+...
+ ... nginx: master process /usr/local/nginx/sbin/nginx -c /usr/local/nginx/conf/nginx.conf
+ ... nginx: worker process
+ ... nginx: worker process
+ ... nginx: worker process
+ ... nginx: worker process
+...
+影响最佳配置的因素较多，比如CPU Cores、存储数据的硬盘驱动器的数量和负载模式等，如果无法确认最佳配置，可设置为auto，这样nginx会根据服务器实际配置自行设置最佳数量。
+
+对于cpu密集型项目，一般也会设置为CPU的数量或者CPU内核数量。
+
+worker_connections
+语法:	worker_connections number;
+默认:	worker_connections 512;
+上下文:	events
+该指令用于设置工作进程最大允许打开的连接数。什么意思呢？一个nginx有多个work processess，但是每个work processes又可以同时处理多个请求，就好比一个进程下允许启用多少线程。
+
+这个连接数不仅仅指的客户端发来的连接请求，还包括代理服务之间的请求，也就是上下游请求都会被统计到。
+
+这个数字也不是越大越好，受限于两个最大文件数的限制：
+
+linux支持最大打开文件数，可以通过ulinit -n查看，默认是1024；
+nginx支持最大打开文件数，可以用下面的worker_rlimit_core指令设置；
+worker_rlimit_core
+更改工作进程的核心文件(RLIMIT_CORE)的最大大小限制。用于在不重新启动主进程的情况下增加限制。
+
+该值不能超过linux的最大文件限制。
+
+error_log
+语法:	error_log file [level];
+默认:	error_log logs/error.log error;
+上下文:	main, http, mail, stream, server, location
+很显然，是配置错误日志。
+
+file：指定日志文件存储的文件
+level：日志级别，可选包括debug, info, notice, warn, error, crit, alert, emerg
+一般生产环境会使用 warn、error或crit三个选择一个。
