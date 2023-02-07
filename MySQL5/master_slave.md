@@ -53,14 +53,14 @@ mysql> PURGE MASTER LOGS TO 'MySQL-bin.004' #删除MySQL-bin.004
 
 # 彻底解除主从复制关系
 ```
-      1)stop slave ;RESET MASTER ;reset slave;reset slave;
-      2)reset slave; 或直接删除master.info和relay-log.info这两个文件；
-      stop slave ;RESET MASTER ;reset slave
-      show variables like '%log_bin%';
-      show engine innodb status \G
-      show binlog events;
-      show binlog events in 'mysql-bin.000002';
-      show binary logs;
+1)stop slave ;RESET MASTER ;reset slave;reset slave;
+2)reset slave; 或直接删除master.info和relay-log.info这两个文件；
+stop slave ;RESET MASTER ;reset slave
+show variables like '%log_bin%';
+show engine innodb status \G
+show binlog events;
+show binlog events in 'mysql-bin.000002';
+show binary logs;
 ```
 
 # 同步所有数据库
