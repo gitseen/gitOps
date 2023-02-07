@@ -99,7 +99,6 @@ kubectl get pods --all-namespaces -o wide --field-selector spec.nodeName=pve-nod
 [基于kubernetes的PaaS平台中细力度控制pods方案的实现](https://corvo.myseu.cn/2021/04/30/2021-04-30-%E5%9F%BA%E4%BA%8Ekubernetes%E7%9A%84PaaS%E5%B9%B3%E5%8F%B0%E4%B8%AD%E7%BB%86%E5%8A%9B%E5%BA%A6%E6%8E%A7%E5%88%B6pod/)  
 均衡分布的工作前提是得知pod在各个机器的分布情况。最好的办法就是我们得到pod信息之后进行简单的统计，这个工作可以使用awk实现。  
 ```
-
 kubectl -n default get pods -o wide -l app="nginx" | awk '{print $7}'|\
  awk '{ count[$0]++ } 
  END { 
@@ -114,9 +113,36 @@ Word : Count
 NODE : 1
 pve-node1 : 1
 pve-node2 : 1
-
 # awk的语法我没深入了解, 有兴趣的读者可以研究看看, 这里我就不求甚解了.
 ```
+## 5、kubectl proxy的使用
+你可以理解为这个命令为K8s的ApiServer做了一层代理，使用该代理，你可以直接调用API而不需要经过鉴权。启动之后，甚至可以实现kubectl套娃，下面是一个例子：  
+```
+# 当你没有设置kubeconfig而直接调用kubectl时
+kubectl get ns -v=9
+# 可以打印出下面类似的错误
+curl -k -v -XGET -H "Accept: application/json, */*" -H "User-Agent: kubectl/v1.21.3 (linux/amd64) kubernetes/ca643a4" 'http://localhost:8080/api?timeout=32s'
+skipped caching discovery info due to Get "http://localhost:8080/api?timeout=32s": dial tcp 127.0.0.1:8080: connect: connection refused 
+# 也就是说当你不指定kubeconfig文件时, kubectl会默认访问本机的8080端口
+# 那么我们先启动一个kubectl proxy, 然后指定监听8080, 再使用kubectl直接访问, 是不是就可行了呢, 
+# 事实证明, 安全与预想一致.
+KUBECONFIG=~/.kube/config-symv3 kubectl proxy -p 8080
+kubectl get ns
+NAME STATUS AGE
+default Active 127d
+```
+默认启动的proxy是屏蔽了某些api的，并且有一些限制，例如无法使用exec进入pod之中可以使用kubectl proxy —help 来看，例如  
+```
+# 仅允许本机访问
+--accept-hosts='^localhost$,^127\.0\.0\.1$,^\[::1\]$': Regular expression for hosts that the proxy should accept.
+# 不允许访问下面的api, 也就是说默认没法exec进入容器
+--reject-paths='^/api/.*/pods/.*/exec,^/api/.*/pods/.*/attach': Regular expression for paths that the proxy should reject. Paths specified here will be rejected even accepted by --accept-paths.
+
+# 想跳过exec的限制也很简单, 把reject-paths去掉就可以了
+kubectl proxy -p 8080 --keepalive 3600s --reject-paths='' -v=9
+```
+有人说kubectl proxy可能没什么作用，那可能仅仅是你还没有实际的应用场景。例如当我想要调试K8s dashboard代码的时候。  
+如果直接使用kubeconfig文件，我没法看到具体的请求过程，如果你加上一层proxy转发，并且设置-v=9的时候，你就自动获得了一个日志记录工具，在调试时相当有用。
 
 
 # kubectl语法  
