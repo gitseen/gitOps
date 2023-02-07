@@ -95,6 +95,29 @@ Field Selectors
 # 我个人平时都不喜欢用这个, 直接get全部pods, 然后grep查找感觉更快
 kubectl get pods --all-namespaces -o wide --field-selector spec.nodeName=pve-node1
 ```
+## 4、统计 Pod 在不同机器的具体数量分布
+[基于kubernetes的PaaS平台中细力度控制pods方案的实现](https://corvo.myseu.cn/2021/04/30/2021-04-30-%E5%9F%BA%E4%BA%8Ekubernetes%E7%9A%84PaaS%E5%B9%B3%E5%8F%B0%E4%B8%AD%E7%BB%86%E5%8A%9B%E5%BA%A6%E6%8E%A7%E5%88%B6pod/)  
+均衡分布的工作前提是得知pod在各个机器的分布情况。最好的办法就是我们得到pod信息之后进行简单的统计，这个工作可以使用awk实现。  
+```
+
+kubectl -n default get pods -o wide -l app="nginx" | awk '{print $7}'|\
+ awk '{ count[$0]++ } 
+ END { 
+ printf("%-35s: %s\n","Word","Count");
+ for(ind in count){
+ printf("%-35s: %d\n",ind,count[ind]);
+ }
+ }'
+
+# 执行结果如下
+Word : Count
+NODE : 1
+pve-node1 : 1
+pve-node2 : 1
+
+# awk的语法我没深入了解, 有兴趣的读者可以研究看看, 这里我就不求甚解了.
+```
+
 
 # kubectl语法  
 from [原文](https://www.toutiao.com/article/7190147160682267140/)  
