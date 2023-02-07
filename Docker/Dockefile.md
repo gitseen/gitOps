@@ -25,7 +25,25 @@ LABEL <key>=<value> <key>=<value> <key>=<value> ...
 LABEL version="1.0" description="这是一个Web服务器" by="liu"
 ```
 ## 1.4 RUN命令
+* RUN用于指定docker build过程中运行的指令，有个限定：一般为基础镜像可以运行的命令，如基础镜像为centos，安装软件命令为yum而不是ubuntu里的apt-get命令
+* 语法：
+```
+# shell 格式： <命令行命令> 等同于，在终端操作的 shell 命令。
+RUN <命令行命令>
+# exec 格式：
+RUN ["可执行文件", "参数1", "参数2"]
+# 例如： RUN ["./test.php", "dev", "offline"] 等价于 RUN ./test.php dev offline
+# 优化镜像层可以使用RUN && 实现一层镜像
+```
 ## 1.5 EXPOSE命令
+- 用来指定构建的镜像在运行为容器时对外暴露的端口
+- 在运行时使用随机端口映射时，也就是docker run -P时，会自动随机映射EXPOSE的端口
+- 语法：
+```
+EXPOSE <端口1> [<端口2>...]
+EXPOSE 80/tcp 如果没有 显示指定则默认暴露都是tcp
+EXPOSE 80/udp
+```
 ## 1.6 CMD命令
 ## 1.7 WORKDIR命令
 ## 1.8 ENV命令
