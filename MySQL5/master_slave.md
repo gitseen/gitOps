@@ -7,20 +7,19 @@ MySQL支持一台主库同时向多台从库进行复制， 从库同时也可�
    + 2.实现读写分离，降低主库的访问压力。
    + 3.可以在从库中执行备份，以避免备份期间影响主库服务
 ## 复制步骤
-   + 1. Master 主库在事务提交时，会把数据变更记录在二进制日志文件 Binlog 中。
-   + 2. 从库读取主库的二进制日志文件 Binlog ，写入到从库的中继日志 Relay Log 。
-   + 3. slave重做中继日志中的事件，将改变反映它自己的数据。
+   + 1.Master 主库在事务提交时，会把数据变更记录在二进制日志文件 Binlog 中。
+   + 2.从库读取主库的二进制日志文件 Binlog ，写入到从库的中继日志 Relay Log 。
+   + 3.slave重做中继日志中的事件，将改变反映它自己的数据。
 ![MySQL主从复](https://p3-sign.toutiaoimg.com/tos-cn-i-qvj2lq49k0/f6ca963a4ac748d699e931ba33d87ccb~noop.image?_iz=58558&from=article.pc_detail&x-expires=1676337972&x-signature=whHLaThph2BdSe3ux87S87yQSXs%3D)  
 
 
-# master-conf
+# master-conf  
 
 [mysqld] 
 log_bin=/var/lib/mysql/mysql_binary_log  #标识唯一id（必须），一般使用ip最后位
 server-id=1                              #标识唯一id（必须），一般使用ip最后位 
 binlog-ignore-db=mysql,performance_schema,sys #不同步的数据库，可设置多个
 binlog-do-db=test,xx                     #指定需要同步的数据库（和slave是相互匹配的），可以设置多个 
-
 binlog_format=MIXED                      #设置存储模式不设置默认
 expire_logs_days=7                       #日志清理时间 
 max_binlog_size=100m                     #日志大小 
