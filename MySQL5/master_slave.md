@@ -14,7 +14,7 @@ MySQL支持一台主库同时向多台从库进行复制， 从库同时也可�
 
 
 # master-conf  
-
+```
 [mysqld] 
 log_bin=/var/lib/mysql/mysql_binary_log  #标识唯一id（必须），一般使用ip最后位
 server-id=1                              #标识唯一id（必须），一般使用ip最后位 
@@ -25,9 +25,10 @@ expire_logs_days=7                       #日志清理时间
 max_binlog_size=100m                     #日志大小 
 binlog_cache_size=4m                     #缓存大小
 max_binlog_cache_size=521m               #最大缓存大小
-
+````
 
 # slave-conf
+```
   #开启二进制日志
 log_bin=/var/lib/mysql/mysql_binary_log
 server-id=2 
@@ -40,16 +41,18 @@ log-slave-updates
 slave-skip-errors=all 
 #slave-skip-errors = 1032,1062,1007
 slave-net-timeout=60 
-
+````
 
 
 # 手动清理master日志，最好关闭日志，在/etc/my.cnf
+```
 mysql> show master status; #手动刷新日志
 mysql> reset slave; rest master; #删除全部
 mysql> PURGE MASTER LOGS TO 'MySQL-bin.004' #删除MySQL-bin.004
-
+```
 
 # 彻底解除主从复制关系
+```
       1)stop slave ;RESET MASTER ;reset slave;reset slave;
       2)reset slave; 或直接删除master.info和relay-log.info这两个文件；
       stop slave ;RESET MASTER ;reset slave
@@ -58,7 +61,7 @@ mysql> PURGE MASTER LOGS TO 'MySQL-bin.004' #删除MySQL-bin.004
       show binlog events;
       show binlog events in 'mysql-bin.000002';
       show binary logs;
-
+```
 
 # 同步所有数据库
 ## Master(产环境主库不能设置read_only不然业务炸了)
