@@ -86,7 +86,15 @@ kubectl get pods --all-namespaces --field-selector status.phase=Running -o json 
 # 当然, 如果只是删除单个NS下面的一些pods, 我会选择下面的方法, 但是它操作多个NS就很不方便了.
 kubectl -n default get pods | grep Completed | awk '{print $1}' | xargs kubectl -n default delete pods
 ```
-
+## 3、统计具体某台机器上运行的所有pod
+kubectl可以使用两种选择器, 一种是label, 一种是field, 可以看官网的介绍:  
+Labels and Selectors  
+Field Selectors  
+```
+# 它是一种选择器, 可以与上面的awk或者xargs配合使用.
+# 我个人平时都不喜欢用这个, 直接get全部pods, 然后grep查找感觉更快
+kubectl get pods --all-namespaces -o wide --field-selector spec.nodeName=pve-node1
+```
 
 # kubectl语法  
 from [原文](https://www.toutiao.com/article/7190147160682267140/)  
