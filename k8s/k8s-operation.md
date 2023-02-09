@@ -1,4 +1,4 @@
-# Kubernetes日常运维工作中常用的命令[]
+# Kubernetes日常运维工作中常用的命令
 ```
 #获取前一个容器的日志
 kubectl -n my-namespace logs  xx OR kubectl logs xx -n my-namespace
