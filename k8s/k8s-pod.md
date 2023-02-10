@@ -136,7 +136,8 @@ kubectl get pods test-pod1 -o yaml #找到restartPolicy字段，就是重启策�
 * exec：      执行Shell命令返回状态码是0为成功。
 * tcpSocket： 发起TCP Socket建立成功
 
-**案例实战**
+**案例实战**  
+
 1、livenessProbe（存活探针）：使用exec的方式（执行Shell命令返回状态码是0则为成功）  
 ```
 apiVersion: v1
