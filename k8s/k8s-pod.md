@@ -189,20 +189,19 @@ spec:
     kubelet在容器内执行命令 ls /opt/goweb-demo/runserver来进行探测;如果命令执行成功并且返回值为0,kubelet就会认为这个容器是健康存活的。 
                                                                  如果这个命令返回非0值,kubelet会杀死这个容器并重新启动它
 #验证存活检查的效果
-
-1.#查看某个pod的里的容器，
+1.查看某个pod的里的容器，
 kubectl get pods goweb-demo-686967fd56-556m9 -n test-a -o jsonpath={.spec.containers[*].name}
-2.#进入某个pod里的容器
+2.进入某个pod里的容器
 kubectl exec -it goweb-demo-686967fd56-556m9 -c goweb-demo -n test-a -- bash
-3.#进入容器后，手动删除掉runserver可执行文件，模拟故障
+3.进入容器后，手动删除掉runserver可执行文件，模拟故障
 rm -rf /opt/goweb-demo/runserver
-4.#查看Pod详情（在输出结果的最下面，有信息显示存活探针失败了，这个失败的容器被杀死并且被重建了。）
+4.查看Pod详情（在输出结果的最下面，有信息显示存活探针失败了，这个失败的容器被杀死并且被重建了。）
 kubectl describe pod goweb-demo-686967fd56-556m9 -n test-a
 Events:
   Type     Reason     Age                   From     Message
   ----     ------     ----                  ----     -------
   Warning  Unhealthy  177m (x6 over 3h59m)  kubelet  Liveness probe failed: ls: cannot access '/opt/goweb-demo/runserver': No such file or directory
-5.#一旦失败的容器恢复为运行状态，RESTARTS 计数器就会增加 1
+5.一旦失败的容器恢复为运行状态，RESTARTS 计数器就会增加 1
 tantianran@test-b-k8s-master:~$ kubectl get pods -n test-a
 NAME                          READY   STATUS    RESTARTS      AGE
 goweb-demo-686967fd56-556m9   1/1     Running   1 (22s ago)   13m # RESTARTS字段加1，
@@ -210,7 +209,156 @@ goweb-demo-686967fd56-8hzjb   1/1     Running   0             13m
 
 ```
 2、livenessProbe（存活探针）：使用httpGet请求的方式检查uri path是否正常  
+```
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: test-a
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goweb-demo
+  namespace: test-a
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: goweb-demo
+  template:
+    metadata:
+      labels:
+        app: goweb-demo
+    spec:
+      containers:
+      - name: goweb-demo
+        image: 192.168.11.247/web-demo/goweb-demo:20221229v3
+        livenessProbe:
+          httpGet:
+            path: /login
+            port: 8090
+            httpHeaders:
+            - name: Custom-Header
+              value: Awesome
+          initialDelaySeconds: 3
+          periodSeconds: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: goweb-demo
+  namespace: test-a
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8090
+  selector:
+    app: goweb-demo
+  type: NodePort
+#注：在这个配置文件中Pod定义 periodSeconds字段指定了kubelet每隔3秒执行一次存活探测
+                             initialDelaySeconds字段告诉kubelet在执行第一次探测前应该等待3秒
+                             kubelet会向容器内运行的服务(服务在监听8090端口)发送一个HTTP GET请求来执行探测。 如果服务器上/login路径下的处理程序返回成功代码，则kubelet认为容器是健康存活的
+                             如果处理程序返回失败代码，则kubelet会杀死这个容器并将其重启。返回大于或等于200并且小于400的任何代码都表示成功，其它返回代码都表示失败。
+#验证效果
+1. 进入容器删除静态文件，模拟故障
+kubectl exec -it goweb-demo-586ff85ddb-4646k -c goweb-demo -n test-a -- bash
+rm -rf login.html
+2. 查看pod的log
+kubectl logs goweb-demo-586ff85ddb-4646k -n test-a
+2023/01/12 06:45:19 [Recovery] 2023/01/12 - 06:45:19 panic recovered:
+GET /login HTTP/1.1
+Host: 10.244.222.5:8090
+Connection: close
+Accept: */*
+Connection: close
+Custom-Header: Awesome
+User-Agent: kube-probe/1.25
+html/template: "login.html" is undefined
+/root/my-work-space/pkg/mod/github.com/gin-gonic/gin@v1.8.2/context.go:911 (0x8836d1)
+/root/my-work-space/pkg/mod/github.com/gin-gonic/gin@v1.8.2/context.go:920 (0x88378c)
+/root/my-work-space/src/goweb-demo/main.go:10 (0x89584e)
+3. 查看pod详情
+kubectl describe pod goweb-demo-586ff85ddb-4646k -n test-a
+Warning  Unhealthy  34s (x3 over 40s)   kubelet            Liveness probe failed: HTTP probe failed with statuscode: 500 # 状态码为500
+4. 恢复后查看Pod，RESTARTS计数器已经增1
+kubectl get pod goweb-demo-586ff85ddb-4646k -n test-a
+NAME                          READY   STATUS    RESTARTS      AGE
+goweb-demo-586ff85ddb-4646k   1/1     Running   1 (80s ago)   5m39s
+```
 3、readinessProbe（就绪探针）结合livenessProbe（存活探针）探测tcp端口  
+第三种类型的存活探测是使用TCP套接字。 使用这种配置时kubelet会尝试在指定端口和容器建立套接字链接。 如果能建立连接，这个容器就被看作是健康的，如果不能则这个容器就被看作是有问题的  
+```
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: test-a
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goweb-demo
+  namespace: test-a
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: goweb-demo
+  template:
+    metadata:
+      labels:
+        app: goweb-demo
+    spec:
+      containers:
+      - name: goweb-demo
+        image: 192.168.11.247/web-demo/goweb-demo:20221229v3
+        readinessProbe:
+          tcpSocket:
+            port: 8090
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 8090
+          initialDelaySeconds: 15
+          periodSeconds: 20
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: goweb-demo
+  namespace: test-a
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8090
+  selector:
+    app: goweb-demo
+  type: NodePort
+#注：TCP检测的配置和HTTP检测非常相似。 这个例子同时使用就绪和存活探针
+            kubelet会在容器启动5秒后发送第一个就绪探针。 探针会尝试连接goweb-demo容器的8090端口
+            如果探测成功则Pod会被标记为就绪状态，kubelet将继续每隔10秒运行一次探测。除了就绪探针，这个配置包括了一个存活探针
+            kubelet会在容器启动15秒后进行第一次存活探测。与就绪探针类似，存活探针会尝试连接goweb-demo容器的8090端口。如果存活探测失败，容器会被重新启动
+#验证效果
+1. 进入容器后，杀掉goweb-demo的进程
+kubectl exec -it goweb-demo-5d7d55f846-vm2kc -c goweb-demo -n test-a -- bash
+root@goweb-demo-5d7d55f846-vm2kc:/opt/goweb-demo# ps -aux
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root           1  0.0  0.0   2476   576 ?        Ss   07:23   0:00 /bin/sh -c /opt/goweb-demo/runserver
+root@goweb-demo-5d7d55f846-vm2kc:/opt/goweb-demo# kill -9 1
+2. 查看pod详情，已经发出警告
+kubectl describe pod goweb-demo-5d7d55f846-vm2kc -n test-a
+  Warning  Unhealthy  16s                 kubelet            Readiness probe failed: dial tcp 10.244.240.48:8090: connect: connection refused
+  Warning  BackOff    16s                 kubelet            Back-off restarting failed container
+3. 查看pod，RESTARTS计数器已经增加为2，因为有两个探针
+kubectl get pod -n test-a
+NAME                          READY   STATUS    RESTARTS        AGE
+goweb-demo-5d7d55f846-vm2kc   1/1     Running   2 (2m55s ago)   12m
+```
 4、startupProbe（启动探针）保护慢启动容器  
+**有一种情景是这样的，某些应用在启动时需要较长的初始化时间。要这种情况下，若要不影响对死锁作出快速响应的探测，设置存活探测参数是要技巧  
+技巧就是使用相同的命令来设置启动探测，针对HTTP或TCP检测，可以通过将failureThreshold * periodSeconds参数设置为足够长的时间来应对糟糕情况下的启动时间** 
+  
 
 
