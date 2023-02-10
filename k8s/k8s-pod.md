@@ -96,7 +96,7 @@ docker ps | grep test-pod1
 296972c29efe   nginx                                                  "/docker-entrypoint.…"   9 minutes ago    Up 9 minutes              k8s_nginx1_test-pod1_default_c3a15f70-3ae2-4a73-8a84-d630c047d827_0
 a5331fba7f11   registry.aliyuncs.com/google_containers/pause:latest   "/pause"                 10 minutes ago   Up 10 minutes             k8s_POD_test-pod1_default_c3a15f70-3ae2-4a73-8a84-d630c047d827_0
 ```
-通过查看容器，名为test-pod1的pod里，除了两个业务容器外（k8s_bs1_test-pod1、nginx1_test-pod1），还有一个pause容器。这个到底是什么?  
+通过查看容器,名为test-pod1的pod里除了两个业务容器外(k8s_bs1_test-pod1、nginx1_test-pod1)还有一个pause容器,这个到底是什么?  
 **对pause容器的理解**  
 - pause容器又叫Infra container，就是基础设施容器的意思，Infra container只是pause容器的一个叫法而已
 - 上面看到paus容器，是从registry.aliyuncs.com/google_containers/pause:latest这个镜像拉起的
