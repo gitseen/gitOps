@@ -209,7 +209,9 @@ goweb-demo-686967fd56-8hzjb   1/1     Running   0             13m
 
 ```
 2、livenessProbe（存活探针）：使用httpGet请求的方式检查uri path是否正常  
-```
+<details>
+  <summary>livenessProbe示例</summary>
+  <pre><code>
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -285,7 +287,8 @@ Warning  Unhealthy  34s (x3 over 40s)   kubelet            Liveness probe failed
 kubectl get pod goweb-demo-586ff85ddb-4646k -n test-a
 NAME                          READY   STATUS    RESTARTS      AGE
 goweb-demo-586ff85ddb-4646k   1/1     Running   1 (80s ago)   5m39s
-```
+  </code></pre>
+</details>
 3、readinessProbe（就绪探针）结合livenessProbe（存活探针）探测tcp端口  
 第三种类型的存活探测是使用TCP套接字。 使用这种配置时kubelet会尝试在指定端口和容器建立套接字链接。 如果能建立连接，这个容器就被看作是健康的，如果不能则这个容器就被看作是有问题的  
 <details>
