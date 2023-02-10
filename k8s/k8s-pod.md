@@ -288,7 +288,9 @@ goweb-demo-586ff85ddb-4646k   1/1     Running   1 (80s ago)   5m39s
 ```
 3、readinessProbe（就绪探针）结合livenessProbe（存活探针）探测tcp端口  
 第三种类型的存活探测是使用TCP套接字。 使用这种配置时kubelet会尝试在指定端口和容器建立套接字链接。 如果能建立连接，这个容器就被看作是健康的，如果不能则这个容器就被看作是有问题的  
-```
+<details>
+  <summary>readinessProbe示例</summary>
+  <pre><code>
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -355,7 +357,8 @@ kubectl describe pod goweb-demo-5d7d55f846-vm2kc -n test-a
 kubectl get pod -n test-a
 NAME                          READY   STATUS    RESTARTS        AGE
 goweb-demo-5d7d55f846-vm2kc   1/1     Running   2 (2m55s ago)   12m
-```
+  </code></pre>
+</details>
 4、startupProbe（启动探针）保护慢启动容器  
 有一种情景是这样的，某些应用在启动时需要较长的初始化时间。要这种情况下，若要不影响对死锁作出快速响应的探测，设置存活探测参数是要技巧  
 技巧就是使用相同的命令来设置启动探测，针对HTTP或TCP检测，可以通过将failureThreshold * periodSeconds参数设置为足够长的时间来应对糟糕情况下的启动时间  
