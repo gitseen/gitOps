@@ -640,3 +640,34 @@ goweb-demo-859cc77bd5-n8hqd   1/1     Running   0          30m
 goweb-demo-859cc77bd5-sns67   1/1     Running   0          30m
   </code></pre>
 </details>
+
+## 7. 静态pod
+在实际工作中,静态Pod的应用场景是毕竟少的,几乎没有。不过也还是得对它做一个简单的了解。静态Pod在指定的节点上由kubelet守护进程直接管理,不需要API服务器监管。与由控制面管理的Pod(如Deployment) 不同；  
+kubelet监视每个静态Pod(在它失败之后重新启动)静态Pod始终都会绑定到特定节点的Kubelet上  
+
+在每个node节点上kubelet的守护进程会自动在/etc/kubernetes/manifests/路径下发现yaml,因此如果想要创建静态Pod，就得把yaml放到该目录，下面我们直接实战一下
+<details>
+  <summary>静态pod使用方法</summary>
+  <pre><code> 
+随便登录到某台node节点，然后创建/etc/kubernetes/manifests/static_pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-static-pod
+spec:
+  containers:
+  - name: test-container
+    image: 192.168.11.247/web-demo/goweb-demo:20221229v3
+创建后,回到master节点上查看pod
+ kubectl get pod
+NAME                                READY   STATUS    RESTARTS   AGE
+test-static-pod-test-b-k8s-node01   1/1     Running   0          11s
+通过上面的输出结果可以看到,该静态pod已经在节点test-b-k8s-node01上面正常运行了
+说明kubelet守护进程已经自动发现并创建了它。你可能会问，它不是不需要API服务器监管吗？为啥在master节点能看到它？
+因为kubelet会尝试通过Kubernetes API服务器为每个静态Pod自动创建一个镜像Pod这意味着节点上运行的静态Pod对API服务来说是可见的,但是不能通过API服务器来控制
+且Pod名称将把以连字符开头的节点主机名作为后缀。
+  </code></pre>
+</details>
+
+## 8. PODxxxx
+
