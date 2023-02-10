@@ -507,4 +507,136 @@ _=/usr/bin/env
 </details>
 
 
+<details>
+  <summary>POD_ENV(使用容器字段作为环境变量的值)</summary>
+  <pre><code> 
+例子设置了资源限制的字段requests和limits，在设置环境变量中，使用资源限制的值作为了变量的值
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-env-demo
+spec:
+  containers:
+  - name: test-env-demo-container
+    image: 192.168.11.247/web-demo/goweb-demo:20221229v3
+    resources:
+      requests:
+        memory: "32Mi"
+        cpu: "125m"
+      limits:
+        memory: "64Mi"
+        cpu: "250m"
+    env:
+      - name: CPU_REQUEST
+        valueFrom:
+          resourceFieldRef:
+            containerName: test-env-demo-container
+            resource: requests.cpu
+      - name: CPU_LIMIT
+        valueFrom:
+          resourceFieldRef:
+            containerName: test-env-demo-container
+            resource: limits.cpu
+      - name: MEM_REQUEST
+        valueFrom:
+          resourceFieldRef:
+            containerName: test-env-demo-container
+            resource: requests.memory
+      - name: MEM_LIMIT
+        valueFrom:
+          resourceFieldRef:
+            containerName: test-env-demo-container
+            resource: limits.memory
+#打印变量 kubectl exec test-env-demo -- printenv
+PATH=/go/bin:/usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+HOSTNAME=test-env-demo
+MEM_REQUEST=33554432
+MEM_LIMIT=67108864
+CPU_REQUEST=1
+CPU_LIMIT=1
+KUBERNETES_SERVICE_PORT_HTTPS=443
+KUBERNETES_PORT=tcp://10.96.0.1:443
+KUBERNETES_PORT_443_TCP=tcp://10.96.0.1:443
+KUBERNETES_PORT_443_TCP_PROTO=tcp
+KUBERNETES_PORT_443_TCP_PORT=443
+KUBERNETES_PORT_443_TCP_ADDR=10.96.0.1
+KUBERNETES_SERVICE_HOST=10.96.0.1
+KUBERNETES_SERVICE_PORT=443
+GOLANG_VERSION=1.19.4
+GOPATH=/go
+HOME=/root
+  </code></pre>
+</details>
 
+## 6. init container(初始化容器)
+**初始化容器的特点**  
+- Init容器是一种特殊容器,在Pod内,会在应用容器启动之前运行
+- 如果Pod的Init容器失败,kubelet会不断地重启该Init容器,直到该容器成功为止
+- 如果Pod对应的restartPolicy值为 "Never"，并且Pod的Init容器失败,则Kubernetes会将整个Pod状态设置为失败
+- 如果为一个Pod指定了多个Init容器,这些容器会按顺序逐个运行。每个Init容器必须运行成功,下一个才能够运行
+- Init容器不支持探针包括lifecycle、livenessProbe、readinessProbe和startupProbe  
+<details>
+  <summary>init-check</summary>
+  <pre><code> 
+假设应用容器是依赖数据库的，如果数据库没起来，那么应用容器就算起来了也是服务不可用。所以，现在的主要目的是想在应用容器启动之前检查mysql服务器的IP地址是否可ping通，如果是通的才启动应用容器。这个例子应该是比较贴近实际场景了  
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: test-a
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goweb-demo
+  namespace: test-a
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: goweb-demo
+  template:
+    metadata:
+      labels:
+        app: goweb-demo
+    spec:
+      containers:
+      - name: goweb-demo
+        image: 192.168.11.247/web-demo/goweb-demo:20221229v3
+      initContainers:
+      - name: init-check-mysql-ip
+        image: 192.168.11.247/os/busybox:latest
+        command: ['sh', '-c', "ping 192.168.11.248 -c 5"]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: goweb-demo
+  namespace: test-a
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8090
+  selector:
+    app: goweb-demo
+  type: NodePort
+
+mysql服务器故意没拉起，看看效果
+kubectl get pods -n test-a
+NAME                          READY   STATUS                  RESTARTS      AGE
+goweb-demo-859cc77bd5-jpcfs   0/1     Init:CrashLoopBackOff   3 (34s ago)   2m11s
+goweb-demo-859cc77bd5-n8hqd   0/1     Init:CrashLoopBackOff   3 (33s ago)   2m11s
+goweb-demo-859cc77bd5-sns67   0/1     Init:CrashLoopBackOff   3 (34s ago    2m11s
+观察STATUS字段发现，它经历了3个阶段，第一阶段是正常的运行，也就是执行ping检查的操作，因为死活Ping不同
+所以进入了第二阶段，状态为Error。
+紧接着是第三阶段，状态变成了CrashLoopBackOff，对于这个状态，我的理解是，初始化容器运行失败了，准备再次运行
+它就会的状态就会一直这样：运行->Error->CrashLoopBackOff。当然这种情况是当Pod对应的restartPolicy为"Always"（这是默认策略）才会这样不断的循环检查
+如果Pod对应的restartPolicy值为"Never"，并且Pod的 Init容器失败，则Kubernetes会将整个Pod状态设置为失败。
+#当我把mysql服务器启动后，初始化容器执行成功，那么应用容器也就成功起来
+kubectl get pods -n test-a
+NAME                          READY   STATUS    RESTARTS   AGE
+goweb-demo-859cc77bd5-jpcfs   1/1     Running   0          30m
+goweb-demo-859cc77bd5-n8hqd   1/1     Running   0          30m
+goweb-demo-859cc77bd5-sns67   1/1     Running   0          30m
+  </code></pre>
+</details>
