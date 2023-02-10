@@ -187,7 +187,7 @@ spec:
 #注 periodSeconds字段指定了kubelet应该每5秒执行一次存活探测
     initialDelaySeconds字段告诉kubelet在执行第一次探测前应该等待5秒
     kubelet在容器内执行命令 ls /opt/goweb-demo/runserver来进行探测;如果命令执行成功并且返回值为0,kubelet就会认为这个容器是健康存活的。 
-                                                                   如果这个命令返回非0值,kubelet会杀死这个容器并重新启动它
+                                                               如果这个命令返回非0值,kubelet会杀死这个容器并重新启动它
 #验证存活检查的效果
 
 #查看某个pod的里的容器，
