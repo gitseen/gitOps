@@ -668,6 +668,7 @@ test-static-pod-test-b-k8s-node01   1/1     Running   0          11s
 且Pod名称将把以连字符开头的节点主机名作为后缀。
   </code></pre>
 </details>
+[参考](https://mp.weixin.qq.com/s/5Kv7DU34_Ae5y17MAQVO-Q)
 
 ## 8. PODxxxx
 
