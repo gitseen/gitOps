@@ -359,6 +359,9 @@ goweb-demo-5d7d55f846-vm2kc   1/1     Running   2 (2m55s ago)   12m
 4、startupProbe（启动探针）保护慢启动容器  
 有一种情景是这样的，某些应用在启动时需要较长的初始化时间。要这种情况下，若要不影响对死锁作出快速响应的探测，设置存活探测参数是要技巧  
 技巧就是使用相同的命令来设置启动探测，针对HTTP或TCP检测，可以通过将failureThreshold * periodSeconds参数设置为足够长的时间来应对糟糕情况下的启动时间  
+<details>
+  <summary>折叠代码块</summary>
+  <pre><code> 
 ```
 apiVersion: v1
 kind: Namespace
@@ -414,5 +417,6 @@ spec:
      一旦启动探测成功一次，存活探测任务就会接管对容器的探测，对容器死锁作出快速响应
      如果启动探测一直没有成功，容器会在300秒后被杀死，并且根据restartPolicy来执行进一步处置
 ```  
-
+ </code></pre>
+</details>
 
