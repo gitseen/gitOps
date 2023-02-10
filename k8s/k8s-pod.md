@@ -190,20 +190,19 @@ spec:
                                                                  如果这个命令返回非0值,kubelet会杀死这个容器并重新启动它
 #验证存活检查的效果
 
-#查看某个pod的里的容器，
+1.#查看某个pod的里的容器，
 kubectl get pods goweb-demo-686967fd56-556m9 -n test-a -o jsonpath={.spec.containers[*].name}
-#进入某个pod里的容器
+2.#进入某个pod里的容器
 kubectl exec -it goweb-demo-686967fd56-556m9 -c goweb-demo -n test-a -- bash
-#进入容器后，手动删除掉runserver可执行文件，模拟故障
+3.#进入容器后，手动删除掉runserver可执行文件，模拟故障
 rm -rf /opt/goweb-demo/runserver
-#查看Pod详情（在输出结果的最下面，有信息显示存活探针失败了，这个失败的容器被杀死并且被重建了。）
+4.#查看Pod详情（在输出结果的最下面，有信息显示存活探针失败了，这个失败的容器被杀死并且被重建了。）
 kubectl describe pod goweb-demo-686967fd56-556m9 -n test-a
 Events:
   Type     Reason     Age                   From     Message
   ----     ------     ----                  ----     -------
   Warning  Unhealthy  177m (x6 over 3h59m)  kubelet  Liveness probe failed: ls: cannot access '/opt/goweb-demo/runserver': No such file or directory
-
-# 一旦失败的容器恢复为运行状态，RESTARTS 计数器就会增加 1
+5.#一旦失败的容器恢复为运行状态，RESTARTS 计数器就会增加 1
 tantianran@test-b-k8s-master:~$ kubectl get pods -n test-a
 NAME                          READY   STATUS    RESTARTS      AGE
 goweb-demo-686967fd56-556m9   1/1     Running   1 (22s ago)   13m # RESTARTS字段加1，
