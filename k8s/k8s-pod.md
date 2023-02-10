@@ -362,7 +362,6 @@ goweb-demo-5d7d55f846-vm2kc   1/1     Running   2 (2m55s ago)   12m
 <details>
   <summary>折叠代码块</summary>
   <pre><code> 
-```
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -416,7 +415,5 @@ spec:
 #注 应用程序将会有最多5分钟（30 * 10 = 300s）的时间来完成其启动过程
      一旦启动探测成功一次，存活探测任务就会接管对容器的探测，对容器死锁作出快速响应
      如果启动探测一直没有成功，容器会在300秒后被杀死，并且根据restartPolicy来执行进一步处置
-```  
  </code></pre>
 </details>
-
