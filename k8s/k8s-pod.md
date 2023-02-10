@@ -428,3 +428,83 @@ spec:
      如果启动探测一直没有成功，容器会在300秒后被杀死，并且根据restartPolicy来执行进一步处置
  </code></pre>
 </details>
+
+## 5. 环境变量
+创建Pod时，可以为其下的容器设置环境变量。通过配置文件的env或者envFrom字段来设置环境变量  
+**应用场景**  
++ 容器内应用程序获取pod信息
++ 容器内应用程序通过用户定义的变量改变默认行为
++ 变量值定义的方式  
+
+**自定义变量值**  
+- 变量值从Pod属性获取
+- 变量值从Secret、ConfigMap获取  
+<details>
+  <summary>POD-ENV示例</summary>
+  <pre><code> 
+设置自定义变量，使用env给pod里的容器设置环境变量，本例子中，设置了环境变量有SAVE_TIME、MAX_CONN、DNS_ADDR  
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-env-demo
+spec:
+  containers:
+  - name: test-env-demo-container
+    image: 192.168.11.247/web-demo/goweb-demo:20221229v3
+    env:
+    - name: SAVE_TIME
+      value: "60"
+    - name: MAX_CONN
+      value: "1024"
+    - name: DNS_ADDR
+      value: "8.8.8.8"
+
+#开始创建POD kubectl create -f test-env.yaml
+#创建后，验证环境变量是否能获取到(使用printenv打印环境变量) kubectl exec test-env-demo -- printenv
+PATH=/go/bin:/usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+HOSTNAME=test-env-demo
+SAVE_TIME=60 # 这个是
+MAX_CONN=1024 # 这个是
+DNS_ADDR=8.8.8.8 # 这个是
+KUBERNETES_SERVICE_HOST=10.96.0.1
+KUBERNETES_SERVICE_PORT=443
+KUBERNETES_SERVICE_PORT_HTTPS=443
+KUBERNETES_PORT=tcp://10.96.0.1:443
+KUBERNETES_PORT_443_TCP=tcp://10.96.0.1:443
+KUBERNETES_PORT_443_TCP_PROTO=tcp
+KUBERNETES_PORT_443_TCP_PORT=443
+KUBERNETES_PORT_443_TCP_ADDR=10.96.0.1
+GOLANG_VERSION=1.19.4
+GOPATH=/go
+HOME=/root
+
+#进入容器打印环境变量 kubectl exec -it test-env-demo -c test-env-demo-container -- bash
+echo $SAVE_TIME # 单独打印一个
+60
+env  执行env命令查看
+KUBERNETES_SERVICE_PORT_HTTPS=443
+KUBERNETES_SERVICE_PORT=443
+HOSTNAME=test-env-demo
+PWD=/opt/goweb-demo
+DNS_ADDR=8.8.8.8
+HOME=/root
+KUBERNETES_PORT_443_TCP=tcp://10.96.0.1:443
+MAX_CONN=1024
+GOLANG_VERSION=1.19.4
+TERM=xterm
+SHLVL=1
+KUBERNETES_PORT_443_TCP_PROTO=tcp
+KUBERNETES_PORT_443_TCP_ADDR=10.96.0.1
+SAVE_TIME=60
+KUBERNETES_SERVICE_HOST=10.96.0.1
+KUBERNETES_PORT=tcp://10.96.0.1:443
+KUBERNETES_PORT_443_TCP_PORT=443
+PATH=/go/bin:/usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+GOPATH=/go
+_=/usr/bin/env
+
+  </code></pre>
+</details>
+
+
+
