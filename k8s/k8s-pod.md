@@ -357,8 +357,62 @@ NAME                          READY   STATUS    RESTARTS        AGE
 goweb-demo-5d7d55f846-vm2kc   1/1     Running   2 (2m55s ago)   12m
 ```
 4、startupProbe（启动探针）保护慢启动容器  
-**有一种情景是这样的，某些应用在启动时需要较长的初始化时间。要这种情况下，若要不影响对死锁作出快速响应的探测，设置存活探测参数是要技巧  
-技巧就是使用相同的命令来设置启动探测，针对HTTP或TCP检测，可以通过将failureThreshold * periodSeconds参数设置为足够长的时间来应对糟糕情况下的启动时间** 
-  
+有一种情景是这样的，某些应用在启动时需要较长的初始化时间。要这种情况下，若要不影响对死锁作出快速响应的探测，设置存活探测参数是要技巧  
+技巧就是使用相同的命令来设置启动探测，针对HTTP或TCP检测，可以通过将failureThreshold * periodSeconds参数设置为足够长的时间来应对糟糕情况下的启动时间  
+```
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: test-a
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goweb-demo
+  namespace: test-a
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: goweb-demo
+  template:
+    metadata:
+      labels:
+        app: goweb-demo
+    spec:
+      containers:
+      - name: goweb-demo
+        image: 192.168.11.247/web-demo/goweb-demo:20221229v3
+        livenessProbe:
+          httpGet:
+            path: /login
+            port: 8090
+          failureThreshold: 1
+          periodSeconds: 10
+        startupProbe:
+          httpGet:
+            path: /login
+            port: 8090
+          failureThreshold: 30
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: goweb-demo
+  namespace: test-a
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8090
+  selector:
+    app: goweb-demo
+  type: NodePort
+
+#注 应用程序将会有最多5分钟（30 * 10 = 300s）的时间来完成其启动过程
+     一旦启动探测成功一次，存活探测任务就会接管对容器的探测，对容器死锁作出快速响应
+     如果启动探测一直没有成功，容器会在300秒后被杀死，并且根据restartPolicy来执行进一步处置
+```  
 
 
