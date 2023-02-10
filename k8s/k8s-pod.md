@@ -105,7 +105,7 @@ a5331fba7f11   registry.aliyuncs.com/google_containers/pause:latest   "/pause"  
   ```
   registry.aliyuncs.com/google_containers/pause        latest       350b164e7ae1   8 years ago     240kB
   ```
-## Pod常用管理命令
+## 3. Pod常用管理命令
 ```
 #查看pod里所有容器的名称
 kubectl get pods test-pod1 -o jsonpath={.spec.containers[*].name}
@@ -117,5 +117,100 @@ kubectl exec -it test-pod1 -c bs1 -- sh
 #查看pod里指定容器的log
 kubectl logs test-pod1 -c nginx1 
 ```
-## Pod的重启策略+应用健康检查(应用自修复)
+## 4. Pod的重启策略+应用健康检查(应用自修复)
+**pod重启策略** 
++ Always：当容器终止退出，总是重启容器，默认策略
++ OnFailure：当容器异常退出（退出状态码非0）时，才重启容器
++ Never：当容器终止退出，从不重启容器  
+```
+#查看pod的重启策略
+kubectl get pods test-pod1 -o yaml #找到restartPolicy字段，就是重启策略restartPolicy: Always
+```
+**pod健康检测(健康检查是检查容器里面的服务是否正常)**  
+- livenessProbe(存活探测)：  如果检查失败，将杀死容器，根据pod的restartPolicy来操作。
+- readinessProbe(就绪探测)： 如果检查失败，k8s会把Pod从service endpoints中剔除
+- startupProbe(启动探测)：   检查成功才由存活检查接手，用于保护慢启动容器
+
+**支持检测试方法**    
+* httpGet：   发起HTTP请求，返回200-400范围状态码为成功。
+* exec：      执行Shell命令返回状态码是0为成功。
+* tcpSocket： 发起TCP Socket建立成功
+
+**案例实战**
+1、livenessProbe（存活探针）：使用exec的方式（执行Shell命令返回状态码是0则为成功）  
+```
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: test-a
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goweb-demo
+  namespace: test-a
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: goweb-demo
+  template:
+    metadata:
+      labels:
+        app: goweb-demo
+    spec:
+      containers:
+      - name: goweb-demo
+        image: 192.168.11.247/web-demo/goweb-demo:20221229v3
+        livenessProbe:
+          exec:
+            command:
+            - ls
+            - /opt/goweb-demo/runserver
+          initialDelaySeconds: 5
+          periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: goweb-demo
+  namespace: test-a
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8090
+  selector:
+    app: goweb-demo
+  type: NodePort
+#注 periodSeconds字段指定了kubelet应该每5秒执行一次存活探测
+    initialDelaySeconds字段告诉kubelet在执行第一次探测前应该等待5秒
+    kubelet在容器内执行命令 ls /opt/goweb-demo/runserver来进行探测;如果命令执行成功并且返回值为0,kubelet就会认为这个容器是健康存活的。 
+                                                                   如果这个命令返回非0值,kubelet会杀死这个容器并重新启动它
+#验证存活检查的效果
+
+#查看某个pod的里的容器，
+kubectl get pods goweb-demo-686967fd56-556m9 -n test-a -o jsonpath={.spec.containers[*].name}
+#进入某个pod里的容器
+kubectl exec -it goweb-demo-686967fd56-556m9 -c goweb-demo -n test-a -- bash
+#进入容器后，手动删除掉runserver可执行文件，模拟故障
+rm -rf /opt/goweb-demo/runserver
+#查看Pod详情（在输出结果的最下面，有信息显示存活探针失败了，这个失败的容器被杀死并且被重建了。）
+kubectl describe pod goweb-demo-686967fd56-556m9 -n test-a
+Events:
+  Type     Reason     Age                   From     Message
+  ----     ------     ----                  ----     -------
+  Warning  Unhealthy  177m (x6 over 3h59m)  kubelet  Liveness probe failed: ls: cannot access '/opt/goweb-demo/runserver': No such file or directory
+
+# 一旦失败的容器恢复为运行状态，RESTARTS 计数器就会增加 1
+tantianran@test-b-k8s-master:~$ kubectl get pods -n test-a
+NAME                          READY   STATUS    RESTARTS      AGE
+goweb-demo-686967fd56-556m9   1/1     Running   1 (22s ago)   13m # RESTARTS字段加1，
+goweb-demo-686967fd56-8hzjb   1/1     Running   0             13m
+
+```
+2、livenessProbe（存活探针）：使用httpGet请求的方式检查uri path是否正常  
+3、readinessProbe（就绪探针）结合livenessProbe（存活探针）探测tcp端口  
+4、startupProbe（启动探针）保护慢启动容器  
+
 
