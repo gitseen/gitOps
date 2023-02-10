@@ -171,5 +171,37 @@ kubectl scale deployment goweb-demo --replicas=5 -n test-a
 - 灰度发布（金丝雀、A/B测试、冒烟测试。灰度发布是最复杂的方式，发布的方式是为了避免上线后出现的问题）
 
 ## 3.1.3 回滚
+当应用发布失败，需要回滚时  
+查看发过有哪些版本  
+```
+#查看历史
+kubectl rollout history deployment -n xx
 
+#通过命令修改deployment的镜像进行升级时，后面加--record参数，再查看历史后就会记录这条命令
+kubectl set image deployment goweb-demo goweb-demo=192.168.11.247/web-demo/goweb-demo:20221229v2 -n test-a --record
 
+#上面加了--record参数，再查看历史，可以看到记录的这条命令
+kubectl rollout history deployment -n test-a
+#查看版本号和RS的对应关系，以及和镜像的对应关系
+kubectl get rs -n xx
+#查看当前使用的RS详情
+kubectl describe rs goweb-demo-b98869456 -n xx
+#查看历史版本
+kubectl rollout history deployment -n xx
+
+#只回滚到上一个版本
+kubectl rollout undo deployment goweb-demo -n test-a
+#回滚到指定的历史版本
+kubectl describe $(kubectl get rs -o name -n test-a | grep "goweb-") -n test-a | grep -E "revision:|Replicas:"
+```
+# 3.1.4 删除（当项目需要下线时）
+```
+# 如果该项目是直接编写yaml的，可这样删除（下线）
+kubectl delete -f goweb-demo.yaml
+
+# 如果该项目的命名空间、deployment、service是用命令的，那就需要手动删除下线
+kubectl delete deployment goweb-demo -n test-a
+kubectl delete svc goweb-demo -n test-a
+kubectl delete ns test-a
+```
+[https://www.toutiao.com/article/7192944727292117541](https://mp.weixin.qq.com/s/jBJTLYvXkCtd__yO4Ap9UA)
