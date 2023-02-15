@@ -3,7 +3,12 @@
 为了实现服务器中多个磁盘的协同配合，让数据存储既高效又安全，就用了磁盘阵列的概念。  
 ![xx](pic/1.png)  
 
-磁盘阵列RAID（Redundant Arrays of Independent Disks）是由很多块独立的磁盘组合成一个容量巨大的磁盘组，利用个别磁盘提供数据所产生加成效果提升整个磁盘系统效能。  
+RAID磁盘阵列(Redundant Arrays of Independent Disks)是由很多块独立的磁盘组合成一个容量巨大的磁盘组,利用个别磁盘提供数据所产生加成效果提升整个磁盘系统效能  
+  - RAID(Redundant Array of Independent Disks)即独立磁盘冗余阵列，通常简称为磁盘阵列  
+  - RAID是由多个独立的高性能磁盘驱动器组成的磁盘子系统，从而提供比单个磁盘更高的存储性能和数据冗余的技术  
+  - RAID是一类多磁盘管理技术，其向主机环境提供了成本适中、数据可靠性高的高性能存储  
+  - RAID的两个关键目标是提高数据可靠性和I/O性能  
+
 
 **目前RAID磁盘阵列的常用的创建模式包括：RAID0、RAID1、RAID5、RAID1+0**
 
