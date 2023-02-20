@@ -138,7 +138,37 @@ Nginx的模块从功能上分为如下三类
  
 [Nginx访问如何分流常见情景](https://github.com/gitseen/gitOps/blob/main/Nginx/Nginx%E8%AE%BF%E9%97%AE%E5%A6%82%E4%BD%95%E5%88%86%E6%B5%81%E5%B8%B8%E8%A7%81%E6%83%85%E6%99%AF)  
 
+# Nginx跨域配置
+同源策略主要是指三点相同(协议+域名+端口)相同的两个请求，则可以被看做是同源的，但如果其中任意一点存在不同，则代表是两个不同源的请求，同源策略会限制了不同源之间的资源交互
+```
 
+cation / {  
+    # 允许跨域的请求，可以自定义变量$http_origin，*表示所有  
+    add_header 'Access-Control-Allow-Origin' *;  
+
+    # 允许携带cookie请求  
+    add_header 'Access-Control-Allow-Credentials' 'true';  
+
+    # 允许跨域请求的方法：GET,POST,OPTIONS,PUT  
+    add_header 'Access-Control-Allow-Methods' 'GET,POST,OPTIONS,PUT';  
+
+    # 允许请求时携带的头部信息，*表示所有  
+    add_header 'Access-Control-Allow-Headers' *;  
+
+    # 允许发送按段获取资源的请求  
+    add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';  
+
+    # 一定要有！！！否则Post请求无法进行跨域！  
+    # 在发送Post跨域请求前，会以Options方式发送预检请求，服务器接受时才会正式请求  
+    if ($request_method = 'OPTIONS') {  
+        add_header 'Access-Control-Max-Age' 1728000;  
+        add_header 'Content-Type' 'text/plain; charset=utf-8';  
+        add_header 'Content-Length' 0;  
+        # 对于Options方式的请求返回204，表示接受跨域请求  
+        return 204;  
+    }  
+}  
+```
 
 # Nginx模块详解
 [Nginx模块详解](https://cloud.tencent.com/developer/article/2057869)  
