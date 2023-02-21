@@ -27,9 +27,27 @@ kubectl get no -o json | jq -r '.items | sort_by(.status.capacity.memory)[]|[.me
 ```bash
    kubectl get pods --sort-by=.status.containerStatuses[0].restartCount
 ```
+* 自定义输出列(-o custom-columns=<header>:<jsonpath>...)  
+```
+kubectl get pods -o custom-columns='NAME:metadata.name' -n xx OR -A
+kubectl get pods -o custom-columns='NAME:metadata.name,NODE:spec.nodeName' -n xx
+
+#JSONPath表达式
+1、选择一个列表中有所有元素
+kubectl get pods -o custom-columns='DATA:spec.containers[*].image'
+2、选择一个列表中一个指定元素
+kubectl get pods -o custom-columns='DATA:spec.containers[0].image'
+3、选择特定位置下的所有字段
+kubectl get pods -o custom-columns='DATA:metadata.*'
+4、选择所有具有特定名称的字段
+kubectl get pods -o custom-columns='DATA:..image'
+5、查询Pod中所有image
+kubectl get pods -o custom-columns='NAME:metadata.name,IMAGES:spec.containers[*].image'
+```
+  
 * 打印指定namespace里Pod包含容器的limits和requests
 ```bash
-kubectl get pods -n x -o=custom-columns='NAME:spec.containers[*].name,MEMREQ:spec.containers[*].resources.requests.memory,MEMLIM:spec.containers[*].resources.limits.memory,CPUREQ:spec.containers[*].resources.requests.cpu,CPULIM:spec.containers[*].resources.limits.cpu'
+kubectl get pods -A -o=custom-columns='NAME:spec.containers[*].name,MEMREQ:spec.containers[*].resources.requests.memory,MEMLIM:spec.containers[*].resources.limits.memory,CPUREQ:spec.containers[*].resources.requests.cpu,CPULIM:spec.containers[*].resources.limits.cpu'
 ```
 * 打印集群的节点IP
 ```bash
