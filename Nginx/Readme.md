@@ -205,6 +205,7 @@ https://www.toutiao.com/article/6679950432736903694/?channel=&source=search_tab
 
 # nginx for k8s
 [nginx for k8s](https://jamesdefabia.github.io/docs/user-guide/kubectl/kubectl_run/)  
+[nginx for run pod](https://dockerlabs.collabnix.com/kubernetes/beginners/workshop/lab00-running-nginx-pod/)    
 
 # 参考来源
 [万字总结体系化带你全面认识 Nginx](https://juejin.cn/post/6942607113118023710)  
