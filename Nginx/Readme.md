@@ -170,6 +170,35 @@ cation / {
 }  
 ```
 
+# Nginx防盗链
+盗链即是指外部网站引入当前网站的资源对外展示  
+
+Nginx的防盗链机制实现,跟一个头部字段：Referer有关,该字段主要描述了当前请求是从哪儿发出的,那么在Nginx中就可获取该值,然后判断是否为本站的资源引用请求,如果不是则不允许访问。语法如下：
+```
+valid_referers none | blocked | server_names | string ...;
+```
+- none：表示接受没有Referer字段的HTTP请求访问。
+- blocked：表示允许http://或https//以外的请求访问。
+- server_names：资源的白名单，这里可以指定允许访问的域名。
+- string：可自定义字符串，支配通配符、正则表达式写法。
+```
+# 在动静分离的location中开启防盗链机制  
+location ~ .*\.(html|htm|gif|jpg|jpeg|bmp|png|ico|txt|js|css){  
+    # 最后面的值在上线前可配置为允许的域名地址  
+    valid_referers blocked 192.168.12.129;  
+    if ($invalid_referer) {  
+        # 可以配置成返回一张禁止盗取的图片  
+        # rewrite   ^/ http://xx.xx.com/NO.jpg;  
+        # 也可直接返回403  
+        return   403;  
+    }        
+    root   /soft/nginx/static_resources;  
+    expires 7d;  
+} 
+```
+对于防盗链机制实现这块，也有专门的第三方模块ngx_http_accesskey_module实现了更为完善的设计  
+
+
 # Nginx模块详解
 [Nginx模块详解](https://cloud.tencent.com/developer/article/2057869)  
 https://www.toutiao.com/article/6679950432736903694/?channel=&source=search_tab  
