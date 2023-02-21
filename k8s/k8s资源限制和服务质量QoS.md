@@ -5,7 +5,7 @@
 >kubernetes中的内存表示单位Mi和M的区别   
 #https://kubernetes.io/zh/docs/tasks/configure-pod-container/assign-cpu-resource/  
 #https://kubernetes.io/zh/docs/tasks/configure-pod-container/assign-memory-resource/     
-#https://www.toutiao.com/article/7201867480929927680
+#https://www.toutiao.com/article/7201867480929927680  
 官网解释：Meaning of memory，Mi表示（1Mi=1024×1024）,M表示（1M=1000×1000）（其它单位类推， 如Ki/K Gi/G） 
                              1M=1024K=1024×1024字节，但在k8s中的M表示的意义是不同的，今天特意看了一下官方文档，并实验了一把，特此记录。  
 kubernetes中的表示法    
