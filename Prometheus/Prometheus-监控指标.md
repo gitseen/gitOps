@@ -150,5 +150,5 @@ http_request_duration_seconds{api="add_product" instance="host1.domain.com" quan
 
 **下表总结了直方图和汇总表的优点和缺点**
 ![diff](https://p3-sign.toutiaoimg.com/tos-cn-i-qvj2lq49k0/c56a73f0fc124501a35ba32536eb14c0~noop.image?_iz=58558&from=article.pc_detail&x-expires=1677484304&x-signature=0hp2K7ZjhBapgcjfrm%2FyDYOH0mE%3D)    
-[参考](See https://www.toutiao.com/article/7200944734544609827/  for details.)  
+[参考](https://www.toutiao.com/article/7200944734544609827)  
 
