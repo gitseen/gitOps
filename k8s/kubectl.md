@@ -44,6 +44,23 @@ kubectl get pods -o custom-columns='DATA:..image'
 5、查询Pod中所有image
 kubectl get pods -o custom-columns='NAME:metadata.name,IMAGES:spec.containers[*].image'
 ```
+* 命令太长不方便上手使用插件来实现
+```
+kubectl plugin [list]  #list安装后可显示
+插件列表：
+kubectl-tree #(可以使用kubectl-tree OR kubectl tree来执行)
+kubectl-krew
+kubectl-sniff
+kubectl-crossplane
+kubectl-argo-rollouts
+kubectl-img #自定义插件(上面脚本)如：
+cat>/usr/local/bin/kubectl-img<<EOF
+#!/bin/bash
+kubectl get pods -o custom-columns='NAME:metadata.name,IMAGES:spec.containers[*].image'
+EOF
+chmod +x /usr/local/bin/kubectl-img
+kubectl img #使用来查询
+```
   
 * 打印指定namespace里Pod包含容器的limits和requests
 ```bash
