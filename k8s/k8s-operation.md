@@ -7,7 +7,7 @@ K8S所有的命令行操作本质是对资源的CRUD有一个对应关系,用YAM
 
 # 基础操作
 <details>
-  <summary>基础操作举例</summary>
+  <summary>base-eg</summary>
   <pre><code>
 alias k=kubectl echo ‘alias k=kubectl’ >>~/.bashrc
 kubectl get pods -o=json
@@ -30,7 +30,198 @@ kubectl delete -f        #– Delete an object.
   </code></pre>
 </details>
 
+#集群相关
+<details>
+  <summary>k8s-cluster</summary>
+  <pre><code>
+kubectl cluster-info #Display endpoint information about the master and services in the cluster.
+kubectl version      #Display the Kubernetes version running on the client and server.
+kubectl config view  #Get the configuration of the cluster.
+kubectl config view -o jsonpath='{.users[*].name}' #Get a list of users.
+kubectl config current-context #Display the current context.
+kubectl config get-contexts    #Display a list of contexts.
+kubectl config use-context    #Set the default context.
+kubectl api-resources         #List the API resources that are available.
+kubectl api-versions          #List the API versions that are available. kubectl get all --all-namespaces
+  </code></pre>
+</details>
 
+# DaemonSets相关
+<details>
+  <summary>DaemonSets</summary>
+  <pre><code>
+kubectl get daemonset                     #List one or more daemonsets.
+kubectl edit daemonset <daemonset_name>   #Edit and update the definition of one or more daemonset.
+kubectl delete daemonset <daemonset_name> #Delete a daemonset.
+kubectl create daemonset <daemonset_name> #Create a new daemonset.
+kubectl rollout daemonset                 #Manage the rollout of a daemonset.
+kubectl describe ds <daemonset_name> -n <namespace_name> #Display the detailed state of daemonsets within a namespace.
+  </code></pre>
+</details>
+
+# Deployments相关
+<details>
+  <summary>Deployments</summary>
+  <pre><code>
+kubectl get deployment                              #List one or more deployments.
+kubectl describe deployment <deployment_name>       #Display the detailed state of one or more deployments.
+kubectl edit deployment <deployment_name>           #Edit and update the definition of one or more deployments on the server.
+kubectl create deployment <deployment_name>         #Create a new deployment.
+kubectl delete deployment <deployment_name>         #Delete deployments.
+kubectl rollout status deployment <deployment_name> #See the rollout status of a deployment.
+kubectl set image deployment/ =image:               #Perform a rolling update (K8S default), set the image of the container to a new version for a particular deployment.
+kubectl rollout undo deployment/                    #Rollback a previous deployment.
+kubectl replace --force -f                          #Perform a replace deployment — Force replace, delete and then re-create the resource.
+  </code></pre>
+</details>
+
+# StatefulSet相关
+<details>
+  <summary>StatefulSet</summary>
+  <pre><code>
+kubectl get statefulset   #List StatefulSet
+kubectl delete statefulset/[stateful_set_name] --cascade=false #Delete StatefulSet only (not pods).
+  </code></pre>
+</details>
+
+# 事件相关
+<details>
+  <summary>k8s-event</summary>
+  <pre><code>
+kubectl get events                               #List recent events for all resources in the system.
+kubectl get events --field-selector type=Warning #List Warnings only.
+kubectl get events --sort-by=.metadata.creationTimestamp      #List events sorted by timestamp.
+kubectl get events --field-selector involvedObject.kind!=Pod  #List events but exclude Pod events.
+kubectl get events --field-selector type!=Normal              #Filter out normal events from a list of events.
+kubectl get events --field-selector involvedObject.kind=Node, involvedObject.name=<node_name>  #Pull events for a single node with a specific name.
+  </code></pre>
+</details>
+
+# 日志相关
+<details>
+  <summary>k8s-logs</summary>
+  <pre><code>
+kubectl logs <pod_name>              #Print the logs for a pod.
+kubectl logs --since=6h <pod_name>   #Print the logs for the last 6 hours for a pod.
+kubectl logs --tail=50 <pod_name>    #Get the most recent 50 lines of logs.
+kubectl logs -f <pod_name>           #Print the logs for a pod and follow new logs.
+kubectl logs -f <service_name> [-c <$container>]  #Get logs from a service and optionally select which container.
+kubectl logs -c <container_name> <pod_name>       #Print the logs for a container in a pod.
+kubectl logs <pod_name> pod.log                   #Output the logs for a pod into a file named ‘pod.log’.
+kubectl logs --previous <pod_name>                #View the logs for a previously failed pod.
+kubectl logs --tail=2000 -f <pod_name>  #时时监控
+  </code></pre>
+</details>
+
+# Namespace相关
+<details>
+  <summary>k8s-namespace</summary>
+  <pre><code>
+kubectl create namespace <namespace_name>    #Create a namespace.
+kubectl get namespace <namespace_name>       #List one or more namespaces.
+kubectl describe namespace <namespace_name>  #Display the detailed state of one or more namespaces.
+kubectl delete namespace <namespace_name>    #Delete a namespace.
+kubectl edit namespace <namespace_name>      #Edit and update the definition of a namespace.
+kubectl top namespace <namespace_name>       #Display Resource (CPU/Memory/Storage) usage for a namespace.
+  </code></pre>
+</details>
+
+# Nodes相关 
+<details>
+  <summary>k8s-nodes</summary>
+  <pre><code>
+kubectl taint node <node_name>  #Update the taints on one or more nodes.
+kubectl get node                #List one or more nodes.
+kubectl delete node <node_name> #Delete a node or multiple nodes.
+kubectl top node <node_name>    #Display Resource usage (CPU/Memory/Storage) for nodes.
+kubectl get pods -o wide | grep <node_name>  #Pods running on a node.
+kubectl annotate node <node_name>  #Annotate a node.
+kubectl cordon node <node_name>    #Mark a node as unschedulable.
+kubectl uncordon node <node_name>  #Mark node as schedulable.
+kubectl drain node <node_name>     #Drain a node in preparation for maintenance.
+kubectl label node                 #Add or update the labels of one or more nodes.
+去污点
+kubectl describe node alone | grep Taint
+kubectl describe node  | grep -i taint
+Taints:             node-role.kubernetes.io/master:NoSchedule
+kubectl taint nodes alone node-role.kubernetes.io/master:NoSchedule-
+                          node-role.kubernetes.io/master:NoSchedule-
+  </code></pre>
+</details>
+
+# Pods操作相关
+<details>
+  <summary>k8s-pod</summary>
+  <pre><code>
+kubectl get pod                                                         #List one or more pods.
+kubectl get pods --sort-by='.status.containerStatuses[0].restartCount'  # List pods Sorted by Restart Count.
+kubectl get pods --field-selector=status.phase=Running    #Get all running pods in the namespace.
+kubectl delete pod <pod_name>                             #Delete a pod.
+kubectl describe pod <pod_name>                           #Display the detailed state of a pods.
+kubectl create pod <pod_name>                             #Create a pod.
+kubectl exec <pod_name> -c <container_name>  #Execute a command against a container in a pod. Read more: Using Kubectl Exec: Connect to Your Kubernetes Containers
+kubectl exec -it <pod_name> /bin/sh   #Get an interactive shell on a single-container pod.
+kubectl top pod                       #Display Resource usage (CPU/Memory/Storage) for pods.
+kubectl annotate pod <pod_name>       #Add or update the annotations of a pod.
+kubectl label pods <pod_name> new-label=   #Add or update the label of a pod.
+kubectl get pods --show-labels  #Get pods and show labels.
+kubectl port-forward :          #Listen on a port on the local machine and forward to a port on a specified pod.
+  </code></pre>
+</details>
+
+# Replicate-Controller相关
+<details>
+  <summary>k8s-rc</summary>
+  cpre><code>
+kubectl get rc          #List the replication controllers.
+kubectl get rc --namespace='<namespace_name>'  #List the replication controllers by namespace
+  </code></pre>
+</details>
+
+# ReplicaSets相关
+<details>
+  <summary>k8s-rs</summary>
+  <pre><code>
+kubectl get replicasets                         #List ReplicaSets.
+kubectl describe replicasets <replicaset_name>  #Display the detailed state of one or more ReplicaSets.
+kubectl scale --replicas=[x]                    #Scale a ReplicaSet.
+  </code></pre>
+</details>
+
+# Secrets相关
+<details>
+  <summary>k8s-secrets</summary>
+  <pre><code>
+kubectl create secret                #Create a secret.
+kubectl get secrets                  #List secrets.
+kubectl describe secrets             #List details about secrets.
+kubectl delete secret <secret_name>  #Delete a secret.
+  </code></pre>
+</details>
+
+# Services相关
+<details>
+  <summary>k8s-services</summary>
+  <pre><code>
+kubectl get services             #List one or more services.
+kubectl describe services        #Display the detailed state of a service.
+kubectl edit services            #Edit and update the definition of one or more services.
+kubectl expose deployment [deployment_name]  #Expose a replication controller, service, deployment, or pod as a new Kubernetes service.
+  </code></pre>
+</details>
+
+# Service-Accounts相关
+<details>
+  <summary>k8s-serveraccount</summary>
+  <pre><code>
+kubectl get serviceaccounts      #List service accounts.
+kubectl describe serviceaccounts #Display the detailed state of one or more service accounts.
+kubectl replace serviceaccount   #Replace a service account.
+kubectl delete serviceaccount <service_account_name>  #Delete a service account.
+  </code></pre>
+</details>
+
+[k8s-CLI](https://www.toutiao.com/article/7169043088801792512/)  
 
 # Kubernetes日常运维工作中常用的命令
 ```
