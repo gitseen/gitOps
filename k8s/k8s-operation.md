@@ -25,7 +25,7 @@ kubectl logs -l name=
   <pre><code>
 kubectl create -f          #Create objects.
 kubectl create -f          #Create objects in all manifest files in a directory.
-kubectl create -f '<url>'  #Create objects from a URL.
+kubectl create -f url(http://xx.xx.yaml)  #Create objects from a URL.
 kubectl delete -f          #Delete an object.
   </code></pre>
 </details>
