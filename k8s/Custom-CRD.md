@@ -34,7 +34,7 @@ CRD，CustomResourceDefinitions，也就是用户自定义K8S资源类型。内�
    ```  
 # 如何在k8S集群中添加CRD
 ## 1、apiservice资源格式
-````
+```
 执行指令# kubectl explain apiservice查看apiservice对象的信息
 ```
 ## 2、定义CRD扩展资源
@@ -49,6 +49,6 @@ kubectl explain customresourcedefinition.spec 查看CRD相关进一步的字段�
 ## 4、如何创建CRD扩展资源
 ```
 写yaml
+```  
 
-```
 [参考CRD](https://www.toutiao.com/article/7201056034784444962)
