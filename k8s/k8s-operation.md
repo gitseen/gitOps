@@ -1,10 +1,9 @@
-
 # k8s-commands CLI
 ![cli1](pic/cli1.png) 
  
 # k8s-commands
-![cli2pic/cli2.png)  
-K8S所有的命令行操作本质是对资源的CRUD有一个对应关系,用YAML描述资源的关系,用cli对资源进行各种操作,因为K8S命令实在太多,很多各种各样的操作参数非常难以记忆 
+![cli2](pic/cli2.png)  
+K8S所有的命令行操作本质是对资源的CRUD有一个对应关系,用YAML描述资源的关系,用cli对资源进行各种操作,因为K8S命令实在太多,很多各种各样的操作参数非常难以记忆   
 
 # 基础操作
 <details>
@@ -21,6 +20,15 @@ kubectl logs -l name=
 </details>
 
 # 资源相关
+<details>
+  <summary>resources</summary>
+  <pre><code>
+kubectl create -f        #– Create objects.
+kubectl create -f        #– Create objects in all manifest files in a directory.
+kubectl create -f <url>  #– Create objects from a URL.
+kubectl delete -f        #– Delete an object.
+  </code></pre>
+</details>
 
 
 
