@@ -1,12 +1,12 @@
 
 # k8s-commands CLI
-![cli1](pic/cli1) 
+![cli1](pic/cli1.png) 
  
 # k8s-commands
-![cli2pic/cli2)  
+![cli2pic/cli2.png)  
 K8S所有的命令行操作本质是对资源的CRUD有一个对应关系,用YAML描述资源的关系,用cli对资源进行各种操作,因为K8S命令实在太多,很多各种各样的操作参数非常难以记忆 
 
-# 基础操作举例
+# 基础操作
 <details>
   <summary>基础操作举例</summary>
   <pre><code>
@@ -19,7 +19,9 @@ kubectl create -f ./
 kubectl logs -l name=
   </code></pre>
 </details>
+
 # 资源相关
+
 
 
 # Kubernetes日常运维工作中常用的命令
