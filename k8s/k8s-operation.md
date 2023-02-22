@@ -1,3 +1,27 @@
+
+# k8s-commands CLI
+![cli1](pic/cli1) 
+ 
+# k8s-commands
+![cli2pic/cli2)  
+K8S所有的命令行操作本质是对资源的CRUD有一个对应关系,用YAML描述资源的关系,用cli对资源进行各种操作,因为K8S命令实在太多,很多各种各样的操作参数非常难以记忆 
+
+# 基础操作举例
+<details>
+  <summary>基础操作举例</summary>
+  <pre><code>
+alias k=kubectl echo ‘alias k=kubectl’ >>~/.bashrc
+kubectl get pods -o=json
+kubectl get pods -o=yaml
+kubectl get pods -o=wide
+kubectl get pods -n=<namespace_name>
+kubectl create -f ./
+kubectl logs -l name=
+  </code></pre>
+</details>
+# 资源相关
+
+
 # Kubernetes日常运维工作中常用的命令
 ```
 #获取前一个容器的日志
