@@ -30,7 +30,7 @@ kubectl delete -f        #– Delete an object.
   </code></pre>
 </details>
 
-#集群相关
+# 集群相关
 <details>
   <summary>k8s-cluster</summary>
   <pre><code>
