@@ -223,6 +223,9 @@ kubectl delete serviceaccount <service_account_name>  #Delete a service account.
 
 [k8s-CLI](https://www.toutiao.com/article/7169043088801792512/)  
 
+---
+
+
 # Kubernetes日常运维工作中常用的命令
 ```
 #获取前一个容器的日志
