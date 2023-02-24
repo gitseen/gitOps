@@ -100,8 +100,8 @@ spec:
       type: Container    
 ```
 
-# 服务质量等级
-[POD-Qos](https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/quality-service-pod/)  
+# [服务质量等级](https://www.toutiao.com/article/7203310230536667707/)
+[平凡人笔记](https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/quality-service-pod/)  
 **K8s的三种服务质量等级**  
 - Guaranteed可保证的
 - Burstable突发的
@@ -150,6 +150,7 @@ BestEffort是服务等级最低的情况，只要具备空闲cpu或空闲内存�
 **Burstable适合面向中型应用**  
   ```
   只有request的资源可以被保证;在节点内存吃紧时可能被驱离
+  ```
 **BestEffort适合面向任务型应用**  
   ```
   比如计算任务或日志分析类型，有资源就启动，没有资源被驱离
