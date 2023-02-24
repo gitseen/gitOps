@@ -1,4 +1,4 @@
-[# Nginx日志分割](https://www.toutiao.com/article/7202541476063150648/)  
+# [Nginx日志分割](https://www.toutiao.com/article/7202541476063150648/)  
 LinkSLA智能运维管家  
 
 nginx默认没有提供对日志文件的分割功能,所以随着时间的增长,access.log和error.log文件会越来越大,尤其是access.log,其日志记录量比较大,更容易增长文件大小,影响日志写入性能。推荐利用Logrotate来完成
@@ -94,7 +94,7 @@ crontab -e
 systemctl restart crond 
 ```
 # nginx日志分割步骤
-在/etc/logrotate.d中创建文件nginx，作为nginx日志分割的配置文件。指定每天执行一次分割，并且当文件大于5M时才进行分割。同时指定notifempty，当日志文件为空时不分割  
+在/etc/logrotate.d中创建文件nginx,作为nginx日志分割的配置文件。指定每天执行一次分割,并且当文件大于5M时才进行分割。同时指定notifempty,当日志文件为空时不分割  
 ```
 /opt/docker-ws/nginx/logs/*.log {
     daily      # 每天分割一次
@@ -113,9 +113,63 @@ systemctl restart crond
 semanage fcontext -a -t var_log_t "/opt/logtest(/.*)?"
 restorecon -Rv /opt/logtest
 ```
-
-
-
-
-
 [链接](https://baobao555.tech/archives/57)  
+
+--- 
+
+# 按日期自动生成日志文件
+前言
+之前文章：Nginx奇技淫巧之：用户行为埋点数据采集实现,介绍了Nginx获取post请求body参数生成日志文件的方法。当业务埋点量信息很大时,所有数据累加到一个日志文件中,会导致单个文件越来越大,后期难于清理和维护。本文将向大家介绍,按日期自动生成日志文件的方法。希望对有需要的小伙伴有所帮助和参考。  
+
+Nginx配置;Nginx配置文件调整  
+
+http块添加以下配置 
+``` 
+# 新增logdate日期变量
+    map $time_iso8601 $logdate {
+      '~^(?<ymd>\d{4}-\d{2}-\d{2})' $ymd;
+      default    'date-not-found';
+    }
+server块添加日志文件变量
+
+生成日志文件的地方添加日期信息,详见如下代码块注释
+
+        location /trackLog {
+            if ($request_method !~* POST) {
+               return 403;
+            }
+           # 日志文件名添加日期变量
+            access_log  /usr/local/nginx/logs/tracklog-$logdate.log  tracklog;
+            proxy_pass http://127.0.0.1/return200/;
+        }
+
+        location /return200 {
+            default_type application/json;
+            return 200 '{"code":0,"msg":"success"}';
+        }
+赋权日志文件目录
+
+按日期动态生成日志文件,需确保对应日志目录具有相应权限。以下为演示代码,生产环境请根据具有情况按需赋权。
+
+chmod -R 777 /usr/local/nginx/logs/*
+生效Nginx Config
+
+# Nginx sbin目录执行配置生效命令
+./nginx -s reload
+测试post请求
+
+# 部署Nginx服务器执行测试post请求,body参数可根据业务场景自行定义
+curl -H "Content-type:application/json" -X POST -d '{"name":"test"}' http://localhost/tracklog
+日志文件查看
+
+切换到日志目录,查看文件名和内容
+
+对应目录下已生成tracklog-{日期}.log文件
+```
+
+
+总结  
+from: https://www.toutiao.com/article/7168739982771847680/  
+from: https://www.toutiao.com/article/7168401363909739019/   #post埋点
+
+
