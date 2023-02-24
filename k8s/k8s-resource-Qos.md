@@ -25,9 +25,10 @@ kubernetes中的表示法
   - t、T、Ti,Terabyte  
   - p、P、Pi,Petabyte  
 
+**$\color{red}{limits是使用的集群资源上限}$**
+
 **$\color{red}{requests是需要使用的集群资源的大小}$**  
 
-**$\color{red}{limits是使用的集群资源上限}$**  
 
 # 资源限制方法一(pod中定义)
 在K8S中,对于资源的设定是落在Pod里的Container上的,主要有两类,limits控制上限,requests控制下限。其位置在：  
@@ -99,4 +100,59 @@ spec:
       type: Container    
 ```
 
+# 服务质量等级
+[POD-Qos](https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/quality-service-pod/)  
+**K8s的三种服务质量等级**  
+- Guaranteed可保证的
+- Burstable突发的
+- BestEffort尽力而为的(默认)
+![Qos1](https://p3-sign.toutiaoimg.com/tos-cn-i-qvj2lq49k0/9f7a8831538d4820b19ce9e223941174~noop.image?_iz=58558&from=article.pc_detail&x-expires=1677809509&x-signature=tpnad%2FVQR4h3jeQgf2vfZd6Vr%2FY%3D)  
+
+给容器配置申请资源(cpu或mem) request和最大使用资源limit的方式  
+
+![pod](https://p3-sign.toutiaoimg.com/tos-cn-i-qvj2lq49k0/8d4f47d793104a83acef5a892d69ee82~noop.image?_iz=58558&from=article.pc_detail&x-expires=1677809509&x-signature=BNfmka1ctv00GS%2BEh2LbvMhgChA%3D)  
+```
+requests是需要使用的集群资源的大小，limits是使用的集群资源上限
+Mi是M*1024byte，标准值是64M
+k8s把cpu分成了1000份，250m为0.25cpu，也可以写1.0或0.5
+requests和limits设定值的不同会影响到pod在集群中的生存周期和服务质量等级
+```
+# Guaranteed可保证的
+
+![Guaranteed](https://p3-sign.toutiaoimg.com/tos-cn-i-qvj2lq49k0/c1a27fc390d04acca0f3e24e72add407~noop.image?_iz=58558&from=article.pc_detail&x-expires=1677809509&x-signature=vWGGtqyHIF6fYsZsfIJFIFpHJuc%3D)  
+
+**requests和limits值一样是可保证的服务质量等级，等级是最高的，资源是可保证的；把pod下的所有的容器加起来requests=limits，才是这种pod等级** 
+在实际使用中大部分情况是只使用一部分资源 ，大部分pod所申请的资源都是浪费的。  
+
+# Burstable突发的
+![Burstable](https://p3-sign.toutiaoimg.com/tos-cn-i-qvj2lq49k0/03ab567e31c341418f2956a1bb7a78da~noop.image?_iz=58558&from=article.pc_detail&x-expires=1677809509&x-signature=sceKhdQz1Ay40fBAdyq%2Fzp1vEu8%3D)  
+requests小于limits或者只有requests没有limits，表示突发的服务质量等级，一般或默认的情况下使用requests设定的资源，极端的情况使用limit设定的资源  
+
+先申请requests，大部分情况下都是使用这么多资源，极限的情况下，可能会使用更多的资源，但不会超过limits限制  
+![free](https://p3-sign.toutiaoimg.com/tos-cn-i-qvj2lq49k0/ce28da174246452986abb227c6e1c0e7~noop.image?_iz=58558&from=article.pc_detail&x-expires=1677809509&x-signature=f2GWEELJ58nJFZF26ZPMQm4uCL4%3D)  
+   
+# BestEffort尽力而为的(默认)
+![BestEffort](https://p3-sign.toutiaoimg.com/tos-cn-i-qvj2lq49k0/46dd42a4b0114a42a2ef48b6e8bcd7d6~noop.image?_iz=58558&from=article.pc_detail&x-expires=1677809509&x-signature=BVR5E2WsdoTXcthkpBfboyI0zSA%3D)  
+这种情况是request和limit都不设定  
+
+![2](https://p3-sign.toutiaoimg.com/tos-cn-i-qvj2lq49k0/0a6d9e542afd4cf7b3261cad642f53c3~noop.image?_iz=58558&from=article.pc_detail&x-expires=1677809509&x-signature=OvsVWduOZrjN3dKp6ies5WleS1M%3D) 
+BestEffort是服务等级最低的情况，只要具备空闲cpu或空闲内存的节点上，pod都会被调度过去  
+- 1、以低优先级获得cpu资源，在极端情况下无法获取cpu资源，其他的pod把cpu用完的时候，BestEffort这样的pod就获取不到任何的cpu资源；
+- 2、当内存产生压力时最先被驱离  
+
+# 总结
+![end](https://p3-sign.toutiaoimg.com/tos-cn-i-qvj2lq49k0/401a779f6126489896410656768dd757~noop.image?_iz=58558&from=article.pc_detail&x-expires=1677809509&x-signature=hUuz%2F%2FdFdFqlbKbh400euzzboVQ%3D)  
+三种不同的服务质量等级其实面向三种不同的应用场景  
+**Guaranteed适合面向服务型应用**  
+  ```
+  集群需要保证申请的资源，pod只要调度到节点上，就不会因为系统资源问题被驱离或被终止这样的情况产生
+  ```
+**Burstable适合面向中型应用**  
+  ```
+  只有request的资源可以被保证;在节点内存吃紧时可能被驱离
+**BestEffort适合面向任务型应用**  
+  ```
+  比如计算任务或日志分析类型，有资源就启动，没有资源被驱离
+  以低优先级获取空闲cpu资源; 在极端的情况下会无cpu使用;  在节点内存吃紧时优先被驱离
+  ```
 
