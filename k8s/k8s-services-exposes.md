@@ -34,10 +34,10 @@ Ingress-controller通过和Kubernetes APIServer交互,动态感知集群中Ingre
 # 几种方式的优缺点
 **NodePort方式缺点**   
 - 当服务比较多的时候,会占用集群节点的大量端口,难以维护
-- 多了一层NAT,请求量比较大的时候会对性能产生影响
+- 多了一层NAT,请求量比较大的时候会对性能产生影响  
 **LoadBlancer方式缺点**  
 - 每个service一个外部负载均衡器,麻烦又浪费
-- 需要有外部负载均衡器支持,有局限性  
+- 需要有外部负载均衡器支持,有局限性   
 **Ingress**    
 相比上面两种方式,只需要一个NodePort或者一个LoadBlancer就可以满足所有service对集群外暴露服务的需求,简单灵活
 
