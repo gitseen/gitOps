@@ -9,32 +9,37 @@ K8S所有的命令行操作本质是对资源的CRUD有一个对应关系,用YAM
   - -l "labelname=labelvalue"
        ```
        这个参数允许我们使用一个或多个匹配的标签来过滤资源。
-       例如，要通过myapp=nginx标签过滤pod，你可以运行kubectl get pods -l app=nginx
+       例如,要通过myapp=nginx标签过滤pod,你可以运行
+       kubectl get pods -l app=nginx
        ```
   - --sort-by
        ```
        这个参数允许我们根据我们指定的资源属性来对输出进行排序
-       例如，要按名称排序，你可以运行kubectl get pods --sort-by=.metadata.name
+       例如,要按名称排序,你可以运行
+       kubectl get pods --sort-by=.metadata.name
        ```
   - -f,--field-selector="attributename=attributevalue"
        ```
        这个参数允许我们使用一些资源属性来过滤输出
-       例如，要通过status.phase=Running过滤pod，你可以运行kubectl get pods --field-selector=status.phase=Running
+       例如,要通过status.phase=Running过滤pod,你可以运行
+       kubectl get pods --field-selector=status.phase=Running
        ```
   - -o wide
        ```
-       这个参数允许我们显示额外的信息，如pod的IP地址，pod被安排到哪个节点
-       例如，要显示每个pod的IP地址，你可以运行kubectl get pods -o wide
+       这个参数允许我们显示额外的信息,如pod的IP地址,pod被安排到哪个节点
+       例如,要显示每个pod的IP地址,你可以运行
+       kubectl get pods -o wide
        ```
-  - -output "-output=<format>" 
+  - -output "-output=format" 
        ```
-       这个参数给了我们一个指定所需输出格式的方法，比如JSON、YAML、wide、name、JSONPath或GO模板
-       例如，要以JSON格式显示每个pod的名称和命名空间，你可以运行kubectl get pods -o json
+       这个参数给了我们一个指定所需输出格式的方法,比如JSON、YAML、wide、name、JSONPath或GO模板
+       例如,要以JSON格式显示每个pod的名称和命名空间,你可以运行
+       kubectl get pods -o json
        ```
-  - 使用shell工具，如awk、grep或sed来进一步清理输出
-  - 使用第三方工具，如jq来过滤输出，只提取你需要的信息
+  - 使用shell工具,如awk、grep或sed来进一步清理输出
+  - 使用第三方工具,如jq来过滤输出,只提取你需要的信息
        ```
-       例如，要提取每个pod的名称和IP地址，你可以运行
+       例如,要提取每个pod的名称和IP地址,你可以运行
        kubectl get pods -o json | jq '.items[] | {name: .metadata.name, ip: .status.podIP}' 
        ```
 
@@ -327,7 +332,7 @@ kubectl get pv | tail -n +2 | grep -v Bound | awk '{print $1}' | xargs -L1 kubec
 方法一：通过patch模式      kubectl get deploy -o name -n <NAMESPACE>|xargs -I{} kubectl patch {} -p '{"spec":{"replicas":0}}'
 方法二：通过资源伸缩副本数 kubectl get deploy -o name |xargs -I{} kubectl scale --replicas=0 {}
 
-#临时关闭Daemonsets(如果需要临时将Daemonsets关闭，只需要将其调度到一个不存在的node上即可，调整下nodeSelector)
+#临时关闭Daemonsets(如果需要临时将Daemonsets关闭,只需要将其调度到一个不存在的node上即可,调整下nodeSelector)
 kubectl patch daemonsets nginx-ingress-controller -p '{"spec":{"template":{"spec":{"nodeSelector":{"project/xdp":"none"}}}}}'
 
 #根据overlay2目录名找容器
@@ -336,7 +341,7 @@ docker ps -q | xargs docker inspect --format '{{.Name}}, {{.State.Pid}}, {{.Id}}
 #通过变量组合展示容器绑定端口列表
 docker inspect --format '{{/*通过变量组合展示容器绑定端口列表*/}}已绑定端口列表：{{println}}{{range $p,$conf := .NetworkSettings.Ports}}{{$p}} -> {{(index $conf 0).HostPort}}{{println}}{{end}}' Web_web_1
 
-#查询指定网络下的容器名称，如果存在输出容器名称，如果没有，输出With No Containers
+#查询指定网络下的容器名称,如果存在输出容器名称,如果没有,输出With No Containers
 docker inspect --format '{{range .Containers}}{{.Name}}{{println}}{{else}}With No Containers{{end}}' bridge
 
 #通过索引序号读取默认网关
@@ -354,7 +359,7 @@ docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}
 #显示所有容器的mac地址
 docker inspect --format='{{range .NetworkSettings.Networks}}{{.MacAddress}}{{end}}' $(docker ps -a -q)
 
-#显示所有容器的名称，并分离出反斜杠
+#显示所有容器的名称,并分离出反斜杠
 docker inspect --format='{{.Name}}' $(docker ps -aq)|cut -d"/" -f2
 
 #创建临时可调式POD
@@ -424,13 +429,13 @@ nsenter -t PID -n
 kubectl describe node k8s-master |grep Taints  #Taints: node-role.kubernetes.io/master:NoSchedule   #k8s集群master的hostname
 kubectl taint nodes k8s-master node-role.kubernetes.io/master-                                      #修改参数可以参与pod调度
 kubectl taint nodes k8s-master node-role.kubernetes.io/master=:NoSchedule                           #让master不参与pod调度
-1、将节点标记为不可调度，确保新的容器不会调度到该节点
+1、将节点标记为不可调度,确保新的容器不会调度到该节点
 kubectl cordon <NODE-NAME>
 2、Master节点上将需要重置的节点驱逐, 除了deamonset
 kubectl drain <NODE-NAME> --delete-local-data --force --ignore-daemonsets
 3、删除节点
 kubectl delete node <NODE-NAME>
-4、在需要重置节点上执⾏重置脚本，注意，如果在Master主节点执⾏kubeadm reset，则需要重新初始化集群
+4、在需要重置节点上执⾏重置脚本,注意,如果在Master主节点执⾏kubeadm reset,则需要重新初始化集群
 kubeadm reset
 
 ```
