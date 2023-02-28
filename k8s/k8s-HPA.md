@@ -28,5 +28,10 @@ Kubernetes平台中,资源弹性分为两个维度
   - Pods  
 
 通过kubectl api-versions |grep autoscal 查看集群内支持的版本
-
+```
+kubectl api-versions |grep autoscal
+autoscaling/v1
+autoscaling/v2beta1
+autoscaling/v2beta2
+```
 
