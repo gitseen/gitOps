@@ -6,7 +6,7 @@
 K8S所有的命令行操作本质是对资源的CRUD有一个对应关系,用YAML描述资源的关系,用cli对资源进行各种操作,因为K8S命令实在太多,很多各种各样的操作参数非常难以记忆   
 
 # kubectl格式化选项
-  - -l "[labelname]=[labelvalue]"
+  - -l "labelname=labelvalue"
        ```
        这个参数允许我们使用一个或多个匹配的标签来过滤资源。
        例如，要通过myapp=nginx标签过滤pod，你可以运行kubectl get pods -l app=nginx
@@ -16,7 +16,7 @@ K8S所有的命令行操作本质是对资源的CRUD有一个对应关系,用YAM
        这个参数允许我们根据我们指定的资源属性来对输出进行排序
        例如，要按名称排序，你可以运行kubectl get pods --sort-by=.metadata.name
        ```
-  - -f,--field-selector="[attributename]=[attributevalue]"
+  - -f,--field-selector="attributename=attributevalue"
        ```
        这个参数允许我们使用一些资源属性来过滤输出
        例如，要通过status.phase=Running过滤pod，你可以运行kubectl get pods --field-selector=status.phase=Running
