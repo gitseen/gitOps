@@ -6,19 +6,37 @@
 K8S所有的命令行操作本质是对资源的CRUD有一个对应关系,用YAML描述资源的关系,用cli对资源进行各种操作,因为K8S命令实在太多,很多各种各样的操作参数非常难以记忆   
 
 # kubectl格式化选项
-  - 1、-l <labelname>=<labelvalue>
+  - -l "<labelname>=<labelvalue>"
        ```
        这个参数允许我们使用一个或多个匹配的标签来过滤资源。
-       例如，要通过myapp=nginx标签过滤pod，你可以运行kubectl get pods -l myapp=nginx
+       例如，要通过myapp=nginx标签过滤pod，你可以运行kubectl get pods -l app=nginx
        ```
-  - 2、--sort-by
+  - --sort-by
        ```
        这个参数允许我们根据我们指定的资源属性来对输出进行排序
        例如，要按名称排序，你可以运行kubectl get pods --sort-by=.metadata.name
        ```
-  - 3、
-  - 4、
-  - 5、 
+  - -f,--field-selector="<attributename>=<attributevalue>"
+       ```
+       这个参数允许我们使用一些资源属性来过滤输出
+       例如，要通过status.phase=Running过滤pod，你可以运行kubectl get pods --field-selector=status.phase=Running
+       ```
+  - -o wide
+       ```
+       这个参数允许我们显示额外的信息，如pod的IP地址，pod被安排到哪个节点
+       例如，要显示每个pod的IP地址，你可以运行kubectl get pods -o wide
+       ```
+  - -output "-output=<format>" 
+       ```
+       这个参数给了我们一个指定所需输出格式的方法，比如JSON、YAML、wide、name、JSONPath或GO模板
+       例如，要以JSON格式显示每个pod的名称和命名空间，你可以运行kubectl get pods -o json
+       ```
+  - 使用shell工具，如awk、grep或sed来进一步清理输出
+  - 使用第三方工具，如jq来过滤输出，只提取你需要的信息
+       ```
+       例如，要提取每个pod的名称和IP地址，你可以运行
+       kubectl get pods -o json | jq '.items[] | {name: .metadata.name, ip: .status.podIP}' 
+       ```
 
 # 基础操作
 <details>
