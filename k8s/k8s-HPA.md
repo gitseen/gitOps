@@ -13,16 +13,15 @@ Kubernetes平台中,资源弹性分为两个维度
    - Pod级别   
      针对Pod负载,当Pod资源不足时,可以使用HPA(Horizontal Pod Autoscaler)自动增加Pod副本数量  
 
-# HPA实现原理
-## HPA介绍
-**HPA(HorizontalPodAutoscaler)水平自动扩缩容**  
+# HPA实现原理HPA介绍
+## HPA(HorizontalPodAutoscaler)水平自动扩缩容
   - 适用对象：Deployment、StatefulSet等  
   - 不适用对象：无法扩缩的对象,例如DaemonSet  
-**HPA的演进历程**   
+## HPA的演进历程
   - autoscaling/v1                     #autoscaling/v1：只支持基于CPU指标的缩放
   - autoscaling/v2beta1                #autoscaling/v2beta1：支持Resource Metrics（资源指标,如pod的CPU）和Custom Metrics（自定义指标）的缩放
   - autoscaling/v2beta2 三个大版本     #autoscaling/v2beta2：支持Resource Metrics（资源指标,如pod的CPU）和Custom Metrics（自定义指标）和ExternalMetrics（额外指标）的缩放
-**HPA四种类型的指标**  
+## HPA四种类型的指标
   - Resource
   - Object
   - External
