@@ -124,7 +124,8 @@ External：指的是k8s外部的指标,数据同样需要第三方的adapter提�
 - 6、回到2,不断循环;HPA通过kube-controller-manager定期(定期轮询的时间通过horizontal-pod-autoscaler-sync-period选项来设置,默认的时间为30秒)  
      如果指标变化太频繁,也可以使用--horizontal-pod-autoscaler-downscale-stabilization指令设置扩缩容延迟时间,表示是自从上次缩容执行结束后,多久可以再次执行缩容,默认是5m   
      >>算法说明  
-    desiredReplicas = ceil[currentReplicas * ( currentMetricValue / desiredMetricValue )] currentMetricValue表示当前度量值,desiredMetricValue表示期望度量值,desiredReplicas表示期望副本数  
+    desiredReplicas = ceil[currentReplicas * ( currentMetricValue / desiredMetricValue )]   
+    currentMetricValue表示当前度量值,desiredMetricValue表示期望度量值,desiredReplicas表示期望副本数  
     例如,当前度量值为200m,目标设定值为100m,那么由于200.0/100.0 == 2.0, 副本数量将会翻倍。 如果当前指标为50m,副本数量将会减半,因为50.0/100.0 == 0.5  
 
  
