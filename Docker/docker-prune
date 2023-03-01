@@ -1,0 +1,52 @@
+Docker运行时间3个月,占用20G磁盘空间,如何清理
+查看 docker 文件夹磁盘使用情况
+查看 Docker 的磁盘使用情况（类似于 Linux 上的 df 命令）
+docker system prune -a命令清理得更加彻底，可以将没
+有容器使用 Docker 镜像都删掉
+1）docker ps 获取容器id
+2） docker logs -f 容器ID/name
+journalctl -xefu kubelet
+curl -L https://github.com/ahmetb/kubectx/releases/download/v0.9.1/kubens -o
+/bin/kubens
+chmod +x /bin/kubens
+kubens <命名空间名称>
+# kubens
+# kubens kube-system
+Context "kubernetes-admin@kubernetes" modified.
+Active namespace is "kube-system".
+# kubectl get pod
+# kubectl logs -f etcd-k8s-master
+# kubectl logs -f kube-scheduler-k8s-master
+
+# du -sh /var/lib/docker/ 1
+# docker system df 1
+# docker system prune -a 1
+# 以flow形式查看日志
+$ journalctl -f
+# 查看内核日志
+$ journalctl -k
+# 查看指定服务日志
+$ journalctl -u docker.serivce
+# 查看指定日期日志
+$ journalctl --since="2018-09-21 10:21:00" -u docker
+$ journalctl --since="2018-09-21 10:21:00" --until="2018-09-21 10:22:00" -u docker
+# 查看指定级别日志
+$ journalctl -p 3 -u docker.service
+操作系统提供了从0 (emerg) 到 7 (debug) 一共7个级别的日志，7个级别的含义为：
+  0: emerg
+  1: alert
+  2: crit
+  3: err
+  4: warning
+  5: notice
+  6: info
+  7: debug
+ 
+# 查看日志占用的磁盘空间
+$ journalctl --disk-usage
+# 设置日志占用的空间
+$ journalctl --vacuum-size=500M
+# 设置日志保存的时间
+$ journalctl --vacuum-time=1month
+# 检查日志文件一致性
+$ journalctl –-verify
