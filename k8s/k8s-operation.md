@@ -261,8 +261,36 @@ kubectl delete serviceaccount <service_account_name>  #Delete a service account.
 
 [k8s-CLI](https://www.toutiao.com/article/7169043088801792512/)  
 
----
 
+# kubectl config管理多k8s集群
+```
+kubectl config -h
+current-context  显示 current_context
+delete-cluster   删除 kubeconfig 文件中指定的集群
+delete-context   删除 kubeconfig 文件中指定的 context
+get-clusters     显示 kubeconfig 文件中定义的集群
+get-contexts     描述一个或多个 contexts
+rename-context Renames a context from the kubeconfig file
+set             设置kubeconfig 文件中的一个单个值
+set-cluster     设置 kubeconfig 文件中的一个集群条目
+set-context     设置 kubeconfig 文件中的一个 context 条目
+set-credentials 设置 kubeconfig 文件中的一个用户条目
+unset           取消设置 kubeconfig 文件中的一个单个值
+use-context     设置 kubeconfig 文件中的当前上下文
+view            显示合并的 kubeconfig 配置或一个指定的 kubeconfig 文件
+
+kubectl config get-clusters      #k8s集群名字
+kubectl config get-contexts      #k8s集群上下文
+kubectl config use-context xxx   #设为当前上下文
+```
+![多集群上下文](pic/context.png)  
+**使用第三方插件更方法** 
+- kubectx
+- kubens
+- kubie  
+[多K8s集群-K8s技术圈](https://www.toutiao.com/video/7202514417886757410/)  
+
+---
 
 # Kubernetes日常运维工作中常用的命令
 ```
