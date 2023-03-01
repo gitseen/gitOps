@@ -1,0 +1,21 @@
+# K8s(v1.25.1) 高可用集群(3 Master + 5 Node) Ansible 剧本部署
+原创2023-02-22 08:39·山河已无恙
+
+分享一个 k8s 高可用集群部署的 Ansible 剧本
+以及涉及到的一些工具的安装
+博文内容涉及：
+一个 k8s 高可用 集群部署 Ansible剧本编写，
+编写后搭建 k8s 高可用 集群
+一些集群常用的 监控，备份工具安装，包括：
+kubectl 常用插件安装
+cadvisor 监控工具部署
+metrics-server 监控工具部署
+Ingress—nginx Ingress 控制器部署
+Metallb 软 LoadBalancer 部署
+local-path-storage 基于本地存储的SC 分配器部署
+prometheus 监控工具部署
+ETCD 快照备份定时任务编写运行
+Velero 集群容灾备份工具部署
+
+ 
+https://www.toutiao.com/article/7201288141557400079/
