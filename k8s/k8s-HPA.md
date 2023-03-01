@@ -209,14 +209,14 @@ done
 </details> 
 
 ### 1.5.3 HPA实现局限性
-- 1、 HPA 无法将pod实例缩到0,即不能从n->0,或者从0-1  
+- 1、HPA 无法将pod实例缩到0,即不能从n->0,或者从0-1  
       根据算法实现说明可以看出desiredReplicas = ceil[currentReplicas * ( currentMetricValue / desiredMetricValue )]  
       desiredMetricValue作为分母,期望值不能是'0'；currentMetricValue当前值是'0'的时候,任务数乘'0'都为零  
 - 2、使用率计算方式在Resource类型中,使用率计算是通过request而不是limit,如果按照request来计算使用率(会超过100%)是不符合预期的。但也是可以修改源码,或者使用自定义指标来代替  
 - 3、多容器Pod使用率问题1.20版本中已经支持了ContainerResource可以配置基于某个容器的资源使用率来进行扩缩,如果是之前的版本建议使用自定义指标替换
 - 4、性能问题  
-     单线程架构：默认的hpa-controller是单个Goroutine执行的,随着集群规模的增多,势必会成为性能瓶颈
-     目前默认hpa资源同步周期会15s,假设每个metric请求延时为100ms,当前架构只能支持150个HPA资源(保证在15s内同步一次)
+      单线程架构：默认的hpa-controller是单个Goroutine执行的,随着集群规模的增多,势必会成为性能瓶颈
+      目前默认hpa资源同步周期会15s,假设每个metric请求延时为100ms,当前架构只能支持150个HPA资源(保证在15s内同步一次)
  
 
 
