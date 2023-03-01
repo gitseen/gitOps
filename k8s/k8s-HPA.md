@@ -133,7 +133,7 @@ External：指的是k8s外部的指标,数据同样需要第三方的adapter提�
 ![HPA原理](https://p3-sign.toutiaoimg.com/tos-cn-i-qvj2lq49k0/72c66064ee5b4526a565bfc06a6b3147~noop.image?_iz=58558&from=article.pc_detail&x-expires=1678179285&x-signature=GNBFlk1oDi3U%2Ftk3YUYoFds4GH4%3D)  
 
 ### 1.5.2 弹性伸缩实例
-**为nginx服务创建一个HPA资源，当时nginx服务CPU使用率超过30%时则触发水平扩容机制(依赖metrics数据，集群中需要提前部署好metrics-server)** 
+**为nginx服务创建一个HPA资源,当时nginx服务CPU使用率超过30%时则触发水平扩容机制(依赖metrics数据,集群中需要提前部署好metrics-server)** 
 <details>
   <summary>k8s-hpa-example</summary>
   <pre><code>
@@ -159,7 +159,7 @@ spec:
         ports:
         - containerPort: 80
         resources:
-          requests:                         ##必须设置，不然HPA无法运行。
+          requests:                         ##必须设置,不然HPA无法运行。
             cpu: 200m
 ---
 apiVersion: v1
@@ -195,12 +195,28 @@ spec:
         averageUtilization: 30
 
 #也可以通过kubectl autoscale来创建HPA对象 
-#将会为名为nginx-hpa的ReplicationSet创建一个HPA对象，目标CPU使用率为%，副本数量配置为1到3之间
+#将会为名为nginx-hpa的ReplicationSet创建一个HPA对象,目标CPU使用率为%,副本数量配置为1到3之间
 kubectl autoscale rs nginx-hpa --min=1 --max=3 --cpu-percent=30 
+
+使用ab命令创建一个简易http服务压测逻辑
+yum install httpd -y
+for i in {1..600}
+do
+    ab -c 1000 -n 100000000 http://ServiceIP/
+    sleep $i
+done
   </code></pre>
 </details> 
 
-### 1.5.3 
+### 1.5.3 HPA实现局限性
+- 1、 HPA 无法将pod实例缩到0,即不能从n->0,或者从0-1  
+      根据算法实现说明可以看出desiredReplicas = ceil[currentReplicas * ( currentMetricValue / desiredMetricValue )]  
+      desiredMetricValue作为分母,期望值不能是'0'；currentMetricValue当前值是'0'的时候,任务数乘'0'都为零  
+- 2、使用率计算方式在Resource类型中,使用率计算是通过request而不是limit,如果按照request来计算使用率(会超过100%)是不符合预期的。但也是可以修改源码,或者使用自定义指标来代替  
+- 3、多容器Pod使用率问题1.20版本中已经支持了ContainerResource可以配置基于某个容器的资源使用率来进行扩缩,如果是之前的版本建议使用自定义指标替换
+- 4、性能问题  
+     单线程架构：默认的hpa-controller是单个Goroutine执行的,随着集群规模的增多,势必会成为性能瓶颈
+     目前默认hpa资源同步周期会15s,假设每个metric请求延时为100ms,当前架构只能支持150个HPA资源(保证在15s内同步一次)
  
 
 
