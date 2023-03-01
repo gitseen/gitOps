@@ -1,10 +1,13 @@
 Docker运行时间3个月,占用20G磁盘空间,如何清理
 查看 docker 文件夹磁盘使用情况
+du -sh /var/lib/docker/
+
 查看 Docker 的磁盘使用情况（类似于 Linux 上的 df 命令）
-docker system prune -a命令清理得更加彻底，可以将没
-有容器使用 Docker 镜像都删掉
-1）docker ps 获取容器id
-2） docker logs -f 容器ID/name
+docker system df 
+
+docker system prune -a命令清理得更加彻底，可以将没有容器使用 Docker 镜像都删掉
+docker system prune -a 
+
 journalctl -xefu kubelet
 curl -L https://github.com/ahmetb/kubectx/releases/download/v0.9.1/kubens -o
 /bin/kubens
