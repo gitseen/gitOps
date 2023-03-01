@@ -34,4 +34,39 @@ autoscaling/v1
 autoscaling/v2beta1
 autoscaling/v2beta2
 ```
+# HPA中metrics类型介绍
+**HPA中 metrics中的type字段有四种类型的值：Object、Pods、Resource、External**    
+
+<details>
+  <summary>Resource</summary>
+  <pre><code>
+Resource：指的是当前伸缩对象下的pod的cpu和memory指标，只支持Utilization(使用率)和AverageValue类型的目标值
+  # Resource类型的指标
+  - type: Resource
+    resource:
+      name: cpu
+      # Utilization类型的目标值，Resource类型的指标只支持Utilization和AverageValue类型的目标值
+      target:
+        type: Utilization
+        averageUtilization: 50
+  </code></pre>
+</details>
+
+<details>
+  <summary>Object</summary>
+  <pre><code>
+  </code></pre>
+</details>
+
+<details>
+  <summary>pods</summary>
+  <pre><code>
+  </code></pre>
+</details>
+
+<details>
+  <summary>External</summary>
+  <pre><code>
+  </code></pre>
+</details>
 
