@@ -221,5 +221,100 @@ done
 
 
 # 2、KEDA 
+## 2.1 KEDA是什么?KEDA和HPA是什么关系  
+KEDA是一个基于Kubernetes的事件驱动自动扩缩器。它为Kubernetes资源提供了30多个内置缩放器，因此我们不必担心为我们需要的各种指标源编写自定义适配器   
+KEDA提供了将资源扩展到零的强大功能。KEDA可以将资源从0扩展到,1或从1扩展到0，从1到n以及向后扩展由HPA负责   
+KEDA安装使用要求Kubernetes集群1.16或以上版本  
 
- 
+KEDA和HPA是什么关系：既生瑜何生亮,主要是HPA这哥们天生有缺陷，无法基于灵活的事件源进行伸缩，KEDA去帮助实现，当然没有一个事物诞生是完美的，只有在特定的场景下才能相较谁更完美  
+
+## 2.2 KEDA实现原理
+**KEDA哪些核心组件**  
+- Metrics Adapter： 将 Scaler 获取的指标转化成 HPA 可以使用的格式并传递给  
+- HPA Controller：负责创建和更新一个HPA对象，并负责扩缩到零  
+- Scaler：连接到外部组件(例如Prometheus或者例如，RabbitMQ并获取指标(例如，待处理消息队列大小))获取指标KEDA实现  
+![k8s-keda原理](https://p3-sign.toutiaoimg.com/tos-cn-i-qvj2lq49k0/08d5a06c06ab41e19ac318a0403edfac~noop.image?_iz=58558&from=article.pc_detail&x-expires=1678241117&x-signature=b7YY%2BJpTkx2T%2Bt92Yd8PTTUSXF0%3D)  
+
+## 2.2 KEDA配置
+```
+kubectl apply -f https://github.com/kedacore/keda/releases/download/v2.4.0/keda-2.6.1.yaml
+```
+组件介绍keda-operator负责创建维护hpa对象资源，同时激活和停止hpa伸缩   
+在无事件的时候将副本数降低为0(如果未设置minReplicaCount的话)   
+keda-metrics-apiserver实现了hpa中external metrics，根据事件源配置返回计算结果  
+创建ScaledObject资源  
+
+<details>
+  <summary>k8s-keda-example</summary>
+  <pre><code>
+apiVersion: keda.sh/v1alpha1
+# 由 Keda 运营商提供的自定义 CRD
+kind: ScaledObject
+metadata:
+  name: nginx-scaledobject
+  namespace: hpa-tmp
+spec:
+  advanced:
+    # HPA config
+    # Read about it here: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+    horizontalPodAutoscalerConfig:
+      behavior:
+        scaleDown:
+          policies:
+          - periodSeconds: 30
+            type: Pods
+            value: 1
+          stabilizationWindowSeconds: 30
+        scaleUp:
+          policies:
+          - periodSeconds: 10
+            type: Pods
+            value: 1
+          stabilizationWindowSeconds: 0
+  # 在将部署缩放回 1 之前，最后一个触发报告活动后等待的时间
+  cooldownPeriod: 30
+  # keda 将扩展到的最大副本数
+  maxReplicaCount: 3
+  # keda 将扩展到的最小副本数
+  minReplicaCount: 1
+  # 查询 Prometheus 的时间间隔
+  pollingInterval: 15
+  scaleTargetRef:
+  # 针对哪个deployment
+    name: nginx-hpa
+  triggers:
+  - type: cpu
+    metadata:
+      type: Utilization
+      value: "30"  
+#deployment复用上文nginx-hpa，创建好ScaledObject后会自动创建出hpa资源
+更多type类型配置介绍
+通过多个指标控制更精准的控制扩缩容动作，支持Prometheus指标、Metrics-server指标、计划任务指标等
+    triggers:
+    - metadata:
+      # Prometheus指标支持
+        metricName: istio_request_qps_1m
+        query: istio_request_qps_1m{app_name="test-hpa"}
+        serverAddress: http://prometheus-service.monitoring.svc.cluster.local:9090
+        threshold: "100"
+      name: istio-qps-trigger  
+      type: prometheus
+    - metadata:
+      # metrics-server 指标支持
+        type: AverageValue
+        value: "10"
+      name: cpu-trigger
+      type: cpu
+    - metadata:
+      # 计划任务指标支持
+        desiredReplicas: "3"
+        end: 45 * * * *
+        start: 40 * * * *
+        timezone: Asia/Shanghai
+      type: cron
+  </code></pre>
+</details>
+
+# 参考
+[HPA-闪念基因](https://www.toutiao.com/article/7205015057346888244)  
+[KEDA相关](https://github.com/kedacore/keda  https://keda.sh/)
