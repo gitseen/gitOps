@@ -13,6 +13,8 @@ Kubernetes平台中,资源弹性分为两个维度
    - Pod级别   
      针对Pod负载,当Pod资源不足时,可以使用HPA(Horizontal Pod Autoscaler)自动增加Pod副本数量  
 
+**水平扩缩容方案HPA和KEDA**   
+
 # 1、HPA介绍
 ## 1.1 HPA(HorizontalPodAutoscaler)水平自动扩缩容
   - 适用对象：Deployment、StatefulSet等  
@@ -111,11 +113,11 @@ External：指的是k8s外部的指标,数据同样需要第三方的adapter提�
   </code></pre>
 </details>
 
-# 2、HPA实现原理  
+## 1.5 HPA实现原理  
 **使用HPA生效前提**   
 - 必须定义requests参数  
 - 必须安装metrics-server  
-## 2.1 流程
+### 1.5.1 流程
 - 1、创建HPA资源,设定目标CPU使用率限额,以及最大、最小实例数
 - 2、收集一组中(PodSelector)每个Pod最近一分钟内的CPU使用率,并计算平均值
 - 3、读取HPA中设定的CPU使用限额
@@ -127,8 +129,79 @@ External：指的是k8s外部的指标,数据同样需要第三方的adapter提�
     desiredReplicas = ceil[currentReplicas * ( currentMetricValue / desiredMetricValue )]   
     currentMetricValue表示当前度量值,desiredMetricValue表示期望度量值,desiredReplicas表示期望副本数  
     例如,当前度量值为200m,目标设定值为100m,那么由于200.0/100.0 == 2.0, 副本数量将会翻倍。 如果当前指标为50m,副本数量将会减半,因为50.0/100.0 == 0.5  
+![HPA原理](https://p3-sign.toutiaoimg.com/tos-cn-i-qvj2lq49k0/72c66064ee5b4526a565bfc06a6b3147~noop.image?_iz=58558&from=article.pc_detail&x-expires=1678179285&x-signature=GNBFlk1oDi3U%2Ftk3YUYoFds4GH4%3D)  
+### 1.5.2 弹性伸缩实例
+**为nginx服务创建一个HPA资源，当时nginx服务CPU使用率超过30%时则触发水平扩容机制(依赖metrics数据，集群中需要提前部署好metrics-server)** 
+<details>
+  <summary>k8s-hpa-example</summary>
+  <pre><code>
+apiVersion: apps/v1 
+kind: Deployment
+metadata:
+  name: nginx-hpa
+  labels:
+    app: nginx-hpa
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx-hpa  
+  template:
+    metadata:
+      labels:
+        app: nginx-hpa
+    spec:
+      containers:
+      - name: nginx-hpa
+        image: nginx:1.7.9 
+        ports:
+        - containerPort: 80
+        resources:
+          requests:                         ##必须设置，不然HPA无法运行。
+            cpu: 200m
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: nginx-hpa
+  name: nginx-hpa
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: nginx-hpa     
+---
+kind: HorizontalPodAutoscaler
+metadata:
+  name: nginx-hpa-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: nginx-hpa
+  minReplicas: 1
+  maxReplicas: 3
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 30
 
+#也可以通过kubectl autoscale来创建HPA对象 
+#将会为名为nginx-hpa的ReplicationSet创建一个HPA对象，目标CPU使用率为%，副本数量配置为1到3之间
+kubectl autoscale rs nginx-hpa --min=1 --max=3 --cpu-percent=30 
+  </code></pre>
+</details> 
+
+### 1.5.3 
  
 
 
-  
+# 2、KEDA 
+
+ 
