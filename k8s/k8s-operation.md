@@ -289,7 +289,22 @@ kubectl config use-context xxx   #设为当前上下文
 - kubens
 - kubie  
 [多K8s集群-K8s技术圈](https://www.toutiao.com/video/7202514417886757410/)  
-
+**config-example**
+```
+kubectl config get-clusters
+NAME
+zzjz-test-k8s
+kubectl config get-contexts 
+CURRENT   NAME                             CLUSTER         AUTHINFO              NAMESPACE
+*         zzjz-test-k8s-admin@kubernetes   zzjz-test-k8s   zzjz-test-k8s-admin   
+cat config|grep "zzjz-test"
+  name: zzjz-test-k8s
+    cluster: zzjz-test-k8s
+    user: zzjz-test-k8s-admin
+  name: zzjz-test-k8s-admin@kubernetes
+current-context: zzjz-test-k8s-admin@kubernetes
+- name: zzjz-test-k8s-admin
+```  
 ---
 
 # Kubernetes日常运维工作中常用的命令
