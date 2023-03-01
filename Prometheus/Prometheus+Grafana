@@ -1,0 +1,13 @@
+监控利器出鞘：Prometheus+Grafana监控MySQL、Redis数据库
+
+原创2023-02-28 21:20·数据库干货铺
+
+https://www.toutiao.com/article/7205192957752902155/
+
+K8S之监控Prometheus部署
+leenhem
+
+https://www.toutiao.com/article/7172099132771893772
+卸载Prometheus方式
+kubectl delete --ignore-not-found=true -f manifests/ -f manifests/setup
+
