@@ -25,8 +25,7 @@ kubectl taint node xxxx key=value:[effect]
 ```
 kubectl taint node xxxx key=value:[effect]-
 ```
-# 实例子
-
+# 实例
 <details>
   <summary>k8s-taint-1</summary>
   <pre><code>
@@ -34,10 +33,12 @@ kubectl taint node xxxx key=value:[effect]-
 #打污点
 kubectl taint node test-b-k8s-node02 disktype=sas:NoSchedule
 #查看node详情的Taints字段
-tantianran@test-b-k8s-master:~$ kubectl describe node test-b-k8s-node02 | grep Taint
+kubectl describe node test-b-k8s-node02 | grep Taint
 Taints:             disktype=sas:NoSchedule
 
+
 ```
+#yaml-file
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -92,3 +93,6 @@ goweb-demo-b98869456-s9rt5   1/1     Running   0          18s   10.244.240.42   
 #发现全部都在test-b-k8s-node01节点,test-b-k8s-node02节点有污点,因此拒绝承载pod
   </code></pre>
 </details>
+
+
+
