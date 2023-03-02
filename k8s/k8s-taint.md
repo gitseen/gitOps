@@ -35,7 +35,7 @@ kubectl taint node test-b-k8s-node02 disktype=sas:NoSchedule
 #查看node详情的Taints字段
 kubectl describe node test-b-k8s-node02 | grep Taint
 Taints:             disktype=sas:NoSchedule
----
+
 ```
 #yaml-file
 apiVersion: v1
@@ -76,7 +76,7 @@ spec:
     app: goweb-demo
   type: NodePort
 ```
----
+
 kubectl get pod -n test-a -o wide
 NAME                         READY   STATUS    RESTARTS   AGE   IP              NODE                NOMINATED NODE   READINESS GATES
 goweb-demo-b98869456-84p4b   1/1     Running   0          18s   10.244.240.50   test-b-k8s-node01   <none>           <none>
@@ -94,5 +94,334 @@ goweb-demo-b98869456-s9rt5   1/1     Running   0          18s   10.244.240.42   
   </code></pre>
 </details>
 
+
+<details>
+  <summary>k8s-taint-2</summary>
+  <pre><code>
+test-b-k8s-node02节点已经有污点了,再通过nodeSelector强行指派到该节点,看看会不会分配到带有污点的节点上
+```
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: test-a
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goweb-demo
+  namespace: test-a
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: goweb-demo
+  template:
+    metadata:
+      labels:
+        app: goweb-demo
+    spec:
+      nodeSelector:
+        disktype: sas
+      containers:
+      - name: goweb-demo
+        image: 192.168.11.247/web-demo/goweb-demo:20221229v3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: goweb-demo
+  namespace: test-a
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8090
+  selector:
+    app: goweb-demo
+  type: NodePort
+```
+kubectl get pod -n test-a
+NAME                          READY   STATUS    RESTARTS   AGE
+goweb-demo-54bc765fff-2gb98   0/1     Pending   0          20s
+goweb-demo-54bc765fff-67c56   0/1     Pending   0          20s
+goweb-demo-54bc765fff-6fdvx   0/1     Pending   0          20s
+goweb-demo-54bc765fff-c2bgd   0/1     Pending   0          20s
+goweb-demo-54bc765fff-d55mw   0/1     Pending   0          20s
+goweb-demo-54bc765fff-dl4x4   0/1     Pending   0          20s
+goweb-demo-54bc765fff-g4vb2   0/1     Pending   0          20s
+goweb-demo-54bc765fff-htjkp   0/1     Pending   0          20s
+goweb-demo-54bc765fff-s76rh   0/1     Pending   0          20s
+goweb-demo-54bc765fff-vg6dn   0/1     Pending   0          20s
+#该节点明明存在污点,又非得往上面指派,因此让所有Pod处于在了Pending的状态,也就是待分配的状态,那如果非要往带有污点的Node上指派pod,怎么办？看例子k8s-taint-3
+  </code></pre>
+</details>
+
+<details>
+  <summary>k8s-taint-3</summary>
+  <pre><code>
+非要往带有污点的Node上指派pod，保留nodeSelector，直接增加污点容忍，pod是不是肯定会分配到带有污点的节点上？测试下便知
+```
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: test-a
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goweb-demo
+  namespace: test-a
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: goweb-demo
+  template:
+    metadata:
+      labels:
+        app: goweb-demo
+    spec:
+      nodeSelector:
+        disktype: sas
+      tolerations:
+      - key: "disktype"
+        operator: "Equal"
+        value: "sas"
+        effect: "NoSchedule"
+      containers:
+      - name: goweb-demo
+        image: 192.168.11.247/web-demo/goweb-demo:20221229v3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: goweb-demo
+  namespace: test-a
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8090
+  selector:
+    app: goweb-demo
+  type: NodePort
+```
+kubectl get pod -n test-a
+NAME                          READY   STATUS    RESTARTS   AGE
+goweb-demo-68cf558b74-6qddp   0/1     Pending   0          109s
+goweb-demo-68cf558b74-7g6cm   0/1     Pending   0          109s
+goweb-demo-68cf558b74-f7g6t   0/1     Pending   0          109s
+goweb-demo-68cf558b74-kcs9j   0/1     Pending   0          109s
+goweb-demo-68cf558b74-kxssv   0/1     Pending   0          109s
+goweb-demo-68cf558b74-pgrvb   0/1     Pending   0          109s
+goweb-demo-68cf558b74-ps5dn   0/1     Pending   0          109s
+goweb-demo-68cf558b74-rb2w5   0/1     Pending   0          109s
+goweb-demo-68cf558b74-tcnj4   0/1     Pending   0          109s
+goweb-demo-68cf558b74-txqfs   0/1     Pending   0          109s
+#在上面的yaml中，tolerations字段为污点容忍，经过测试就可以回答刚才的问题：保留nodeSelector，直接增加污点容忍，pod是不是肯定会分配到带有污点的节点上？
+经过测试后，给出的答案是：不是  例子4(去掉nodeSelector)
+
+  </code></pre>
+</details>
+
+<details>
+  <summary>k8s-taint-4</summary>
+  <pre><code>
+现在把nodeSelector去掉，只留下污点容忍，看看pod会不会有可能分配到打了污点的节点上
+```
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: test-a
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goweb-demo
+  namespace: test-a
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: goweb-demo
+  template:
+    metadata:
+      labels:
+        app: goweb-demo
+    spec:
+      tolerations:
+      - key: "disktype"
+        operator: "Equal"
+        value: "sas"
+        effect: "NoSchedule"
+      containers:
+      - name: goweb-demo
+        image: 192.168.11.247/web-demo/goweb-demo:20221229v3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: goweb-demo
+  namespace: test-a
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8090
+  selector:
+    app: goweb-demo
+  type: NodePort
+```
+kubectl get pod -n test-a -o wide
+NAME                          READY   STATUS    RESTARTS   AGE    IP              NODE                NOMINATED NODE   READINESS GATES
+goweb-demo-55ff5cd68c-287vw   1/1     Running   0          110s   10.244.222.57   test-b-k8s-node02   <none>           <none>
+goweb-demo-55ff5cd68c-7s7zb   1/1     Running   0          110s   10.244.222.24   test-b-k8s-node02   <none>           <none>
+goweb-demo-55ff5cd68c-84jww   1/1     Running   0          110s   10.244.240.24   test-b-k8s-node01   <none>           <none>
+goweb-demo-55ff5cd68c-b5l9m   1/1     Running   0          110s   10.244.240.15   test-b-k8s-node01   <none>           <none>
+goweb-demo-55ff5cd68c-c2gfp   1/1     Running   0          110s   10.244.222.3    test-b-k8s-node02   <none>           <none>
+goweb-demo-55ff5cd68c-hpjn4   1/1     Running   0          110s   10.244.240.62   test-b-k8s-node01   <none>           <none>
+goweb-demo-55ff5cd68c-j5bvc   1/1     Running   0          110s   10.244.222.43   test-b-k8s-node02   <none>           <none>
+goweb-demo-55ff5cd68c-r95f6   1/1     Running   0          110s   10.244.240.16   test-b-k8s-node01   <none>           <none>
+goweb-demo-55ff5cd68c-rhvmw   1/1     Running   0          110s   10.244.240.60   test-b-k8s-node01   <none>           <none>
+goweb-demo-55ff5cd68c-rl8nh   1/1     Running   0          110s   10.244.222.8    test-b-k8s-node02   <none>           <none>
+#从上面的分配结果可以看出，有些Pod分配到了打了污点容忍的test-b-k8s-node02节点上
+  </code></pre>
+</details>
+
+<details>
+  <summary>k8s-taint-5</summary>
+  <pre><code>
+再玩个小例子，让它容忍任何带污点的节点，master默认也是有污点的（二进制搭建的除外），那pod会不会有可能跑master去哦？测试一下便知
+先看看master的污点情况
+```
+kubectl describe node test-b-k8s-master | grep Taint
+Taints:             node-role.kubernetes.io/control-plane:NoSchedule
+```
+```
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: test-a
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goweb-demo
+  namespace: test-a
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: goweb-demo
+  template:
+    metadata:
+      labels:
+        app: goweb-demo
+    spec:
+      tolerations:
+        - effect: "NoSchedule"
+          operator: "Exists"
+      containers:
+      - name: goweb-demo
+        image: 192.168.11.247/web-demo/goweb-demo:20221229v3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: goweb-demo
+  namespace: test-a
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8090
+  selector:
+    app: goweb-demo
+  type: NodePort
+```
+kubectl get pod -n test-a -o wide
+NAME                          READY   STATUS             RESTARTS   AGE   IP              NODE                NOMINATED NODE   READINESS GATES
+goweb-demo-65bbd7b49c-5qb5m   0/1     ImagePullBackOff   0          20s   10.244.82.55    test-b-k8s-master   <none>           <none>
+goweb-demo-65bbd7b49c-7qqw8   1/1     Running            0          20s   10.244.222.13   test-b-k8s-node02   <none>           <none>
+goweb-demo-65bbd7b49c-9tflk   1/1     Running            0          20s   10.244.240.27   test-b-k8s-node01   <none>           <none>
+goweb-demo-65bbd7b49c-dgxhx   1/1     Running            0          20s   10.244.222.44   test-b-k8s-node02   <none>           <none>
+goweb-demo-65bbd7b49c-fbmn5   1/1     Running            0          20s   10.244.240.1    test-b-k8s-node01   <none>           <none>
+goweb-demo-65bbd7b49c-h2nnz   1/1     Running            0          20s   10.244.240.39   test-b-k8s-node01   <none>           <none>
+goweb-demo-65bbd7b49c-kczsp   1/1     Running            0          20s   10.244.240.40   test-b-k8s-node01   <none>           <none>
+goweb-demo-65bbd7b49c-ms768   1/1     Running            0          20s   10.244.222.45   test-b-k8s-node02   <none>           <none>
+goweb-demo-65bbd7b49c-pbwht   0/1     ErrImagePull       0          20s   10.244.82.56    test-b-k8s-master   <none>           <none>
+goweb-demo-65bbd7b49c-zqxlt   1/1     Running            0          20s   10.244.222.18   test-b-k8s-node02   <none>           <none>
+
+#两个pod调度到了master上;
+#警告：要注意了，master之所以默认会打上污点，是因为master是管理节点、考虑到安全的问题，所以master节点是不建议跑常规的pod(或者说是不建议跑业务pod)
+
+  </code></pre>
+</details>
+
+<details>
+  <summary>k8s-taint-6</summary>
+  <pre><code>
+打了污点的节点，到底有没有办法可以强行分配到该节点上？我们试试
+```
+kubectl describe node test-b-k8s-node02 | grep Taint
+Taints:             disktype=sas:NoSchedule
+```
+```
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: test-a
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goweb-demo
+  namespace: test-a
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: goweb-demo
+  template:
+    metadata:
+      labels:
+        app: goweb-demo
+    spec:
+      nodeName: test-b-k8s-node02
+      containers:
+      - name: goweb-demo
+        image: 192.168.11.247/web-demo/goweb-demo:20221229v3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: goweb-demo
+  namespace: test-a
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8090
+  selector:
+    app: goweb-demo
+  type: NodePort
+```
+在上面的配置中，注意nodeName字段，nodeName指定节点名称，用于将Pod调度到指定的Node上，它的机制是[不经过调度器]
+kubectl get pod -n test-a -o wide
+NAME                         READY   STATUS    RESTARTS   AGE   IP              NODE                NOMINATED NODE   READINESS GATES
+goweb-demo-dd446d4b9-2zdnx   1/1     Running   0          13s   10.244.222.39   test-b-k8s-node02   <none>           <none>
+goweb-demo-dd446d4b9-4qbg9   1/1     Running   0          13s   10.244.222.6    test-b-k8s-node02   <none>           <none>
+goweb-demo-dd446d4b9-67cpl   1/1     Running   0          13s   10.244.222.63   test-b-k8s-node02   <none>           <none>
+goweb-demo-dd446d4b9-fhsgf   1/1     Running   0          13s   10.244.222.53   test-b-k8s-node02   <none>           <none>
+goweb-demo-dd446d4b9-gp9gj   1/1     Running   0          13s   10.244.222.49   test-b-k8s-node02   <none>           <none>
+goweb-demo-dd446d4b9-hzvs2   1/1     Running   0          13s   10.244.222.9    test-b-k8s-node02   <none>           <none>
+goweb-demo-dd446d4b9-px598   1/1     Running   0          13s   10.244.222.22   test-b-k8s-node02   <none>           <none>
+goweb-demo-dd446d4b9-rkbm4   1/1     Running   0          13s   10.244.222.40   test-b-k8s-node02   <none>           <none>
+goweb-demo-dd446d4b9-vr9mq   1/1     Running   0          13s   10.244.222.17   test-b-k8s-node02   <none>           <none>
+goweb-demo-dd446d4b9-wnfqc   1/1     Running   0          13s   10.244.222.16   test-b-k8s-node02   <none>           <none>
+#发现，所有Pod都分配到了test-b-k8s-node02节点，怎么不会分一些到test-b-k8s-node01节点？原因就是，它的机制是不经过调度器的  
+nodeName这个字段建议在生产环境中还是少用，所有Pod都在一个节点上，这就存在单点故障了。其实，测试环境下还是可以用的嘛
+  </code></pre>
+</details>
 
 
