@@ -37,7 +37,7 @@ kubectl taint node test-b-k8s-node02 disktype=sas:NoSchedule
 tantianran@test-b-k8s-master:~$ kubectl describe node test-b-k8s-node02 | grep Taint
 Taints:             disktype=sas:NoSchedule
 
-goweb-demo.yaml
+```
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -75,6 +75,7 @@ spec:
   selector:
     app: goweb-demo
   type: NodePort
+```
 kubectl get pod -n test-a -o wide
 NAME                         READY   STATUS    RESTARTS   AGE   IP              NODE                NOMINATED NODE   READINESS GATES
 goweb-demo-b98869456-84p4b   1/1     Running   0          18s   10.244.240.50   test-b-k8s-node01   <none>           <none>
