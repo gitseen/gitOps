@@ -72,7 +72,7 @@ spec:
             values:
             - team-a
             - team-b
-      preferredDuringSchedulingIgnoredDuringExecution: # 调度器会尝试寻找满足对应规则的节点（如果找不到匹配的节点，调度器仍然会调度该Pod）
+      preferredDuringSchedulingIgnoredDuringExecution: # 调度器会尝试寻找满足对应规则的节点（如果找不到匹配的节点,调度器仍然会调度该Pod）
       - weight: 1
         preference:
           matchExpressions:
@@ -94,12 +94,12 @@ kubectl create -f xx.yaml
 kubectl get pod -o wide
 NAME         READY   STATUS    RESTARTS   AGE   IP              NODE                NOMINATED NODE   READINESS GATES
 goweb-demo   1/1     Running   0          17s   10.244.240.58   test-b-k8s-node01   <none>           <none>
-在上面的案例中，所应用的规则如下：
-   节点必须包含一个键名为 team 的标签， 并且该标签的取值必须为 team-a 或 team-b
+在上面的案例中,所应用的规则如下：
+   节点必须包含一个键名为 team 的标签, 并且该标签的取值必须为 team-a 或 team-b
    节点最好具有一个键名为 hostbrand 且取值为 ibm 的标签
 关于节点亲和性权重的weight字段：
-   preferredDuringSchedulingIgnoredDuringExecution 亲和性类型可以设置 weight 字段，其取值范围是 1 到 100。 当调度器找到能够满足 Pod 的其他调度请求的节点时，调度器会遍历节点满足的所有的偏好性规则， 并将对应表达式的 weight 值加和。
-   最终的加和值会添加到该节点的其他优先级函数的评分之上。 在调度器为 Pod 作出调度决定时，总分最高的节点的优先级也最高。
+   preferredDuringSchedulingIgnoredDuringExecution 亲和性类型可以设置 weight 字段,其取值范围是 1 到 100。 当调度器找到能够满足 Pod 的其他调度请求的节点时,调度器会遍历节点满足的所有的偏好性规则, 并将对应表达式的 weight 值加和。
+   最终的加和值会添加到该节点的其他优先级函数的评分之上。 在调度器为 Pod 作出调度决定时,总分最高的节点的优先级也最高。
 
   </code></pre>
 </details>
@@ -149,24 +149,25 @@ goweb-demo   1/1     Running   0          35s   10.244.240.18   test-b-k8s-node0
  
   </code></pre>
 </details>
->>上面的例子，存在两个候选节点，都满足
+
+>>上面的例子,存在两个候选节点,都满足
 preferredDuringSchedulingIgnoredDuringExecution 规则  
 其中一个节点具有标签 disktype:ssd  
-另一个节点具有标签 disktype:sas，调度器会考察各个节点的weight取值，并将该权重值添加到节点的其他得分值之上  
+另一个节点具有标签 disktype:sas,调度器会考察各个节点的weight取值,并将该权重值添加到节点的其他得分值之上  
 
 ## 3、nodeSelector案例
 <details>
   <summary>nodeSelector-example</summary>
   <pre><code>
 设置节点的标签
-#给节点打标签，key和value：gpu=true
+#给节点打标签,key和value：gpu=true
 kubectl label node test-b-k8s-node02 gpu=true
 node/test-b-k8s-node02 labeled
 
 #查看指定节点标签
 kubectl get node test-b-k8s-node02 --show-labels
 
-#不指定节点时，查看所有节点标签
+#不指定节点时,查看所有节点标签
 kubectl get node --show-labels
 
 添加nodeSelector字段到pod配置
@@ -211,7 +212,7 @@ spec:
     app: goweb-demo
   type: NodePort
 ```
-提示：刚测了一下，非要取这种标签的话gpu=true，在yaml定义时gpu: true ，true就要加双引号，它是字符串，不加的话，他认为是bool。所以，设置node的标签，value以后尽量不要是true/false，非要的话，指定时加上双引号即可  
+提示：刚测了一下,非要取这种标签的话gpu=true,在yaml定义时gpu: true ,true就要加双引号,它是字符串,不加的话,他认为是bool。所以,设置node的标签,value以后尽量不要是true/false,非要的话,指定时加上双引号即可  
 kubectl get pods -n test-a -o wide
 NAME                          READY   STATUS    RESTARTS   AGE   IP              NODE                NOMINATED NODE   READINESS GATES
 goweb-demo-69d79997f7-24862   1/1     Running   0          16m   10.244.222.7    test-b-k8s-node02   <none>           <none>
@@ -225,13 +226,13 @@ goweb-demo-69d79997f7-v768k   1/1     Running   0          16m   10.244.222.38  
 goweb-demo-69d79997f7-vgt5w   1/1     Running   0          16m   10.244.222.56   test-b-k8s-node02   <none>           <none>
 goweb-demo-69d79997f7-xqhxp   1/1     Running   0          16m   10.244.222.41   test-b-k8s-node02   <none> 
 
-如果创建pod，指派的标签是不存在任何1台节点时，pod会一直处于pending状态，直至进入Terminating状态，pod的重启策略是always（默认策略：当容器退出时，总是重启容器），则一直在pending和Terminating中徘徊，直到有符合条件的标签，就会立马分配节点，从而创建pod
+如果创建pod,指派的标签是不存在任何1台节点时,pod会一直处于pending状态,直至进入Terminating状态,pod的重启策略是always（默认策略：当容器退出时,总是重启容器）,则一直在pending和Terminating中徘徊,直到有符合条件的标签,就会立马分配节点,从而创建pod
 
 
 删除标签
 kubectl label node test-b-k8s-node02 gpu-
 node/test-b-k8s-node02 unlabeled
-提示：key和小横杠之间不能有空格，否则删除失败
+提示：key和小横杠之间不能有空格,否则删除失败
 
   </code></pre>
 </details>
