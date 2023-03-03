@@ -57,6 +57,7 @@ nodeAffinity是亲和性的,它的NotIn和DoesNotExist可用来实现节点反�
 <details>
   <summary>nodeAffinity-example</summary>
   <pre><code>
+#xx.yaml
 ```
 apiVersion: v1
 kind: Pod
@@ -85,6 +86,7 @@ spec:
   - name: container-goweb-demo
     image: 192.168.11.247/web-demo/goweb-demo:20221229v3
 ```
+
 配置node的标签
 # 设置标签
 kubectl label node test-b-k8s-node01 team=team-a
