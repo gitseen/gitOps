@@ -108,8 +108,7 @@ sts: redis
   roles:
   - redis
 主文件的内容就是指定哪些主机进行什么操作。用什么用户等等。
-
-
+```
 # roles
 ```
 roles是整个playbook的重点。role可以理解为做一件事的一个角色。
