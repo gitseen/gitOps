@@ -116,7 +116,7 @@ roles目录下面根据你自己的业务，可以定义多个role子目录，�
 为了做成这件事的一些列操作都写到这个role子目录下。比如这里的common,webserver,monitoring,fooapp等
 ```
 # tasks
-````
+```
 tasks下的文件就是完成工作的一个个具体动作，
 至少要包含main.yml,playbook执行时默认就找这个main.yml。可以定义其他的yml文件，在main.yml引入
 eg:
