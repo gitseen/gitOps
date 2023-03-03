@@ -204,7 +204,7 @@ kubectl proxy -p 8080 --keepalive 3600s --reject-paths='' -v=9
 
 
 # kubectl语法  
-from [原文](https://www.toutiao.com/article/7190147160682267140/)  
+[高效运维-常用命令集锦云原生运维](https://www.toutiao.com/article/7190147160682267140/)  
 ```bash
 kubectl [command] [Type] [NAME] [flags]
 command: 子命令，用于操作kubernetes集群资源对象的命令，例如：create, delete, describe, get, apply等等
