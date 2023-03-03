@@ -51,7 +51,58 @@ nodeAffinity是亲和性的,它的NotIn和DoesNotExist可用来实现节点反�
 - 如果在与 nodeSelectorTerms 中的条件相关联的单个 matchExpressions 字段中指定多个表达式,则只有当所有表达式都满足（各表达式按逻辑与操作组合）时,Pod才能被调度到节点上  
 
 
+# 实战案例
+## 1、节点亲和性案例（nodeAffinity）
+<details>
+  <summary>nodeAffinity-example</summary>
+  <pre><code>
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: goweb-demo
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution: # 调度器只有在规则被满足的时候才执行调度
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: team
+            operator: In
+            values:
+            - team-a
+            - team-b
+      preferredDuringSchedulingIgnoredDuringExecution: # 调度器会尝试寻找满足对应规则的节点（如果找不到匹配的节点，调度器仍然会调度该Pod）
+      - weight: 1
+        preference:
+          matchExpressions:
+          - key: hostbrand
+            operator: In
+            values:
+            - ibm
+  containers:
+  - name: container-goweb-demo
+    image: 192.168.11.247/web-demo/goweb-demo:20221229v3
+```
+配置node的标签
+# 设置标签
+kubectl label node test-b-k8s-node01 team=team-a
+kubectl label node test-b-k8s-node02 team=team-b
+kubectl label node test-b-k8s-node01 hostbrand=ibm
+kubectl get node --show-labels
+kubectl create -f xx.yaml 
+kubectl get pod -o wide
+NAME         READY   STATUS    RESTARTS   AGE   IP              NODE                NOMINATED NODE   READINESS GATES
+goweb-demo   1/1     Running   0          17s   10.244.240.58   test-b-k8s-node01   <none>           <none>
+在上面的案例中，所应用的规则如下：
+   节点必须包含一个键名为 team 的标签， 并且该标签的取值必须为 team-a 或 team-b
+   节点最好具有一个键名为 hostbrand 且取值为 ibm 的标签
+关于节点亲和性权重的weight字段：
+   preferredDuringSchedulingIgnoredDuringExecution 亲和性类型可以设置 weight 字段，其取值范围是 1 到 100。 当调度器找到能够满足 Pod 的其他调度请求的节点时，调度器会遍历节点满足的所有的偏好性规则， 并将对应表达式的 weight 值加和。
+   最终的加和值会添加到该节点的其他优先级函数的评分之上。 在调度器为 Pod 作出调度决定时，总分最高的节点的优先级也最高。
 
+  </code></pre>
+</details>
 
 
 
