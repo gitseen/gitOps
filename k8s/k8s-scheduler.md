@@ -58,6 +58,7 @@ nodeAffinity是亲和性的,它的NotIn和DoesNotExist可用来实现节点反�
   <summary>nodeAffinity-example</summary>
   <pre><code>
 #xx.yaml
+
 ```
 apiVersion: v1
 kind: Pod
@@ -112,6 +113,7 @@ goweb-demo   1/1     Running   0          17s   10.244.240.58   test-b-k8s-node0
   <summary>nodeAffinity-weight-example</summary>
   <pre><code>
 #nodeAffinity-weight-example-yaml
+
 ```
 apiVersion: v1
 kind: Pod
