@@ -35,6 +35,7 @@ k8s的各个组件是基于list-watch机制进行交互的,了解了list-watch�
 # nodeSelector和nodeAffinity
 >>实际工作中,可能会有这样的情况,需要进一步控制Pod被部署到哪个节点
 例如,确保某些Pod最终落在具有SSD硬盘的主机上,又需要确保某些pod落在具体部门的主机上运行,这时就可以使用标签选择器来进行选择  
+ 
 ![eg](https://p3-sign.toutiaoimg.com/tos-cn-i-qvj2lq49k0/cdd26b016dd942f4924d0958a0ce07b6~noop.image?_iz=58558&from=article.pc_detail&x-expires=1678325352&x-signature=kovHYav8gbx2iTSDAtaXrtyFrQ4%3D) 
 
 - nodeSelector：通过它可以将pod指派到具有特定标签的节点上,nodeSelector只能选择指定标签的节点,它属于强制性的,如果标签不小心写错则无法调度
