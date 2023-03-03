@@ -62,6 +62,7 @@ redis1 ansible_ssh_host=10.178.151.211
 redis1 ansible_ssh_host=10.178.151.211 password=UYSbdyf
 ```
 # 组变量
+```
 就是给整个组加变量
 [prod]
 redis1 ansible_ssh_host=10.178.151.211
