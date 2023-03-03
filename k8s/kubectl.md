@@ -215,17 +215,18 @@ kubectl get po pod1
 NAME：资源对象的名称，区分大小写。如果不指定名称，系统则将返回属于TYPE的全部对象的列表，例如：kubectl get pods 将返回所有pod的列表
 flags: kubectl 子命令的可选参数，例如使用 -s 指定api server的url地址而不用默认值。
 ```
-[kubectl可操作的资源对象类型以及缩写](https://p3-sign.toutiaoimg.com/tos-cn-i-tjoges91tu/TTL6hPnIEzvwbh~noop.image?_iz=58558&from=article.pc_detail&x-expires=1676272227&x-signature=I33bvWr4TzjAy%2BJ%2F%2BbWMErYFmfc%3D)  
+![kubectl可操作的资源对象类型以及缩写](https://p3-sign.toutiaoimg.com/tos-cn-i-tjoges91tu/TTL6hPnIEzvwbh~noop.image?_iz=58558&from=article.pc_detail&x-expires=1676272227&x-signature=I33bvWr4TzjAy%2BJ%2F%2BbWMErYFmfc%3D)  
 
 ## kubectl 子命令详解
 kebectl的子命令非常丰富，涵盖了对kubernetes集群的主要操作，包括资源对象的创建、删除、查看、修改、配置、运行等  
-[详细的子命令](https://p3-sign.toutiaoimg.com/tos-cn-i-tjoges91tu/TTL6hQKQcQmvz~noop.image?_iz=58558&from=article.pc_detail&x-expires=1676272227&x-signature=AUfWesyvDdOLDlbmN8da%2BWAokpw%3D)  
+![详细的子命令](https://p3-sign.toutiaoimg.com/tos-cn-i-tjoges91tu/TTL6hQKQcQmvz~noop.image?_iz=58558&from=article.pc_detail&x-expires=1676272227&x-signature=AUfWesyvDdOLDlbmN8da%2BWAokpw%3D)  
 
 ## kubectl参数列表
-[Kubectl命令行的公共启动参数](https://p3-sign.toutiaoimg.com/tos-cn-i-tjoges91tu/TTL6hQzFlp05vm~noop.image?_iz=58558&from=article.pc_detail&x-expires=1678439059&x-signature=%2FaJA3z4jtuL8qs6a3CC1slAJTfk%3D)  
+![Kubectl命令行的公共启动参数](https://p3-sign.toutiaoimg.com/tos-cn-i-tjoges91tu/TTL6hQzFlp05vm~noop.image?_iz=58558&from=article.pc_detail&x-expires=1678439059&x-signature=%2FaJA3z4jtuL8qs6a3CC1slAJTfk%3D)  
 
 ## Kubectl输出格式
-kubectl命令可以用多种格式对结果进行显示，[输出的格式通过-o参数指定](https://p3-sign.toutiaoimg.com/tos-cn-i-tjoges91tu/TTL6iHFF62qpk4~noop.image?_iz=58558&from=article.pc_detail&x-expires=1676272227&x-signature=Ri4mzFxIMaPuuByZ1GJurPFgjvI%3D) 
+kubectl命令可以用多种格式对结果进行显示  
+![输出的格式通过-o参数指定](https://p3-sign.toutiaoimg.com/tos-cn-i-tjoges91tu/TTL6iHFF62qpk4~noop.image?_iz=58558&from=article.pc_detail&x-expires=1676272227&x-signature=Ri4mzFxIMaPuuByZ1GJurPFgjvI%3D) 
 
 ## kubectl操作示例
 ```
