@@ -198,6 +198,34 @@ location ~ .*\.(html|htm|gif|jpg|jpeg|bmp|png|ico|txt|js|css){
 ```
 对于防盗链机制实现这块，也有专门的第三方模块ngx_http_accesskey_module实现了更为完善的设计  
 
+# Nginx设置密码认证
+安装Apache2-utils软件包：该软件包提供了htpasswd工具，用于管理用户的证书。你可以通过运行以下命令将其安装到你的系统中  
+```
+apt-get install apache2-utils || yum -y install httpd
+sudo htpasswd -c /etc/nginx/.htpasswd username
+nginx-conf-ADD
+auth_basic "Restricted Content";
+auth_basic_user_file /etc/nginx/.htpasswd;
+eg:
+server {
+      listen 80 default_server;
+      listen [::]:80 default_server ipv6only=on;
+  
+      root /usr/share/nginx/html;
+      index index.html index.htm;
+  
+      server_name localhost;
+  
+      location / {
+                try_files $uri $uri/ =404;
+                auth_basic "Restricted Content";
+                auth_basic_user_file /etc/nginx/.htpasswd;
+      }
+}
+这将要求对该地点进行认证，并使用.htpasswd文件对用户进行认证
+nginx -s reload
+
+```
 
 # Nginx模块详解
 [Nginx模块详解](https://cloud.tencent.com/developer/article/2057869)  
