@@ -2,6 +2,9 @@
 [数据库干货铺](https://www.toutiao.com/article/7205192957752902155/)  
 
 # K8S之监控Prometheus部署
+- 老老实实写yaml部署脚本，这种方式部署太麻烦，细节太多，不建议
+- 使用开源项目prometheus-operator部署
+- 使用开源项目kube-prometheus部署
 [leenhem](https://www.toutiao.com/article/7172099132771893772)  
 卸载Prometheus方式  
 kubectl delete --ignore-not-found=true -f manifests/ -f manifests/setup  
