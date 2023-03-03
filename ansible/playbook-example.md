@@ -198,18 +198,16 @@ daemonize {{ mode }}
 
 
 *** 
-
+# 示例
 <details>
   <summary>playbook-example</summary>
   <pre><code> 
 ```
-$ cat dockervars.yml
+#dockervars.yml
 ---
   username: "enter your dockerhub username"
 password: "enter your dockerhub password"
-```
-```
-$ cat git.yml
+#git.yml
 ---
   - name: "deploying docker from git"
   hosts: build
