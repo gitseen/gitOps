@@ -159,8 +159,8 @@ goweb-demo   1/1     Running   0          35s   10.244.240.18   test-b-k8s-node0
 
 >>上面的例子,存在两个候选节点,都满足  
 preferredDuringSchedulingIgnoredDuringExecution规则  
-其中一个节点具有标签 disktype:ssd   
-另一个节点具有标签 disktype:sas,调度器会考察各个节点的weight取值,并将该权重值添加到节点的其他得分值之上  
+其中一个节点具有标签disktype:ssd   
+另一个节点具有标签disktype:sas,调度器会考察各个节点的weight取值,并将该权重值添加到节点的其他得分值之上  
 
 ## 3、nodeSelector案例
 <details>
