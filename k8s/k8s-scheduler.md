@@ -99,9 +99,10 @@ NAME         READY   STATUS    RESTARTS   AGE   IP              NODE            
 goweb-demo   1/1     Running   0          17s   10.244.240.58   test-b-k8s-node01   <none>           <none>
 在上面的案例中,所应用的规则如下  
    节点必须包含一个键名为 team 的标签, 并且该标签的取值必须为 team-a 或 team-b
-   节点最好具有一个键名为 hostbrand 且取值为 ibm 的标签
-关于节点亲和性权重的weight字段：
-   preferredDuringSchedulingIgnoredDuringExecution 亲和性类型可以设置 weight 字段,其取值范围是 1 到 100。 当调度器找到能够满足 Pod 的其他调度请求的节点时,调度器会遍历节点满足的所有的偏好性规则, 并将对应表达式的 weight 值加和。
+   节点最好具有一个键名为 hostbrand 且取值为 ibm 的标签   
+
+关于节点亲和性权重的weight字段：  
+   preferredDuringSchedulingIgnoredDuringExecution 亲和性类型可以设置 weight 字段,其取值范围是 1 到 100。 当调度器找到能够满足 Pod 的其他调度请求的节点时,调度器会遍历节点满足的所有的偏好性规则, 并将对应表达式的 weight 值加和。  
    最终的加和值会添加到该节点的其他优先级函数的评分之上。 在调度器为 Pod 作出调度决定时,总分最高的节点的优先级也最高。
   </code></pre>
 </details>
