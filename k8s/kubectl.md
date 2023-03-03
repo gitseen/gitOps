@@ -1,6 +1,6 @@
 # kubectl命令的使用技巧 
   https://www.toutiao.com/article/7172014453595210252/  
-  #kubectl命令的使用技巧  
+  [徐福工程师-kubectl命令的使用技巧](https://www.toutiao.com/article/7172014453595210252/)  
   kubectl是管理kubernetes的命令行工具，平时工作中使用很多，依赖kubectl可以做很多事情，比如下面：  
 * 列出集群中运行异常的Pod
 ```bash
