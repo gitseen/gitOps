@@ -26,10 +26,17 @@ kubectl taint node xxxx key=value:[effect]
 kubectl taint node xxxx key=value:[effect]-
 ```
 # 实例
+**环境信息**  
+```
+test-b-k8s-master
+test-b-k8s-node01
+test-b-k8s-node02
+```
+eg1:测试给test-b-k8s-node02节点打上污点,不干预调度到哪台节点,让k8s按自己的算法进行调度,看看这10个pod会不会分配到带有污点的节点上  
+
 <details>
   <summary>k8s-taint-1</summary>
   <pre><code>
-给test-b-k8s-node02节点打上污点,不干预调度到哪台节点,让k8s按自己的算法进行调度,看看这10个pod会不会分配到带有污点的节点上
 #打污点
 kubectl taint node test-b-k8s-node02 disktype=sas:NoSchedule
 #查看node详情的Taints字段
@@ -95,10 +102,12 @@ goweb-demo-b98869456-s9rt5   1/1     Running   0          18s   10.244.240.42   
 </details>
 
 
+
+eg2: test-b-k8s-node02节点已经有污点了,再通过nodeSelector强行指派到该节点,看看会不会分配到带有污点的节点上   
+
 <details>
   <summary>k8s-taint-2</summary>
   <pre><code>
-test-b-k8s-node02节点已经有污点了,再通过nodeSelector强行指派到该节点,看看会不会分配到带有污点的节点上
 ```
 apiVersion: v1
 kind: Namespace
@@ -156,10 +165,11 @@ goweb-demo-54bc765fff-vg6dn   0/1     Pending   0          20s
   </code></pre>
 </details>
 
+eg3: 非要往带有污点的Node上指派pod，保留nodeSelector，直接增加污点容忍，pod是不是肯定会分配到带有污点的节点上？测试下便知  
+
 <details>
   <summary>k8s-taint-3</summary>
   <pre><code>
-非要往带有污点的Node上指派pod，保留nodeSelector，直接增加污点容忍，pod是不是肯定会分配到带有污点的节点上？测试下便知
 ```
 apiVersion: v1
 kind: Namespace
@@ -223,6 +233,8 @@ goweb-demo-68cf558b74-txqfs   0/1     Pending   0          109s
 
   </code></pre>
 </details>
+
+eg4:现在把nodeSelector去掉，只留下污点容忍，看看pod会不会有可能分配到打了污点的节点上  
 
 <details>
   <summary>k8s-taint-4</summary>
@@ -288,10 +300,11 @@ goweb-demo-55ff5cd68c-rl8nh   1/1     Running   0          110s   10.244.222.8  
   </code></pre>
 </details>
 
+eg5: 再玩个小例子，让它容忍任何带污点的节点，master默认也是有污点的（二进制搭建的除外），那pod会不会有可能跑master去哦？测试一下便知  
+
 <details>
   <summary>k8s-taint-5</summary>
   <pre><code>
-再玩个小例子，让它容忍任何带污点的节点，master默认也是有污点的（二进制搭建的除外），那pod会不会有可能跑master去哦？测试一下便知
 先看看master的污点情况
 ```
 kubectl describe node test-b-k8s-master | grep Taint
@@ -358,10 +371,12 @@ goweb-demo-65bbd7b49c-zqxlt   1/1     Running            0          20s   10.244
   </code></pre>
 </details>
 
+
+eg6: 打了污点的节点，到底有没有办法可以强行分配到该节点上？我们试试  
+
 <details>
   <summary>k8s-taint-6</summary>
   <pre><code>
-打了污点的节点，到底有没有办法可以强行分配到该节点上？我们试试
 ```
 kubectl describe node test-b-k8s-node02 | grep Taint
 Taints:             disktype=sas:NoSchedule
