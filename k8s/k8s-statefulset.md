@@ -20,3 +20,5 @@ StatefulSet确保该集合中的每个pod都具有唯一的身份,并以特定�
 - 使用滚动更新：滚动更新可以在不中断应用程序的情况下更新StatefulSet中的pod  
 
 总之,StatefulSet是Kubernetes中管理有状态应用程序的强大资源。 通过遵循使用唯一主机名,将持久数据存储在单独的卷中以及使用反亲和规则等最佳实践,您可以确保在Kubernetes集群中顺利且一致地运行有状态应用程序
+
+[k8s-生态](https://kubernetes.io)
