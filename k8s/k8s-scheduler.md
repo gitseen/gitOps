@@ -111,6 +111,7 @@ goweb-demo   1/1     Running   0          17s   10.244.240.58   test-b-k8s-node0
 <details>
   <summary>nodeAffinity-weight-example</summary>
   <pre><code>
+#nodeAffinity-weight-example-yaml
 ```
 apiVersion: v1
 kind: Pod
@@ -145,8 +146,9 @@ spec:
   - name: container-goweb-demo
     image: 192.168.11.247/web-demo/goweb-demo:20221229v3
 ```
+
 kubectl create -f xx.yaml
- kubectl get pods -o wide
+kubectl get pods -o wide
 NAME         READY   STATUS    RESTARTS   AGE   IP              NODE                NOMINATED NODE   READINESS GATES
 goweb-demo   1/1     Running   0          35s   10.244.240.18   test-b-k8s-node01   <none>           <none>
  
@@ -230,7 +232,6 @@ goweb-demo-69d79997f7-vgt5w   1/1     Running   0          16m   10.244.222.56  
 goweb-demo-69d79997f7-xqhxp   1/1     Running   0          16m   10.244.222.41   test-b-k8s-node02   <none> 
 
 如果创建pod,指派的标签是不存在任何1台节点时,pod会一直处于pending状态,直至进入Terminating状态,pod的重启策略是always（默认策略：当容器退出时,总是重启容器）,则一直在pending和Terminating中徘徊,直到有符合条件的标签,就会立马分配节点,从而创建pod
-
 
 删除标签
 kubectl label node test-b-k8s-node02 gpu-
