@@ -104,7 +104,137 @@ goweb-demo   1/1     Running   0          17s   10.244.240.58   test-b-k8s-node0
   </code></pre>
 </details>
 
+## 2、节点亲和性+带有权重的例子
+<details>
+  <summary>nodeAffinity-weight-example</summary>
+  <pre><code>
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: goweb-demo
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: team
+            operator: In
+            values:
+            - team-a
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 1
+        preference:
+          matchExpressions:
+          - key: disktype
+            operator: In
+            values:
+            - ssd
+      - weight: 50
+        preference:
+          matchExpressions:
+          - key: disktype
+            operator: In
+            values:
+            - sas
+  containers:
+  - name: container-goweb-demo
+    image: 192.168.11.247/web-demo/goweb-demo:20221229v3
+```
+kubectl create -f xx.yaml
+ kubectl get pods -o wide
+NAME         READY   STATUS    RESTARTS   AGE   IP              NODE                NOMINATED NODE   READINESS GATES
+goweb-demo   1/1     Running   0          35s   10.244.240.18   test-b-k8s-node01   <none>           <none>
+ 
+  </code></pre>
+</details>
+>>上面的例子，存在两个候选节点，都满足
+preferredDuringSchedulingIgnoredDuringExecution 规则  
+其中一个节点具有标签 disktype:ssd  
+另一个节点具有标签 disktype:sas，调度器会考察各个节点的weight取值，并将该权重值添加到节点的其他得分值之上  
 
+## 3、nodeSelector案例
+<details>
+  <summary>nodeSelector-example</summary>
+  <pre><code>
+设置节点的标签
+#给节点打标签，key和value：gpu=true
+kubectl label node test-b-k8s-node02 gpu=true
+node/test-b-k8s-node02 labeled
+
+#查看指定节点标签
+kubectl get node test-b-k8s-node02 --show-labels
+
+#不指定节点时，查看所有节点标签
+kubectl get node --show-labels
+
+添加nodeSelector字段到pod配置
+```
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: test-a
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goweb-demo
+  namespace: test-a
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: goweb-demo
+  template:
+    metadata:
+      labels:
+        app: goweb-demo
+    spec:
+      nodeSelector:
+        gpu: true
+      containers:
+      - name: goweb-demo
+        image: 192.168.11.247/web-demo/goweb-demo:20221229v3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: goweb-demo
+  namespace: test-a
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8090
+  selector:
+    app: goweb-demo
+  type: NodePort
+```
+提示：刚测了一下，非要取这种标签的话gpu=true，在yaml定义时gpu: true ，true就要加双引号，它是字符串，不加的话，他认为是bool。所以，设置node的标签，value以后尽量不要是true/false，非要的话，指定时加上双引号即可  
+kubectl get pods -n test-a -o wide
+NAME                          READY   STATUS    RESTARTS   AGE   IP              NODE                NOMINATED NODE   READINESS GATES
+goweb-demo-69d79997f7-24862   1/1     Running   0          16m   10.244.222.7    test-b-k8s-node02   <none>           <none>
+goweb-demo-69d79997f7-48c62   1/1     Running   0          16m   10.244.222.32   test-b-k8s-node02   <none>           <none>
+goweb-demo-69d79997f7-76jd9   1/1     Running   0          16m   10.244.222.51   test-b-k8s-node02   <none>           <none>
+goweb-demo-69d79997f7-dt7sf   1/1     Running   0          16m   10.244.222.21   test-b-k8s-node02   <none>           <none>
+goweb-demo-69d79997f7-fddpd   1/1     Running   0          16m   10.244.222.60   test-b-k8s-node02   <none>           <none>
+goweb-demo-69d79997f7-lw2t8   1/1     Running   0          16m   10.244.222.47   test-b-k8s-node02   <none>           <none>
+goweb-demo-69d79997f7-nwwkg   1/1     Running   0          16m   10.244.222.10   test-b-k8s-node02   <none>           <none>
+goweb-demo-69d79997f7-v768k   1/1     Running   0          16m   10.244.222.38   test-b-k8s-node02   <none>           <none>
+goweb-demo-69d79997f7-vgt5w   1/1     Running   0          16m   10.244.222.56   test-b-k8s-node02   <none>           <none>
+goweb-demo-69d79997f7-xqhxp   1/1     Running   0          16m   10.244.222.41   test-b-k8s-node02   <none> 
+
+如果创建pod，指派的标签是不存在任何1台节点时，pod会一直处于pending状态，直至进入Terminating状态，pod的重启策略是always（默认策略：当容器退出时，总是重启容器），则一直在pending和Terminating中徘徊，直到有符合条件的标签，就会立马分配节点，从而创建pod
+
+
+删除标签
+kubectl label node test-b-k8s-node02 gpu-
+node/test-b-k8s-node02 unlabeled
+提示：key和小横杠之间不能有空格，否则删除失败
+
+  </code></pre>
+</details>
 
 
 [不背锅运维-k8s调度之初探](https://www.google.com/)
