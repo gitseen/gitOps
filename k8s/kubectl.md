@@ -60,6 +60,29 @@ kubectl get pods -o custom-columns='NAME:metadata.name,IMAGES:spec.containers[*]
 EOF
 chmod +x /usr/local/bin/kubectl-img
 kubectl img #使用来查询
+
+
+#kubectl-krew下载安装
+cat install-krew.sh
+#!/bin/bash
+(
+  set -x; cd "$(mktemp -d)" &&
+  OS="$(uname | tr '[:upper:]' '[:lower:]')" &&
+  ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" &&
+  KREW="krew-${OS}_${ARCH}" &&
+  curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" &&
+  tar zxvf "${KREW}.tar.gz" &&
+  ./"${KREW}" install krew
+)
+#wget  https://github.com/kubernetes-sigs/krew/releases/latest/download/krew-linux_amd64.tar.gz
+tar -zxvf krew-linux_amd64.tar.gz
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH" #然后添加环境变量
+export PATH="${PATH}:${HOME}/.krew/bin"
+#配置为 kubectl 插件
+mv ./krew-linux_amd64 ./kubectl-krew
+mv ./kubectl-krew /usr/local/bin/
+kubectl krew version
+
 ```
   
 * 打印指定namespace里Pod包含容器的limits和requests
