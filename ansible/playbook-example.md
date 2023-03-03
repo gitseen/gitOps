@@ -202,12 +202,15 @@ daemonize {{ mode }}
 <details>
   <summary>playbook-example</summary>
   <pre><code> 
-```
+
 #dockervars.yml
+```
 ---
   username: "enter your dockerhub username"
 password: "enter your dockerhub password"
+```
 #git.yml
+```
 ---
   - name: "deploying docker from git"
   hosts: build
@@ -222,20 +225,17 @@ password: "enter your dockerhub password"
     url: "https://github.com/antony-a-n/devops-flask.git"
     clone: "/var/flaskapp"
     img: "antonyanlinux/flask"
-
   tasks:
     - name: "installing packages"
       yum:
         name: "{{pkg}}"
         state: present
-        
             - name: "adding user to docker group"
       user:
         name: "ec2-user"
         groups:
           - docker
         append: true
-
     - name: "installing python module"
       pip:
         name: docker-py
@@ -245,12 +245,10 @@ password: "enter your dockerhub password"
         name: docker
                 state: restarted
                         enabled: true
-
     - name: "creating document-root"
       file:
         path: "{{clone}}"
         state: "directory"
-
     - name: "cloning-repo"
       git:
         repo: "{{url}}"
@@ -262,7 +260,6 @@ password: "enter your dockerhub password"
         username: "{{username}}"
         password: "{{password}}"
         state: present
-        
             - name: "image building"
       when: clone_state.changed
       docker_image:
@@ -278,7 +275,6 @@ password: "enter your dockerhub password"
       with_items:
         - latest
         - "{{clone_state.after}}"
-
     - name: "removing local image"
       when: clone_state.changed
       docker_image:
@@ -288,14 +284,12 @@ password: "enter your dockerhub password"
       with_items:
         - latest
         - "{{clone_state.after}}"
-
     - name: "logout"
       when: clone_state.changed
       docker_login:
         username: "{{username}}"
         password: "{{password}}"
         state: absent
-        
         - name: "testing image"
   hosts: test
     become: true
@@ -304,7 +298,6 @@ password: "enter your dockerhub password"
     test_pkg:
       - docker
       - pip
-
   tasks:
     - name: "package installation"
       yum:
@@ -316,7 +309,6 @@ password: "enter your dockerhub password"
         groups:
           - docker
         append: true
-
     - name: "installing module"
       pip:
         name: docker-py
@@ -331,7 +323,6 @@ password: "enter your dockerhub password"
         source: pull
                 force_source: true
       register: image_stat
-      
           - name: "creating docker container"
       when: image_stat.changed
       docker_container:
@@ -342,7 +333,8 @@ password: "enter your dockerhub password"
                         published_ports:
           - "80:5000"
 ```
-ansible-playbook -i inventory git.yml  
+ansible-playbook -i inventory git.yml 
+ 
   </code></pre>
 </details>
 
