@@ -198,9 +198,10 @@ daemonize {{ mode }}
 
 
 *** 
- 
-playbook-example
 
+<details>
+  <summary>playbook-example</summary>
+  <pre><code> 
 ```
 $ cat dockervars.yml
 ---
@@ -344,7 +345,8 @@ $ cat git.yml
           - "80:5000"
 ```
 ansible-playbook -i inventory git.yml  
-
+  </code></pre>
+</details>
 
 
 
