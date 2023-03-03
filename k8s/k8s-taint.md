@@ -439,4 +439,6 @@ nodeName这个字段建议在生产环境中还是少用，所有Pod都在一个
   </code></pre>
 </details>
 
+[不背锅运维-K8S之污点、污点容忍](https://www.google.com/)
+
 
