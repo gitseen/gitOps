@@ -162,7 +162,7 @@ Kubernetes探针(Probe)是用于检测容器内部状态的机制有以下三种
 
 1、livenessProbe（存活探针）：使用exec的方式（执行Shell命令返回状态码是0则为成功）  
 <details>
-  <summary>livenessProbe示例</summary>
+  <summary>livenessProbe-exec</summary>
   <pre><code>
 apiVersion: v1
 kind: Namespace
@@ -235,7 +235,7 @@ goweb-demo-686967fd56-8hzjb   1/1     Running   0             13m
 
 2、livenessProbe（存活探针）：使用httpGet请求的方式检查uri path是否正常  
 <details>
-  <summary>livenessProbe示例</summary>
+  <summary>livenessProbe-httpGet</summary>
   <pre><code>
 apiVersion: v1
 kind: Namespace
