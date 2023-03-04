@@ -52,6 +52,7 @@ kubectl-krew
 kubectl-sniff
 kubectl-crossplane
 kubectl-argo-rollouts
+kubectl-spy #kubespy实时观察YAML资源变更  #https://github.com/pulumi/kubespy or https://www.toutiao.com/article/7199530991965176381/     
 kubectl-img #自定义插件(上面脚本)如：
 cat>/usr/local/bin/kubectl-img<<EOF
 #!/bin/bash
