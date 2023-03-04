@@ -1,14 +1,14 @@
 # K8S-Pod知识点
 ## 1. Pod概念热身
-Pod是一个逻辑抽象概念，K8s创建和管理的最小单元，一个Pod由一个容器或多个容器组成。   
+Pod是一个逻辑抽象概念,K8s创建和管理的最小单元,一个Pod由一个容器或多个容器组成。   
 **特点**  
 + 一个Pod可以理解为是一个应用实例
 + Pod中容器始终部署在一个Node上
 + Pod中容器共享网络、存储资源 
  
 **Pod主要用法**  
-* 运行单个容器：最常见的用法，在这种情况下，可以将Pod看作是单个容器的抽象封装
-* 运行多个容器：边车模式(Sidecar)通过在Pod中定义专门容器，来执行主业务容器需要的辅助工作，这样好处是将辅助功能同主业务容器解耦，实现独立发布和能力重用。 例如:   
+* 运行单个容器：最常见的用法,在这种情况下,可以将Pod看作是单个容器的抽象封装
+* 运行多个容器：边车模式(Sidecar)通过在Pod中定义专门容器,来执行主业务容器需要的辅助工作,这样好处是将辅助功能同主业务容器解耦,实现独立发布和能力重用。 例如:   
   - 日志收集
   - 应用监控  
 
@@ -17,7 +17,7 @@ Pod是一个逻辑抽象概念，K8s创建和管理的最小单元，一个Pod�
 tantianran@test-b-k8s-master:~$ kubectl get pods -n test-a
 NAME                         READY   STATUS    RESTARTS        AGE
 goweb-demo-b98869456-25sj9   1/1     Running   1 (3m49s ago)   5d10h
-在READY字段中，1/1的意义为在这个pod里，已准备的容器/一共有多少个容器
+在READY字段中,1/1的意义为在这个pod里,已准备的容器/一共有多少个容器
 ```  
 
 **pod3种类型的容器**  
@@ -28,7 +28,7 @@ goweb-demo-b98869456-25sj9   1/1     Running   1 (3m49s ago)   5d10h
 ## 2. POD内容器间资源共享实现机制
 ### 2.1 共享数据的机制
 + emptyDir  
-  会在Pod被删除的同时也会被删除，当Pod分派到某个节点上时，emptyDir卷会被创建，并且在Pod在该节点上运行期间，卷一直存在。 就像其名称表示的那样，卷最初是空的。 尽管Pod中的容器挂载emptyDir卷的路径可能相同也可能不同，这些容器都可以读写emptyDir卷中相同的文件。 当Pod因为某些原因被从节点上删除时emptyDir卷中的数据也会被永久删除  
+  会在Pod被删除的同时也会被删除,当Pod分派到某个节点上时,emptyDir卷会被创建,并且在Pod在该节点上运行期间,卷一直存在。 就像其名称表示的那样,卷最初是空的。 尽管Pod中的容器挂载emptyDir卷的路径可能相同也可能不同,这些容器都可以读写emptyDir卷中相同的文件。 当Pod因为某些原因被从节点上删除时emptyDir卷中的数据也会被永久删除  
 ```
 apiVersion: v1
 kind: Pod
@@ -53,11 +53,11 @@ volumes:
     sizeLimit: 500Mi
 ```
 + cephfs  
-  cephfs 卷允许你将现存的CephFS卷挂载到Pod中，cephfs卷的内容在Pod被删除时会被保留，只是卷被卸载了。 这意味着cephfs卷可以被预先填充数据，且这些数据可以在Pod之间共享。同一cephfs卷可同时被多个写者挂载   
+  cephfs 卷允许你将现存的CephFS卷挂载到Pod中,cephfs卷的内容在Pod被删除时会被保留,只是卷被卸载了。 这意味着cephfs卷可以被预先填充数据,且这些数据可以在Pod之间共享。同一cephfs卷可同时被多个写者挂载   
 
 ### 2.2 共享网络的机制
-共享网络的机制是由Pause容器实现，下面慢慢分析一下，啥是pause，了解一下它的作用等等。  
-1、先准备一个yaml文件（pod1.yaml ），创建一个pod，pod里包含两个容器，一个是名为nginx1的容器，还有一个是名为bs1的容器  
+共享网络的机制是由Pause容器实现,下面慢慢分析一下,啥是pause,了解一下它的作用等等。  
+1、先准备一个yaml文件（pod1.yaml ）,创建一个pod,pod里包含两个容器,一个是名为nginx1的容器,还有一个是名为bs1的容器  
 ```
 apiVersion: v1
 kind: Pod
@@ -99,9 +99,9 @@ a5331fba7f11   registry.aliyuncs.com/google_containers/pause:latest   "/pause"  
 通过查看容器,名为test-pod1的pod里除了两个业务容器外(k8s_bs1_test-pod1、nginx1_test-pod1)还有一个pause容器,这个到底是什么?  
 
 **对pause容器的理解**  
-- pause容器又叫Infra container，就是基础设施容器的意思，Infra container只是pause容器的一个叫法而已
-- 上面看到paus容器，是从registry.aliyuncs.com/google_containers/pause:latest这个镜像拉起的
-- 在其中一台node节点上查看docker镜像，可看到该镜像的大小是240KB
+- pause容器又叫Infra container,就是基础设施容器的意思,Infra container只是pause容器的一个叫法而已
+- 上面看到paus容器,是从registry.aliyuncs.com/google_containers/pause:latest这个镜像拉起的
+- 在其中一台node节点上查看docker镜像,可看到该镜像的大小是240KB
   ```
   registry.aliyuncs.com/google_containers/pause        latest       350b164e7ae1   8 years ago     240kB
   ```
@@ -110,7 +110,7 @@ a5331fba7f11   registry.aliyuncs.com/google_containers/pause:latest   "/pause"  
 #查看pod里所有容器的名称
 kubectl get pods test-pod1 -o jsonpath={.spec.containers[*].name}
 
-#进入pod里的指定容器的终端，如下进入pod为test-pod1里的容器nginx1和bs1
+#进入pod里的指定容器的终端,如下进入pod为test-pod1里的容器nginx1和bs1
 kubectl exec -it test-pod1 -c nginx1 -- bash
 kubectl exec -it test-pod1 -c bs1 -- sh
 
@@ -119,20 +119,26 @@ kubectl logs test-pod1 -c nginx1
 ```
 ## 4. Pod的重启策略+应用健康检查(应用自修复)
 **pod重启策略** 
-+ Always：当容器终止退出，总是重启容器，默认策略
-+ OnFailure：当容器异常退出（退出状态码非0）时，才重启容器
-+ Never：当容器终止退出，从不重启容器  
++ Always：当容器终止退出,总是重启容器,默认策略
++ OnFailure：当容器异常退出（退出状态码非0）时,才重启容器
++ Never：当容器终止退出,从不重启容器  
 ```
 #查看pod的重启策略
-kubectl get pods test-pod1 -o yaml #找到restartPolicy字段，就是重启策略restartPolicy: Always
+kubectl get pods test-pod1 -o yaml #找到restartPolicy字段,就是重启策略restartPolicy: Always
 ```
-**pod健康检测(健康检查是检查容器里面的服务是否正常)**  
-- livenessProbe(存活探测)：  如果检查失败，将杀死容器，根据pod的restartPolicy来操作。
-- readinessProbe(就绪探测)： 如果检查失败，k8s会把Pod从service endpoints中剔除
-- startupProbe(启动探测)：   检查成功才由存活检查接手，用于保护慢启动容器
+**pod健康检测(健康检查是检查容器里面的服务是否正常)** 
+Kubernetes中探测容器的三种探针  
+Kubernetes探针(Probe)是用于检测容器内部状态的机制有以下三种探针分别是Liveness、Readiness、Startup前两种使用的比较多  
+- livenessProbe(存活探测)：  如果检查失败,将杀死容器,根据pod的restartPolicy来操作 
+  #用于确定容器是否仍在运行;如果容器不响应Liveness Probe则Kubernetes将在重启容器之前将其标记为失败
+- readinessProbe(就绪探测)： 如果检查失败,k8s会把Pod从service endpoints中剔除
+  #用于确定容器是否准备好接收网络流量;如果容器不响应Readiness Probe则Kubernetes将不会将网络流量路由到该容器(通过修改Endpoints)
+- startupProbe(启动探测)：   检查成功才由存活检查接手,用于保护慢启动容器  
+  #如果三个探针同时存在,先执行StartupProbe探针,其他两个探针将会被暂时禁用,直到pod满足StartupProbe探针配置的条件。与LivenessProbe和ReadinessProbe不同,Startup Probe仅在容器启动时运行一次   
+
 
 **支持检测试方法**    
-* httpGet：   发起HTTP请求，返回200-400范围状态码为成功。
+* httpGet：   发起HTTP请求,返回200-400范围状态码为成功。
 * exec：      执行Shell命令返回状态码是0为成功。
 * tcpSocket： 发起TCP Socket建立成功
 
@@ -191,22 +197,22 @@ spec:
     kubelet在容器内执行命令 ls /opt/goweb-demo/runserver来进行探测;如果命令执行成功并且返回值为0,kubelet就会认为这个容器是健康存活的。 
                                                                  如果这个命令返回非0值,kubelet会杀死这个容器并重新启动它
 #验证存活检查的效果
-1.查看某个pod的里的容器，
+1.查看某个pod的里的容器,
 kubectl get pods goweb-demo-686967fd56-556m9 -n test-a -o jsonpath={.spec.containers[*].name}
 2.进入某个pod里的容器
 kubectl exec -it goweb-demo-686967fd56-556m9 -c goweb-demo -n test-a -- bash
-3.进入容器后，手动删除掉runserver可执行文件，模拟故障
+3.进入容器后,手动删除掉runserver可执行文件,模拟故障
 rm -rf /opt/goweb-demo/runserver
-4.查看Pod详情（在输出结果的最下面，有信息显示存活探针失败了，这个失败的容器被杀死并且被重建了。）
+4.查看Pod详情（在输出结果的最下面,有信息显示存活探针失败了,这个失败的容器被杀死并且被重建了。）
 kubectl describe pod goweb-demo-686967fd56-556m9 -n test-a
 Events:
   Type     Reason     Age                   From     Message
   ----     ------     ----                  ----     -------
   Warning  Unhealthy  177m (x6 over 3h59m)  kubelet  Liveness probe failed: ls: cannot access '/opt/goweb-demo/runserver': No such file or directory
-5.一旦失败的容器恢复为运行状态，RESTARTS 计数器就会增加 1
+5.一旦失败的容器恢复为运行状态,RESTARTS 计数器就会增加 1
 tantianran@test-b-k8s-master:~$ kubectl get pods -n test-a
 NAME                          READY   STATUS    RESTARTS      AGE
-goweb-demo-686967fd56-556m9   1/1     Running   1 (22s ago)   13m # RESTARTS字段加1，
+goweb-demo-686967fd56-556m9   1/1     Running   1 (22s ago)   13m # RESTARTS字段加1,
 goweb-demo-686967fd56-8hzjb   1/1     Running   0             13m
   </code></pre>
 </details>
@@ -263,10 +269,10 @@ spec:
   type: NodePort
 #注：在这个配置文件中Pod定义 periodSeconds字段指定了kubelet每隔3秒执行一次存活探测
                              initialDelaySeconds字段告诉kubelet在执行第一次探测前应该等待3秒
-                             kubelet会向容器内运行的服务(服务在监听8090端口)发送一个HTTP GET请求来执行探测。 如果服务器上/login路径下的处理程序返回成功代码，则kubelet认为容器是健康存活的
-                             如果处理程序返回失败代码，则kubelet会杀死这个容器并将其重启。返回大于或等于200并且小于400的任何代码都表示成功，其它返回代码都表示失败。
+                             kubelet会向容器内运行的服务(服务在监听8090端口)发送一个HTTP GET请求来执行探测。 如果服务器上/login路径下的处理程序返回成功代码,则kubelet认为容器是健康存活的
+                             如果处理程序返回失败代码,则kubelet会杀死这个容器并将其重启。返回大于或等于200并且小于400的任何代码都表示成功,其它返回代码都表示失败。
 #验证效果
-1. 进入容器删除静态文件，模拟故障
+1. 进入容器删除静态文件,模拟故障
 kubectl exec -it goweb-demo-586ff85ddb-4646k -c goweb-demo -n test-a -- bash
 rm -rf login.html
 2. 查看pod的log
@@ -286,7 +292,7 @@ html/template: "login.html" is undefined
 3. 查看pod详情
 kubectl describe pod goweb-demo-586ff85ddb-4646k -n test-a
 Warning  Unhealthy  34s (x3 over 40s)   kubelet            Liveness probe failed: HTTP probe failed with statuscode: 500 # 状态码为500
-4. 恢复后查看Pod，RESTARTS计数器已经增1
+4. 恢复后查看Pod,RESTARTS计数器已经增1
 kubectl get pod goweb-demo-586ff85ddb-4646k -n test-a
 NAME                          READY   STATUS    RESTARTS      AGE
 goweb-demo-586ff85ddb-4646k   1/1     Running   1 (80s ago)   5m39s
@@ -294,7 +300,7 @@ goweb-demo-586ff85ddb-4646k   1/1     Running   1 (80s ago)   5m39s
 </details>
 
 3、readinessProbe（就绪探针）结合livenessProbe（存活探针）探测tcp端口  
-第三种类型的存活探测是使用TCP套接字。 使用这种配置时kubelet会尝试在指定端口和容器建立套接字链接。 如果能建立连接，这个容器就被看作是健康的，如果不能则这个容器就被看作是有问题的  
+第三种类型的存活探测是使用TCP套接字。 使用这种配置时kubelet会尝试在指定端口和容器建立套接字链接。 如果能建立连接,这个容器就被看作是健康的,如果不能则这个容器就被看作是有问题的  
 <details>
   <summary>readinessProbe示例</summary>
   <pre><code>
@@ -347,20 +353,20 @@ spec:
   type: NodePort
 #注：TCP检测的配置和HTTP检测非常相似。 这个例子同时使用就绪和存活探针
             kubelet会在容器启动5秒后发送第一个就绪探针。 探针会尝试连接goweb-demo容器的8090端口
-            如果探测成功则Pod会被标记为就绪状态，kubelet将继续每隔10秒运行一次探测。除了就绪探针，这个配置包括了一个存活探针
-            kubelet会在容器启动15秒后进行第一次存活探测。与就绪探针类似，存活探针会尝试连接goweb-demo容器的8090端口。如果存活探测失败，容器会被重新启动
+            如果探测成功则Pod会被标记为就绪状态,kubelet将继续每隔10秒运行一次探测。除了就绪探针,这个配置包括了一个存活探针
+            kubelet会在容器启动15秒后进行第一次存活探测。与就绪探针类似,存活探针会尝试连接goweb-demo容器的8090端口。如果存活探测失败,容器会被重新启动
 #验证效果
-1. 进入容器后，杀掉goweb-demo的进程
+1. 进入容器后,杀掉goweb-demo的进程
 kubectl exec -it goweb-demo-5d7d55f846-vm2kc -c goweb-demo -n test-a -- bash
 root@goweb-demo-5d7d55f846-vm2kc:/opt/goweb-demo# ps -aux
 USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
 root           1  0.0  0.0   2476   576 ?        Ss   07:23   0:00 /bin/sh -c /opt/goweb-demo/runserver
 root@goweb-demo-5d7d55f846-vm2kc:/opt/goweb-demo# kill -9 1
-2. 查看pod详情，已经发出警告
+2. 查看pod详情,已经发出警告
 kubectl describe pod goweb-demo-5d7d55f846-vm2kc -n test-a
   Warning  Unhealthy  16s                 kubelet            Readiness probe failed: dial tcp 10.244.240.48:8090: connect: connection refused
   Warning  BackOff    16s                 kubelet            Back-off restarting failed container
-3. 查看pod，RESTARTS计数器已经增加为2，因为有两个探针
+3. 查看pod,RESTARTS计数器已经增加为2,因为有两个探针
 kubectl get pod -n test-a
 NAME                          READY   STATUS    RESTARTS        AGE
 goweb-demo-5d7d55f846-vm2kc   1/1     Running   2 (2m55s ago)   12m
@@ -368,8 +374,8 @@ goweb-demo-5d7d55f846-vm2kc   1/1     Running   2 (2m55s ago)   12m
 </details>
 
 4、startupProbe（启动探针）保护慢启动容器  
-有一种情景是这样的，某些应用在启动时需要较长的初始化时间。要这种情况下，若要不影响对死锁作出快速响应的探测，设置存活探测参数是要技巧  
-技巧就是使用相同的命令来设置启动探测，针对HTTP或TCP检测，可以通过将failureThreshold * periodSeconds参数设置为足够长的时间来应对糟糕情况下的启动时间  
+有一种情景是这样的,某些应用在启动时需要较长的初始化时间。要这种情况下,若要不影响对死锁作出快速响应的探测,设置存活探测参数是要技巧  
+技巧就是使用相同的命令来设置启动探测,针对HTTP或TCP检测,可以通过将failureThreshold * periodSeconds参数设置为足够长的时间来应对糟糕情况下的启动时间  
 <details>
   <summary>startupProbe示例</summary>
   <pre><code> 
@@ -424,13 +430,13 @@ spec:
   type: NodePort
 
 #注 应用程序将会有最多5分钟（30 * 10 = 300s）的时间来完成其启动过程
-     一旦启动探测成功一次，存活探测任务就会接管对容器的探测，对容器死锁作出快速响应
-     如果启动探测一直没有成功，容器会在300秒后被杀死，并且根据restartPolicy来执行进一步处置
+     一旦启动探测成功一次,存活探测任务就会接管对容器的探测,对容器死锁作出快速响应
+     如果启动探测一直没有成功,容器会在300秒后被杀死,并且根据restartPolicy来执行进一步处置
  </code></pre>
 </details>
 
 ## 5. 环境变量
-创建Pod时，可以为其下的容器设置环境变量。通过配置文件的env或者envFrom字段来设置环境变量  
+创建Pod时,可以为其下的容器设置环境变量。通过配置文件的env或者envFrom字段来设置环境变量  
 **应用场景**  
 + 容器内应用程序获取pod信息
 + 容器内应用程序通过用户定义的变量改变默认行为
@@ -442,7 +448,7 @@ spec:
 <details>
   <summary>POD-ENV示例</summary>
   <pre><code> 
-设置自定义变量，使用env给pod里的容器设置环境变量，本例子中，设置了环境变量有SAVE_TIME、MAX_CONN、DNS_ADDR  
+设置自定义变量,使用env给pod里的容器设置环境变量,本例子中,设置了环境变量有SAVE_TIME、MAX_CONN、DNS_ADDR  
 apiVersion: v1
 kind: Pod
 metadata:
@@ -460,7 +466,7 @@ spec:
       value: "8.8.8.8"
 
 #开始创建POD kubectl create -f test-env.yaml
-#创建后，验证环境变量是否能获取到(使用printenv打印环境变量) kubectl exec test-env-demo -- printenv
+#创建后,验证环境变量是否能获取到(使用printenv打印环境变量) kubectl exec test-env-demo -- printenv
 PATH=/go/bin:/usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 HOSTNAME=test-env-demo
 SAVE_TIME=60 # 这个是
@@ -510,7 +516,7 @@ _=/usr/bin/env
 <details>
   <summary>POD_ENV(使用容器字段作为环境变量的值)</summary>
   <pre><code> 
-例子设置了资源限制的字段requests和limits，在设置环境变量中，使用资源限制的值作为了变量的值
+例子设置了资源限制的字段requests和limits,在设置环境变量中,使用资源限制的值作为了变量的值
 apiVersion: v1
 kind: Pod
 metadata:
@@ -572,13 +578,13 @@ HOME=/root
 **初始化容器的特点**  
 - Init容器是一种特殊容器,在Pod内,会在应用容器启动之前运行
 - 如果Pod的Init容器失败,kubelet会不断地重启该Init容器,直到该容器成功为止
-- 如果Pod对应的restartPolicy值为 "Never"，并且Pod的Init容器失败,则Kubernetes会将整个Pod状态设置为失败
+- 如果Pod对应的restartPolicy值为 "Never",并且Pod的Init容器失败,则Kubernetes会将整个Pod状态设置为失败
 - 如果为一个Pod指定了多个Init容器,这些容器会按顺序逐个运行。每个Init容器必须运行成功,下一个才能够运行
 - Init容器不支持探针包括lifecycle、livenessProbe、readinessProbe和startupProbe  
 <details>
   <summary>init-check</summary>
   <pre><code> 
-假设应用容器是依赖数据库的，如果数据库没起来，那么应用容器就算起来了也是服务不可用。所以，现在的主要目的是想在应用容器启动之前检查mysql服务器的IP地址是否可ping通，如果是通的才启动应用容器。这个例子应该是比较贴近实际场景了  
+假设应用容器是依赖数据库的,如果数据库没起来,那么应用容器就算起来了也是服务不可用。所以,现在的主要目的是想在应用容器启动之前检查mysql服务器的IP地址是否可ping通,如果是通的才启动应用容器。这个例子应该是比较贴近实际场景了  
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -621,18 +627,18 @@ spec:
     app: goweb-demo
   type: NodePort
 
-mysql服务器故意没拉起，看看效果
+mysql服务器故意没拉起,看看效果
 kubectl get pods -n test-a
 NAME                          READY   STATUS                  RESTARTS      AGE
 goweb-demo-859cc77bd5-jpcfs   0/1     Init:CrashLoopBackOff   3 (34s ago)   2m11s
 goweb-demo-859cc77bd5-n8hqd   0/1     Init:CrashLoopBackOff   3 (33s ago)   2m11s
 goweb-demo-859cc77bd5-sns67   0/1     Init:CrashLoopBackOff   3 (34s ago    2m11s
-观察STATUS字段发现，它经历了3个阶段，第一阶段是正常的运行，也就是执行ping检查的操作，因为死活Ping不同
-所以进入了第二阶段，状态为Error。
-紧接着是第三阶段，状态变成了CrashLoopBackOff，对于这个状态，我的理解是，初始化容器运行失败了，准备再次运行
+观察STATUS字段发现,它经历了3个阶段,第一阶段是正常的运行,也就是执行ping检查的操作,因为死活Ping不同
+所以进入了第二阶段,状态为Error。
+紧接着是第三阶段,状态变成了CrashLoopBackOff,对于这个状态,我的理解是,初始化容器运行失败了,准备再次运行
 它就会的状态就会一直这样：运行->Error->CrashLoopBackOff。当然这种情况是当Pod对应的restartPolicy为"Always"（这是默认策略）才会这样不断的循环检查
-如果Pod对应的restartPolicy值为"Never"，并且Pod的 Init容器失败，则Kubernetes会将整个Pod状态设置为失败。
-#当我把mysql服务器启动后，初始化容器执行成功，那么应用容器也就成功起来
+如果Pod对应的restartPolicy值为"Never",并且Pod的 Init容器失败,则Kubernetes会将整个Pod状态设置为失败。
+#当我把mysql服务器启动后,初始化容器执行成功,那么应用容器也就成功起来
 kubectl get pods -n test-a
 NAME                          READY   STATUS    RESTARTS   AGE
 goweb-demo-859cc77bd5-jpcfs   1/1     Running   0          30m
@@ -645,11 +651,11 @@ goweb-demo-859cc77bd5-sns67   1/1     Running   0          30m
 在实际工作中,静态Pod的应用场景是毕竟少的,几乎没有。不过也还是得对它做一个简单的了解。静态Pod在指定的节点上由kubelet守护进程直接管理,不需要API服务器监管。与由控制面管理的Pod(如Deployment) 不同；  
 kubelet监视每个静态Pod(在它失败之后重新启动)静态Pod始终都会绑定到特定节点的Kubelet上  
 
-在每个node节点上kubelet的守护进程会自动在/etc/kubernetes/manifests/路径下发现yaml,因此如果想要创建静态Pod，就得把yaml放到该目录，下面我们直接实战一下
+在每个node节点上kubelet的守护进程会自动在/etc/kubernetes/manifests/路径下发现yaml,因此如果想要创建静态Pod,就得把yaml放到该目录,下面我们直接实战一下
 <details>
   <summary>静态pod使用方法</summary>
   <pre><code> 
-随便登录到某台node节点，然后创建/etc/kubernetes/manifests/static_pod.yaml
+随便登录到某台node节点,然后创建/etc/kubernetes/manifests/static_pod.yaml
 apiVersion: v1
 kind: Pod
 metadata:
@@ -663,7 +669,7 @@ spec:
 NAME                                READY   STATUS    RESTARTS   AGE
 test-static-pod-test-b-k8s-node01   1/1     Running   0          11s
 通过上面的输出结果可以看到,该静态pod已经在节点test-b-k8s-node01上面正常运行了
-说明kubelet守护进程已经自动发现并创建了它。你可能会问，它不是不需要API服务器监管吗？为啥在master节点能看到它？
+说明kubelet守护进程已经自动发现并创建了它。你可能会问,它不是不需要API服务器监管吗？为啥在master节点能看到它？
 因为kubelet会尝试通过Kubernetes API服务器为每个静态Pod自动创建一个镜像Pod这意味着节点上运行的静态Pod对API服务来说是可见的,但是不能通过API服务器来控制
 且Pod名称将把以连字符开头的节点主机名作为后缀。
   </code></pre>
