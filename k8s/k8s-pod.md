@@ -126,13 +126,13 @@ kubectl logs test-pod1 -c nginx1
 #查看pod的重启策略
 kubectl get pods test-pod1 -o yaml #找到restartPolicy字段,就是重启策略restartPolicy: Always
 ```
-**pod健康检测(健康检查是检查容器里面的服务是否正常)** 
+**pod健康检测(健康检查是检查容器里面的服务是否正常)**   
 Kubernetes中探测容器的三种探针  
 Kubernetes探针(Probe)是用于检测容器内部状态的机制有以下三种探针分别是Liveness、Readiness、Startup前两种使用的比较多  
-- livenessProbe(存活探测)：  如果检查失败,将杀死容器,根据pod的restartPolicy来操作 
-  #用于确定容器是否仍在运行;如果容器不响应Liveness Probe则Kubernetes将在重启容器之前将其标记为失败
-- readinessProbe(就绪探测)： 如果检查失败,k8s会把Pod从service endpoints中剔除
-  #用于确定容器是否准备好接收网络流量;如果容器不响应Readiness Probe则Kubernetes将不会将网络流量路由到该容器(通过修改Endpoints)
+- livenessProbe(存活探测)：  如果检查失败,将杀死容器,根据pod的restartPolicy来操作   
+  #用于确定容器是否仍在运行;如果容器不响应Liveness Probe则Kubernetes将在重启容器之前将其标记为失败  
+- readinessProbe(就绪探测)： 如果检查失败,k8s会把Pod从service endpoints中剔除  
+  #用于确定容器是否准备好接收网络流量;如果容器不响应Readiness Probe则Kubernetes将不会将网络流量路由到该容器(通过修改Endpoints)  
 - startupProbe(启动探测)：   检查成功才由存活检查接手,用于保护慢启动容器  
   #如果三个探针同时存在,先执行StartupProbe探针,其他两个探针将会被暂时禁用,直到pod满足StartupProbe探针配置的条件。与LivenessProbe和ReadinessProbe不同,Startup Probe仅在容器启动时运行一次   
 
