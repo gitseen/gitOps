@@ -130,11 +130,16 @@ kubectl get pods test-pod1 -o yaml #找到restartPolicy字段,就是重启策略
 Kubernetes中探测容器的三种探针  
 Kubernetes探针(Probe)是用于检测容器内部状态的机制有以下三种探针分别是Liveness、Readiness、Startup前两种使用的比较多  
 - livenessProbe(存活探测)：  如果检查失败,将杀死容器,根据pod的restartPolicy来操作   
-  #用于确定容器是否仍在运行;如果容器不响应Liveness Probe则Kubernetes将在重启容器之前将其标记为失败  
+  #用于确定容器是否仍在运行;如果容器不响应LivenessProbe则Kubernetes将在重启容器之前将其标记为失败  
+  #常用于检测容器内部的应用程序状态;如果LivenessProbe失败,Kubernetes将重启该容器;这对于检测容器内存泄漏、死锁和其他常见问题非常有用   
+
 - readinessProbe(就绪探测)： 如果检查失败,k8s会把Pod从service endpoints中剔除  
-  #用于确定容器是否准备好接收网络流量;如果容器不响应Readiness Probe则Kubernetes将不会将网络流量路由到该容器(通过修改Endpoints)  
+  #用于确定容器是否准备好接收网络流量;如果容器不响应ReadinessProbe则Kubernetes将不会将网络流量路由到该容器(通过修改Endpoints)  
+  #常用于检测应用程序是否已完成启动和初始化过程;如果ReadinessProbe失败，Kubernetes将停止将网络流量路由到该容器，直到它再次响应探测请求    
+
 - startupProbe(启动探测)：   检查成功才由存活检查接手,用于保护慢启动容器  
-  #如果三个探针同时存在,先执行StartupProbe探针,其他两个探针将会被暂时禁用,直到pod满足StartupProbe探针配置的条件。与LivenessProbe和ReadinessProbe不同,Startup Probe仅在容器启动时运行一次   
+  #如果三个探针同时存在,先执行StartupProbe探针,其他两个探针将会被暂时禁用,直到pod满足StartupProbe探针配置的条件,与LivenessProbe和ReadinessProbe不同,StartupProbe仅在容器启动时运行一次  
+  #常用于确定容器是否已经启动并准备好接收请求。与LivenessProbe和ReadinessProbe不同，StartupProbe仅在容器启动时运行一次，因此它适用于应用程序需要长时间启动的情况。如果StartupProbe失败，Kubernetes将重启该容器  
 
 
 **支持检测试方法**    
