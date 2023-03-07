@@ -70,7 +70,7 @@ spec:
 需要注意的是,主机路径存储卷会将主机上的目录直接挂载到容器中,因此可能会存在安全风险和数据共享的问题。在使用时需要注意权限控制和数据隔离 
   </code></pre>
 </details>
-下面是一个使用主机路径存储卷存储日志文件的示例YAML文件  
+
 ## 3、持久化存储卷(PersistentVolume & Persistent Volume Claim)
 持久化存储卷(PersistentVolume)持久化存储卷。它用来描述或者说用来定义一个存储卷,代表一个独立的存储资源。PV 通常代表一个存储卷,PVC与PV是一一对应关系,通常一个PV必须被Bound到一个PVC上,才能被Pod访问和使用  
 <details>
