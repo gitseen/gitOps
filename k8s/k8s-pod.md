@@ -453,9 +453,10 @@ spec:
      如果启动探测一直没有成功,容器会在300秒后被杀死,并且根据restartPolicy来执行进一步处置
  </code></pre>
 </details>
-[探针-路多辛](https://www.toutiao.com/article/7206670428587164192/)  
-[kubernetes官方文档](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)   
 
+[探针-路多辛](https://www.toutiao.com/article/7206670428587164192/)  
+ 
+[kubernetes官方文档](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)   
 
 
 ## 5. 环境变量
