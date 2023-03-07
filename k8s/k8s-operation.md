@@ -304,7 +304,39 @@ cat config|grep "zzjz-test"
   name: zzjz-test-k8s-admin@kubernetes
 current-context: zzjz-test-k8s-admin@kubernetes
 - name: zzjz-test-k8s-admin
-```  
+```
+
+**如何为Kubectl配置对多个群集的访问**  
+
+默认情况下kubectl将使用.kube文件夹中的配置
+```
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority: fake-ca-file
+    server: https://1.2.3.4
+  name: development
+  contexts:
+- context:
+    cluster: development
+        namespace: frontend
+            user: developer
+              name: dev-frontend
+current-context: ""
+kind: Config
+preferences: {}
+users:
+- name: developer
+  user:
+    client-certificate: fake-cert-file
+    client-key: fake-key-seefile
+kubectl config --kubeconfig=config set-cluster development --server=https://1.2.3.4 --certificate-authority=fake-ca-file
+kubectl config --kubeconfig=config set-context dev-frontend --cluster=development --namespace=frontend --user=developer
+kubectl config --kubeconfig=config set-credentials developer --client-certificate=fake-cert-file --client-key=fake-key-seefile
+KUBECONFIG=~/.kube/cluster-a/config:.kube/cluster-b/config:.kube/cluster-c/config kubectl config view --merge --flatten > ~/.kube/config
+kubectl config get-contexts
+```
+ 
 ---
 
 # Kubernetes日常运维工作中常用的命令
