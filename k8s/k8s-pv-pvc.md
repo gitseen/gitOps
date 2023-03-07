@@ -9,7 +9,7 @@
 - 4、动态存储卷(Dynamic Volume Provisioning)  
      它用存储插件动态创建存储卷,将存储资源与应用程序分离;可以根据需要自动创建和删除存储资源,节约资源
 
-## 空白存储卷(EmptyDir)
+## 1、空白存储卷(EmptyDir)
 空白存储卷(EmptyDir)它是一种临时性的存储卷,适用于需要在容器内部传递数据的场景。例如,当一个容器需要向另一个容器传递一些数据时,可以使用空白存储卷来实现  
 <details>
   <summary>k8s-EmptyDir</summary>
@@ -42,7 +42,7 @@ spec:
   </code></pre>
 </details>
 
-## 主机路径存储卷(HostPath)
+## 2、主机路径存储卷(HostPath)
 主机路径存储卷(HostPath)将主机的目录挂载到容器中,可以用来存储一些应用程序的数据。例如,我们可以使用主机路径存储卷来存储应用程序的日志文件、配置文件等  
 <details>
   <summary>k8s-HostPath</summary>
@@ -71,7 +71,7 @@ spec:
   </code></pre>
 </details>
 下面是一个使用主机路径存储卷存储日志文件的示例YAML文件  
-## 持久化存储卷(PersistentVolume & Persistent Volume Claim)
+## 3、持久化存储卷(PersistentVolume & Persistent Volume Claim)
 持久化存储卷(PersistentVolume)持久化存储卷。它用来描述或者说用来定义一个存储卷,代表一个独立的存储资源。PV 通常代表一个存储卷,PVC与PV是一一对应关系,通常一个PV必须被Bound到一个PVC上,才能被Pod访问和使用  
 <details>
   <summary>k8s-pv-pvc</summary>
@@ -133,7 +133,7 @@ spec:
 </details>
 
 
-## 动态存储卷(Dynamic Volume Provisioning)
+## 4、动态存储卷(Dynamic Volume Provisioning)
 一个大规模的Kubernetes集群里很可能有成千上万个PVC,这就意味着运维人员必须得事先创建出成千上万个PV;更麻烦的是,随着新的PVC不断被提交,运维人员就不得不继续添加新的、能满足条件的PV,否则新的Pod就会因为PVC绑定不到PV而失败   
 在实际操作中,这几乎没办法靠人工做到  
 
