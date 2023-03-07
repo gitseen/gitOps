@@ -161,3 +161,5 @@ BestEffort是服务等级最低的情况，只要具备空闲cpu或空闲内存�
 kubectl --namespace=default get pod nginx-7db9fccd9b-k8czd -o jsonpath='{ .status.qosClass}{"\n"}'
 kubectl describe pod nginx-7db9fccd9b-k8czd |grep "QoS Class" 
 ```
+# [Resource-Quotas](https://www.toutiao.com/article/7199078869490696715/)  
+
