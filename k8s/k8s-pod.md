@@ -157,6 +157,9 @@ Kubernetes探针(Probe)是用于检测容器内部状态的机制有以下三种
 * httpGet：   发起HTTP请求,返回200-400范围状态码为成功。
 * exec：      执行Shell命令返回状态码是0为成功。
 * tcpSocket： 发起TCP Socket建立成功
+* grpc：      通过容器的IP地址和端口,发起一个grpc请求（前提是服务实现了grpc健康检查协议）,返回服务健康的结果正常则认为服务是健康的 
+
+
 
 **案例实战**  
 
@@ -450,6 +453,10 @@ spec:
      如果启动探测一直没有成功,容器会在300秒后被杀死,并且根据restartPolicy来执行进一步处置
  </code></pre>
 </details>
+[探针-路多辛](https://www.toutiao.com/article/7206670428587164192/)  
+[kubernetes官方文档](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)   
+
+
 
 ## 5. 环境变量
 创建Pod时,可以为其下的容器设置环境变量。通过配置文件的env或者envFrom字段来设置环境变量  
