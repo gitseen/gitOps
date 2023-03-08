@@ -1,4 +1,4 @@
-[Helm官网](https://v3.helm.sh/zh/docs/）  
+[Helm官网](https://v3.helm.sh/zh/docs/)  
 
 [Helm官方的chart站点](https://hub.kubeapps.com/)  
 
