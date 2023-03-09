@@ -339,4 +339,5 @@ ansible-playbook -i inventory git.yml
 </details>
 
 
+[Ansible-playbook语法-朴实清风29](https://www.toutiao.com/article/7207664778704159271/)  
 
