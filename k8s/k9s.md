@@ -1,4 +1,5 @@
-# K9S安装及使用
+# [K9S](https://www.toutiao.com/article/7207741220553392679)  
+
 Kubernetes通常称为K8s  
 K8s(是将8个字母"ubernete"替换为"8"的缩写)  
 是用于自动部署、扩展和管理容器化（containerized）应用程序的开源系统  
