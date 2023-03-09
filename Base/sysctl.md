@@ -54,11 +54,11 @@ sysctl [-n] [-e] -a
 命令,所设置的值即会丢失,如果想永久保留配置,可以修改/etc/sysctl.conf文件,将 net.ipv4.ip_forward=0改为net.ipv4.ip_forward=1
 ```
 ## linux内核参数调整有两种方式
-- 修改/proc下内核参数文件内容 
+- 修改/proc下内核参数文件内容   
   不能使用编辑器来修改内核参数文件,理由是由于内核随时可能更改这些文件中的任意一个,另外,这些内核参数文件都是虚拟文件,实际中不存在,因此不能使用编辑器进行编辑,而是使用echo命令,然后从命令行将输出重定向至/proc下所选定的文件中。如将timeout_timewait参数设置为30秒  
   echo 30 > /proc/sys/net/ipv4/tcp_fin_timeout  
   参数修改后立即生效,但是重启系统后,该参数又恢复成默认值。因此,想永久更改内核参数,需要修改/etc/sysctl.conf文件  
-- 修改/etc/sysctl.conf文件
+- 修改/etc/sysctl.conf文件  
   检查sysctl.conf文件,如果已经包含需要修改的参数,则修改该参数的值,如果没有需要修改的参数,在sysctl.conf文件中添加参数  
   如net.ipv4.tcp_fin_timeout=30保存退出后,可以重启机器使参数生效,如果想使参数马上生效,也可以执行如下命令sysctl -p  
 
