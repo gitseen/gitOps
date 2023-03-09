@@ -185,6 +185,7 @@ cat /proc/net/ip_conntrack | perl -pe s/^\(.*?\)src/src/g | cut -d ' ' -f1 | cut
 # [linux内核参数优化](https://blog.51cto.com/liuzhengwei521/2311250)  
 ![sysctl](https://s2.51cto.com/images/blog/201901/18/5b3b0289ea4af2db3726919bb984dc2a.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_30,g_se,x_10,y_10,shadow_20,type_ZmFuZ3poZW5naGVpdGk=/format,webp/resize,m_fixed,w_1184)  
 
- 
+[Linux内核优化参数](https://www.cnblogs.com/struggle-1216/p/12901341.html)  
+[linux系统参数调优分类](https://blog.csdn.net/wuxiaobingandbob/article/details/98942294)  
 
 
