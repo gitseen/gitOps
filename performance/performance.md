@@ -97,3 +97,10 @@ DAU通常统计一日（统计日）之内,登录或使用了某个产品的用�
 MAU(Month Active User)：月活跃用户数量,指网站、app等去重后的月活跃用户数量
 
 [QPS-TPS](https://www.toutiao.com/article/7207741049845039627/)  
+
+***
+# 磁盘性能测试工具
+[对磁盘的性能进行压力测试](https://www.toutiao.com/article/6724696003426910734/?channel=&source=news)  
+[Linux下系统 I/O 性能分析的套路](https://www.toutiao.com/article/7153898892965577250/?channel=&source=news)  
+[基于Linux测试磁盘IO性能--dd、fio、iozone](https://www.toutiao.com/article/6715399260579299853)  
+[性能：磁盘读写原理、分类与性能指标](https://www.toutiao.com/article/7175404072810349056/?channel=&source=news)
