@@ -21,12 +21,13 @@ tar -zxvf k9s_Linux_amd64.tar.gz -C /usr/local/bin
 ```
 
 # 使用k9s管理工具
+```
 k9s help   #启动k9s
 k9s info   
 k9s context name
 k9s -n namespace
 k9s --readonly
-
+```
 # Readme
 <img src="assets/k9s.png" alt="k9s">
 
