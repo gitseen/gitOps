@@ -65,14 +65,14 @@ kubectl delete -f xxx.yaml
 - 套路3：通过命令行来获取，也是有2个方式，一是利用尝试运行（--dry-run）的机制再配合-o来输出一个yaml文件），二是通过get来得到yaml文件，得到yaml文件后再自行修改  
 下面演示通过create来得到yaml   
 ```
-# 在kubectl级别上进行验证
+#在kubectl级别上进行验证
 kubectl create deployment web1 --image=nginx --replicas=5 --dry-run=client
 
-# 指的是提交到apiserver进行验证
+#指的是提交到apiserver进行验证
 kubectl create deployment web1 --image=nginx --replicas=5 --dry-run=server
 
-# 下面来一个deployment的例子，得到其他资源的yaml也是这个套路
-tantianran@test-b-k8s-master:~$ kubectl create deployment web1 --image=nginx --replicas=5 --dry-run=client -o yaml
+#下面来一个deployment的例子，得到其他资源的yaml也是这个套路
+kubectl create deployment web1 --image=nginx --replicas=5 --dry-run=client -o yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -98,7 +98,7 @@ spec:
         resources: {}
 status: {}
 
-# 还可以配合重定向输出到yaml文件
+#还可以配合重定向输出到yaml文件
 kubectl create deployment web1 --image=nginx --replicas=5 --dry-run=client -o yaml > test.yaml
 ```
 下面演示通过get命令来得到yaml文件，使用-o来指定yaml的格式输出，其他资源也是这个套路  
@@ -107,15 +107,24 @@ kubectl get pods -n test-a -o yaml
 ```
 编写yaml的时候，字段名太多记不住或者想不起来怎么办？可以使用explain来查看字段层级  
 ```
-# 找第一级
+#找第一级
 kubectl explain deployment
 
-# 找第二级
+#找第二级
 kubectl explain deployment.spec
 
-# 再比如查pod相关的
+#再比如查pod相关的
 kubectl explain pods.spec.containers
 ```
+#实例  
+```
+kubectl create deploy mynginx --image=nginx:1.14
+kubectl create deploy mynginx --image=nginx:1.14 -o yaml --dry-run=client > mynginx.yaml
+kubectl expose deploy mynginx --port=80 --type=NodePort
+kubectl expose deploy mynginx --port=80 --type=NodePort -o yaml --dry-run=client > expose.yaml
+
+```
+
 ##3. 应用生命周期管理
 deployment是最常用的k8s工作负载控制器Workload Controllers是k8s的一个抽象概念，用于更高级层次对象，部署和管理Pod，卡控制器还有DaemonSet、StatefulSet等  
 应用生命周期管理流程  
