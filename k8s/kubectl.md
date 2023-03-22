@@ -48,7 +48,7 @@ kubectl get pods -o custom-columns='NAME:metadata.name,IMAGES:spec.containers[*]
 kubectl plugin [list]  #list安装后可显示
 插件列表：
 kubectl-tree #(可以使用kubectl-tree OR kubectl tree来执行) #https://www.toutiao.com/article/7199078869490696715/
-kubectl-krew
+kubectl-krew  #kubectl krew插件获取resource-capacity #https://www.toutiao.com/article/7213178836983398972  
 kubectl-sniff
 kubectl-crossplane
 kubectl-argo-rollouts
