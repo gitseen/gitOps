@@ -321,3 +321,80 @@ spec:
 [KEDA相关](https://github.com/kedacore/keda  https://keda.sh/)  
 
 
+# HPA、Deployment、Service、Pod关系
+
+## HPA、Deployment、Pod关系
+Deployment配置清单  
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: php-apache
+spec:
+  selector:
+    matchLabels:
+      run: php-apache
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        run: php-apache
+    spec:
+      containers:
+      - name: php-apache
+        image: registry.k8s.io/hpa-example
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: 500m
+          requests:
+            cpu: 200m
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: php-apache
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: php-apache
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 50
+
+```
+如上图，可以看到HPA、Deployment（ReplicaSet）、Pod之间的层级关系  
+![tt](https://p3-sign.toutiaoimg.com/tos-cn-i-qvj2lq49k0/ebfbea63910b4221bacaa75ba101f473~noop.image?_iz=58558&from=article.pc_detail&x-expires=1679879043&x-signature=i1XQMR1cIaKyOpmPOtzLwF7muUM%3D)  
+
+## Service、Pod关系
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: php-apache
+  labels:
+    run: php-apache
+spec:
+  ports:
+  - port: 80
+  selector:
+    run: php-apache
+
+```  
+
+可以看出Service与Pod之间是如何匹配
+![cv](https://p3-sign.toutiaoimg.com/tos-cn-i-qvj2lq49k0/2ee68ab212d349148d0cdf350937addc~noop.image?_iz=58558&from=article.pc_detail&x-expires=1679879043&x-signature=VbDxqimjoQ9Mwh%2B3BjW6O3PHxZQ%3D)  
+   
+
+[k8s-零壹问道](https://www.toutiao.com/article/7208869661071573565/)  
+
+
+
