@@ -233,3 +233,71 @@ error_log
 file：指定日志文件存储的文件
 level：日志级别，可选包括debug, info, notice, warn, error, crit, alert, emerg
 一般生产环境会使用 warn、error或crit三个选择一个。
+
+基本配置
+```
+user nginx;  # Nginx 进程的运行用户
+worker_processes auto;  # Nginx 进程的数量，一般设置为 CPU 核数
+pid /var/run/nginx.pid;  # Nginx 进程 ID 文件的位置
+
+events {
+    worker_connections 1024;  # 每个 worker 进程可处理的连接数
+    use epoll;  # 使用 epoll 模型来处理连接
+    multi_accept on;  # 开启多路复用，一个 worker 进程可以同时处理多个连接
+}
+
+http {
+    include /etc/nginx/mime.types;  # 定义 MIME 类型
+    default_type application/octet-stream;  # 默认 MIME 类型
+    sendfile on;  # 开启 sendfile，使用系统调用来传输文件
+    keepalive_timeout 65;  # 连接空闲时间超过该值将被关闭
+    server_tokens off;  # 关闭服务器版本号的显示
+    gzip on;  # 开启 gzip 压缩
+    gzip_types text/plain text/css application/json application/javascript;
+    # 定义可以压缩的 MIME 类型
+         include /etc/nginx/conf.d/*.conf;  # 包含额外的配置文件
+}
+   
+```
+
+虚拟主机配置
+```
+server {
+    listen 80;  # 监听端口号
+    server_name example.com;  # 绑定域名
+    access_log /var/log/nginx/example.com.access.log;  # 访问日志文件
+    error_log /var/log/nginx/example.com.error.log;  # 错误日志文件
+    root /usr/share/nginx/html;  # 根目录
+    index index.html;  # 默认首页
+
+    location / {
+        try_files $uri $uri/ /index.html;  # 优先匹配文件或目录，否则返回 index.html
+    }
+
+    location /api/ {
+        proxy_pass http://127.0.0.1:8080/;  # 反向代理到本地的 API 服务器
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+```
+
+SSL/TLS 配置
+```
+server {
+    listen 443 ssl;
+    server_name example.com;
+    ssl_certificate /etc/nginx/certs/example.com.crt;
+    ssl_certificate_key /etc/nginx/certs/example.com.key;
+    ssl_session_timeout 5m;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH;
+    ssl_prefer_server_ciphers on;
+    add_header Strict-Transport-Security "max-age=31536000" always;
+    location / {
+        ...
+    }
+}
+```
+
+
