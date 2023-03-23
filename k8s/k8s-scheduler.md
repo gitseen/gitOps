@@ -6,7 +6,7 @@
   - pod反亲和性podAntiAffinity  
 
 进入主题之前,先看看创建pod的大概过程  
-![创建pod流程](https://p3-sign.toutiaoimg.com/tos-cn-i-qvj2lq49k0/01235649687f49ab9c753705c94ec72c~noop.image?_iz=58558&from=article.pc_detail&x-expires=1678325352&x-signature=UV6Rxxr5pBaRgksqFDMfeddJI34%3D)  
+![创建pod流程](https://p3-sign.toutiaoimg.com/tos-cn-i-qvj2lq49k0/01235649687f49ab9c753705c94ec72c~noop.image?_iz=58558&from=article.pc_detail&x-expires=1680141269&x-signature=E%2B%2BO60EUmurXwO%2BO6h0bS%2Fal9JE%3D)  
 ```
 1、kubectl向apiserver发起创建pod请求,apiserver将创建pod配置写入etcd
 2、scheduler收到apiserver有新pod的事件,scheduler根据自身调度算法选择一个合适的节点,并打标记pod=test-b-k8s-node01
@@ -36,7 +36,7 @@ k8s的各个组件是基于list-watch机制进行交互的,了解了list-watch�
 >>实际工作中,可能会有这样的情况,需要进一步控制Pod被部署到哪个节点
 例如,确保某些Pod最终落在具有SSD硬盘的主机上,又需要确保某些pod落在具体部门的主机上运行,这时就可以使用标签选择器来进行选择  
  
-![eg](https://p3-sign.toutiaoimg.com/tos-cn-i-qvj2lq49k0/cdd26b016dd942f4924d0958a0ce07b6~noop.image?_iz=58558&from=article.pc_detail&x-expires=1678325352&x-signature=kovHYav8gbx2iTSDAtaXrtyFrQ4%3D) 
+![eg](https://p3-sign.toutiaoimg.com/tos-cn-i-qvj2lq49k0/cdd26b016dd942f4924d0958a0ce07b6~noop.image?_iz=58558&from=article.pc_detail&x-expires=1680141269&x-signature=w8dCnjlw406IrypgDZBTPNaeNr8%3D)  
 
 - nodeSelector：通过它可以将pod指派到具有特定标签的节点上,nodeSelector只能选择指定标签的节点,它属于强制性的,如果标签不小心写错则无法调度
 - nodeAffinity：节点亲和性有以下两种,它的表达能力更强,允许指定软规则,提供了对选择逻辑更强的控制能力,operator字段支持In、NotIn、Exists、DoesNotExist、Gt和Lt,
@@ -244,4 +244,5 @@ node/test-b-k8s-node02 unlabeled
 </details>
 
 
-[不背锅运维-k8s调度之初探](https://www.google.com/)
+[不背锅运维-k8s调度之初探](https://www.toutiao.com/article/7205499274883727927/?log_from=b4eecc0a67019_1679536467971)  
+
