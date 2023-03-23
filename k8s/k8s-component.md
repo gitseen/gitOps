@@ -20,11 +20,11 @@ Kubernetes集群是主从架构
 ![lt](http://ningg.top/images/kubernetes-series/k8s-cluster-arch.png) 
 
 - Master管理节点,集群的控制和调度(管理整个Kubernetes集群,接收外部命令,维护集群状态)
-  * kube-apiserver(Kubernetes API Server)
+  * **kube-apiserver(Kubernetes API Server)**  
     - 集群控制的入口
     - 资源的增删改查,持久化存储到etcd
     - kubectl直接与API Server交互,默认端口6443
-  * kube-controller-manager(所有资源的自动化控制中心)
+  * **kube-controller-manager(所有资源的自动化控制中心)**   
     - 每个资源,都对应有一个控制器
     - controller manager管理这些控制器
     - controller manager是自动化的循环控制器
