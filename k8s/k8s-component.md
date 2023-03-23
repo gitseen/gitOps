@@ -24,7 +24,7 @@ Kubernetes集群是主从架构
   * etcd  
 - Node工作节点,执行具体的业务容器
   * kubelet
-  * kube-proxy
+  * kube-proxy  
 ![lt](http://ningg.top/images/kubernetes-series/k8s-cluster-arch.png)  
 
 
