@@ -261,7 +261,7 @@ node/test-b-k8s-node02 unlabeled
 - 举个例子,假设给小明分配班级（小明是pod,班级是节点）  
   - 节点亲和性：直接告诉小明,你去一年级  
   - pod亲和性：从小朋友中找出和小明同年的,找到了小张,发现小张是一年级的,于是让小明去一年级  
-## 节点亲和性：硬亲和性
+## 节点亲和性--硬亲和性
   - requiredDuringSchedulinglgnoredDuringExecution  #用于定义节点硬亲和性
   - nodeSelectorTerm #节点选择器,可以有多个,之间的关系是逻辑或,即一个nodeSelectorTerm满足即可  
   - matchExpressions #匹配规则定义,多个之间的关系是逻辑与,即同一个nodeSelectorTerm下所有matchExpressions定义的规则都匹配,才算匹配成功
@@ -285,7 +285,7 @@ spec:
 不满足硬亲和性条件时,pod为Pending状态
 在预选阶段,节点硬亲和性被用于预选策略MatchNodeSelector
 ```
-## 节点亲和性：软亲和性
+## 节点亲和性--软亲和性
    - 特点：条件不满足时也能被调度
    - 示例  
 ```
