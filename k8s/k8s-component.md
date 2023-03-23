@@ -58,45 +58,6 @@ Kubernetes集群是主从架构
 
 
 
----
-
-
-**Master管理节点：管理整个Kubernetes集群,接收外部命令,维护集群状态**  
-- apiserver： Kubernetes API Server
-  * 集群控制的入口
-  * 资源的增删改查,持久化存储到etcd
-  * kubectl直接与API Server交互,默认端口6443
-- etcd一个高可用的key-value存储系统
-  * 作用：存储资源的状态
-  * 支持Restful的API
-  * 默认监听2379和2380端口(2379提供服务,2380用于集群节点通信)
-- scheduler负责将pod资源调度到合适的node上
-  * 调度算法：根据node节点的性能、负载、数据位置等,进行调度。
-  * 默认监听10251端口
-- controller-manager: 所有资源的自动化控制中心
-  * 每个资源,都对应有一个控制器
-  * controller manager管理这些控制器
-  * controller manager是自动化的循环控制器
-  * Kubernetes的核心控制守护进程,默认监听10252端口
-  * scheduler和controller-manager都是通过apiserver从etcd中获取各种资源的状态,进行相应的调度和控制操作
-
-**Node节点：Master节点,将任务调度到Node节点,以docker方式运行；当Node节点宕机时,Master会自动将Node上的任务调度到其他Node上** 
-- kubelet节点Pod的生命周期管理,定期向Master上报本节点及Pod的基本信息
-  * Kubelet是在每个Node节点上运行agent
-  * 负责维护和管理所有容器：从apiserver接收Pod的创建请求,启动和停止Pod
-  * Kubelet不会管理不是由Kubernetes创建的容器
-  * 定期向Master上报信息,如操作系统、CPU、内存、pod运行状态等信息
-- kube-proxy：集群中 Service 的通信以及负载均衡
-  * 功能：服务发现、反向代理。
-  * 反向代理：支持TCP和UDP连接转发,默认基于Round Robin算法将客户端流量转发到与service对应的一组后端pod
-  * 服务发现：使用etcd的watch机制,监控集群中service和endpoint对象数据的动态变化,并且维护一个service到endpoint的映射关系(本质是路由关系)
-  * 实现方式：userspace、iptables、ipvs
-    * userspace：在用户空间,通过kuber-proxy实现负载均衡的代理服务,是最初的实现方案,较稳定、效率不高
-    * iptables：在内核空间,是纯采用iptables来实现LB,是Kubernetes目前默认的方式
-    * ipvs 
-- runtime：一般使用docker容器、rkt、containerd等其他的容器(CRI)
-
-
 
 
 
