@@ -26,7 +26,7 @@ Worker是Pod运行的地方;k8s支持Docker、rkt等容器Runtime;Worker上运�
 
 
 - **Master管理节点,集群的控制和调度(管理整个Kubernetes集群,接收外部命令,维护集群状态)** 
-  * **kube-apiserver(Kubernetes API Server)** 
+  * **kube-apiserver(Kubernetes API Server)**   
     API Server(kube-apiserver)提供HTTP/HTTPS RESTful API,实现认证、授权、访问控制、API注册和发现等功能,各种客户端工具(CLI 或 UI)以及k8s其他组件可以通过它管理Cluster资源  
     - 集群控制的入口
     - 资源的增删改查,持久化存储到etcd
