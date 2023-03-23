@@ -20,7 +20,8 @@ Kubernetes的资源控制是一种声明+引擎的理念
 Kubernetes集群是主从架构  
 ![lt](http://ningg.top/images/kubernetes-series/k8s-cluster-arch.png) 
 
-Master主要职责是调度;运行k8s组件有kube-apiserver、kube-scheduler、kube-controller-manager、etcd和Pod网络(flannel、calico)可以同时运行多个Master实现高可用  
+Master主要职责是调度;运行k8s组件有kube-apiserver、kube-scheduler、kube-controller-manager、etcd和Pod网络(flannel、calico)可以同时运行多个Master实现高可用 
+ 
 Worker是Pod运行的地方;k8s支持Docker、rkt等容器Runtime;Worker上运行的组件有kubelet、kube-proxy和Pod网络;Worker由Master管理,负责监控并向Master汇报容器的状态,并根据Master的要求管理容器的生命周期  
 
 
