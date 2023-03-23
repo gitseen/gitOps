@@ -39,7 +39,7 @@ Kubernetes集群是主从架构
     - 支持Restful的API
     - 默认监听2379和2380端口(2379提供服务,2380用于集群节点通信) 
 
-- **Node工作节点,执行具体的业务容器(Master节点将任务调度到Node节点,以docker方式运行;当Node节点宕机时,Master会自动将Node上的任务调度到其他Node上)**   
+- **Node工作节点(Master节点将任务调度到Node节点,以docker方式运行;当Node节点宕机时,Master会自动将Node上的任务调度到其他Node上)**   
   * **kubelet(节点Pod的生命周期管理,定期向Master上报本节点及Pod的基本信息)**  
     - Kubelet是在每个Node节点上运行agent
     - 负责维护和管理所有容器：从apiserver接收Pod的创建请求,启动和停止Pod
@@ -54,6 +54,12 @@ Kubernetes集群是主从架构
       * iptables：在内核空间,是纯采用iptables来实现LB,是Kubernetes目前默认的方式
       * ipvs
   * **runtime：一般使用docker容器、rkt、containerd等其他的容器(CRI)**  
+
+
+
+
+---
+
 
 **Master管理节点：管理整个Kubernetes集群,接收外部命令,维护集群状态**  
 - apiserver： Kubernetes API Server
