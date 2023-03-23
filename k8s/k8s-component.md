@@ -16,6 +16,7 @@ Kubernetes的资源控制是一种声明+引擎的理念
 
 ## 架构(物理+逻辑)
 Kubernetes集群是主从架构  
+![lt](http://ningg.top/images/kubernetes-series/k8s-cluster-arch.png) 
 
 - Master管理节点,集群的控制和调度
   * kube-apiserver
@@ -25,8 +26,6 @@ Kubernetes集群是主从架构
 - Node工作节点,执行具体的业务容器
   * kubelet
   * kube-proxy  
-![lt](http://ningg.top/images/kubernetes-series/k8s-cluster-arch.png)  
-
 
 **Master管理节点：管理整个Kubernetes集群,接收外部命令,维护集群状态**  
 - apiserver： Kubernetes API Server
