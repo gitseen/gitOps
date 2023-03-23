@@ -73,8 +73,21 @@ Worker是Pod运行的地方;k8s支持Docker、rkt等容器Runtime;Worker上运�
   * **runtime(CRI)：一般使用docker容器、rkt、containerd等其他的容器**  
   * **pod网络(CNI)**   
 
-
-
+ # k8s组件端口监控
+```
+ss -tlnup|grep -E "102|etcd"
+tcp    LISTEN     0      128    127.0.0.1:10248                 *:*                   users:(("kubelet",pid=29840,fd=21))
+tcp    LISTEN     0      128    127.0.0.1:10249                 *:*                   users:(("kube-proxy",pid=30962,fd=10))
+tcp    LISTEN     0      128    192.168.19.227:2379                  *:*                   users:(("etcd",pid=30377,fd=6))
+tcp    LISTEN     0      128    127.0.0.1:2379                  *:*                   users:(("etcd",pid=30377,fd=5))
+tcp    LISTEN     0      128    192.168.19.227:2380                  *:*                   users:(("etcd",pid=30377,fd=3))
+tcp    LISTEN     0      128    127.0.0.1:10257                 *:*                   users:(("kube-controller",pid=30387,fd=5))
+tcp    LISTEN     0      128    127.0.0.1:10259                 *:*                   users:(("kube-scheduler",pid=30397,fd=5))
+tcp    LISTEN     0      128      :::10250                :::*                   users:(("kubelet",pid=29840,fd=30))
+tcp    LISTEN     0      128      :::10251                :::*                   users:(("kube-scheduler",pid=30397,fd=3))
+tcp    LISTEN     0      128      :::10252                :::*                   users:(("kube-controller",pid=30387,fd=3))
+tcp    LISTEN     0      128      :::10256                :::*                   users:(("kube-proxy",pid=30962,fd=9))
+```
 
 
 
