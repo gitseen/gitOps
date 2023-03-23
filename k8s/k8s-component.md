@@ -1,4 +1,5 @@
-# k8s-架构 
+# k8s-架构
+![k8s](pic/k8s.png) 
 - 基本工作过程
 - 架构：逻辑架构、物理架构
 
@@ -19,7 +20,7 @@ Kubernetes的资源控制是一种声明+引擎的理念
 Kubernetes集群是主从架构  
 ![lt](http://ningg.top/images/kubernetes-series/k8s-cluster-arch.png) 
 
-- Master管理节点,集群的控制和调度(管理整个Kubernetes集群,接收外部命令,维护集群状态)
+- **Master管理节点,集群的控制和调度(管理整个Kubernetes集群,接收外部命令,维护集群状态)**  
   * **kube-apiserver(Kubernetes API Server)**  
     - 集群控制的入口
     - 资源的增删改查,持久化存储到etcd
@@ -30,21 +31,21 @@ Kubernetes集群是主从架构
     - controller manager是自动化的循环控制器
     - Kubernetes的核心控制守护进程,默认监听10252端口
     - scheduler和controller-manager都是通过apiserver从etcd中获取各种资源的状态,进行相应的调度和控制操作
-  * kube-scheduler(负责将pod资源调度到合适的node上)
+  * **kube-scheduler(负责将pod资源调度到合适的node上)**  
     - 调度算法：根据node节点的性能、负载、数据位置等,进行调度。
     - 默认监听10251端口
-  * etcd(一个高可用的key-value存储系统) 
+  * **etcd(一个高可用的key-value存储系统)**   
     - 作用：存储资源的状态
     - 支持Restful的API
     - 默认监听2379和2380端口(2379提供服务,2380用于集群节点通信) 
 
-- Node工作节点,执行具体的业务容器(Node节点：Master节点,将任务调度到Node节点,以docker方式运行；当Node节点宕机时,Master会自动将Node上的任务调度到其他Node上)  
-  * kubelet(节点Pod的生命周期管理,定期向Master上报本节点及Pod的基本信息)
+- **Node工作节点,执行具体的业务容器(Master节点将任务调度到Node节点,以docker方式运行;当Node节点宕机时,Master会自动将Node上的任务调度到其他Node上)**   
+  * **kubelet(节点Pod的生命周期管理,定期向Master上报本节点及Pod的基本信息)**  
     - Kubelet是在每个Node节点上运行agent
     - 负责维护和管理所有容器：从apiserver接收Pod的创建请求,启动和停止Pod
     - Kubelet不会管理不是由Kubernetes创建的容器
     - 定期向Master上报信息,如操作系统、CPU、内存、pod运行状态等信息
-  * kube-proxy(集群中Service的通信以及负载均衡)  
+  * **kube-proxy(集群中Service的通信以及负载均衡)**    
     - 功能：服务发现、反向代理。
     - 反向代理：支持TCP和UDP连接转发,默认基于Round Robin算法将客户端流量转发到与service对应的一组后端pod
     - 服务发现：使用etcd的watch机制,监控集群中service和endpoint对象数据的动态变化,并且维护一个service到endpoint的映射关系(本质是路由关系)
@@ -52,7 +53,7 @@ Kubernetes集群是主从架构
       * userspace：在用户空间,通过kuber-proxy实现负载均衡的代理服务,是最初的实现方案,较稳定、效率不高
       * iptables：在内核空间,是纯采用iptables来实现LB,是Kubernetes目前默认的方式
       * ipvs
-  * runtime：一般使用docker容器、rkt、containerd等其他的容器(CRI)
+  * **runtime：一般使用docker容器、rkt、containerd等其他的容器(CRI)**  
 
 **Master管理节点：管理整个Kubernetes集群,接收外部命令,维护集群状态**  
 - apiserver： Kubernetes API Server
