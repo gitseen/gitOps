@@ -4,7 +4,7 @@
 
 ## 基本工作过程
 Kubernetes 的核心工作过程  
-- 1、资源对象   #Node、Pod、Service、Replication Controller等都可以看作一种资源对象
+- 1、资源对象:  #Node、Pod、Service、Deploymnet、label等都可以看作一种资源对象
 - 2、操作       #通过使用kubectl工具,执行增删改查
 - 3、存储       #对象的目标状态(预设状态)保存在etcd中持久化储存
 - 4、自动控制   #跟踪、对比etcd中存储的目标状态与资源的当前状态,对差异资源纠偏,自动控制集群状态
@@ -34,11 +34,11 @@ Kubernetes集群是主从架构
   * kubectl直接与API Server交互,默认端口6443
 - etcd一个高可用的key-value存储系统
   * 作用：存储资源的状态
-  * 支持Restful 的API
+  * 支持Restful的API
   * 默认监听2379和2380端口(2379提供服务,2380用于集群节点通信)
 - scheduler负责将pod资源调度到合适的node上
-  * 调度算法：根据 node 节点的性能、负载、数据位置等,进行调度。
-  * 默认监听 10251 端口。
+  * 调度算法：根据node节点的性能、负载、数据位置等,进行调度。
+  * 默认监听10251端口
 - controller-manager: 所有资源的自动化控制中心
   * 每个资源,都对应有一个控制器
   * controller manager管理这些控制器
