@@ -58,12 +58,14 @@ Worker是Pod运行的地方;k8s支持Docker、rkt等容器Runtime;Worker上运�
     - 负责维护和管理所有容器：从apiserver接收Pod的创建请求,启动和停止Pod
     - Kubelet不会管理不是由Kubernetes创建的容器
     - 定期向Master上报信息,如操作系统、CPU、内存、pod运行状态等信息
+    - 默认监听10250
   * **kube-proxy(集群中Service的通信以及负载均衡)**    
     kube-proxy：service在逻辑上代表了后端的多个Pod;外界通过service访问Pod;service接收到的请求是如何转发到Pod的呢？这就是kube-proxy要完成的工作  
     每个Worker都会运行kube-proxy服务,负责将访问service的TCP/UPD数据流转发到后端的容器;如果有多个副本kube-proxy会实现负载均衡  
     - 功能：服务发现、反向代理
     - 反向代理：支持TCP和UDP连接转发,默认基于Round Robin算法将客户端流量转发到与service对应的一组后端pod
     - 服务发现：使用etcd的watch机制,监控集群中service和endpoint对象数据的动态变化,并且维护一个service到endpoint的映射关系(本质是路由关系)
+    - 默认监听10256
     - 实现方式：userspace、iptables、ipvs
       * userspace：在用户空间,通过kuber-proxy实现负载均衡的代理服务,是最初的实现方案,较稳定、效率不高
       * iptables：在内核空间,是纯采用iptables来实现LB,是Kubernetes目前默认的方式
