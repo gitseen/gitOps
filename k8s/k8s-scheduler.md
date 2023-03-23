@@ -328,9 +328,9 @@ spec:
    - 如果需求是：新增的pod要和已经存在pod(假设是A)在同一node上,此时用节点亲和性是无法完成的,因为A可能和节点没啥关系(可能是随机调度的),此时只能用pod亲和性来实现
    - pod亲和性：一个pod与已经存在的某个pod的亲和关系,需要通过举例来说明
    - 创建一个deployment,这个pod有标签app=tomcat： 
-     ```
-     kubectl run tomcat -l app=tomcat --image tomcat:alpine
-     ----
+```
+kubectl run tomcat -l app=tomcat --image tomcat:alpine
+---
 apiVersion: v1
 kind: Pod
 metadata:
@@ -346,7 +346,7 @@ spec:
   containers:
   - name: nginx
     image: nginx
-     ```
+ ```
    - 调度逻辑
      ![c](https://p3-sign.toutiaoimg.com/tos-cn-i-qvj2lq49k0/6d71eca8e755470789d7cdc7bdfbe13e~noop.image?_iz=58558&from=article.pc_detail&x-expires=1680139477&x-signature=VoZtfq9vRAuNcBfDlZ728Z9JrIw%3D)  
    - 表面上看,最终只是根据hostname去调度的,但如果topologyKey的值是多个节点所拥有的,就更有通用性了  
