@@ -20,11 +20,9 @@ Kubernetes的资源控制是一种声明+引擎的理念
 Kubernetes集群是主从架构  
 ![lt](http://ningg.top/images/kubernetes-series/k8s-cluster-arch.png) 
 
+# k8s-master组件
 Master主要职责是调度;运行k8s组件有kube-apiserver、kube-scheduler、kube-controller-manager、etcd和Pod网络(flannel、calico)可以同时运行多个Master实现高可用 
  
-Worker是Pod运行的地方;k8s支持Docker、rkt等容器Runtime;Worker上运行的组件有kubelet、kube-proxy和Pod网络;Worker由Master管理,负责监控并向Master汇报容器的状态,并根据Master的要求管理容器的生命周期  
-
-
 - **Master管理节点,集群的控制和调度(管理整个Kubernetes集群,接收外部命令,维护集群状态)** 
   * **kube-apiserver(Kubernetes API Server)**   
     API Server(kube-apiserver)提供HTTP/HTTPS RESTful API,实现认证、授权、访问控制、API注册和发现等功能,各种客户端工具(CLI 或 UI)以及k8s其他组件可以通过它管理Cluster资源  
@@ -50,6 +48,10 @@ Worker是Pod运行的地方;k8s支持Docker、rkt等容器Runtime;Worker上运�
     - 默认监听2379和2380端口(2379提供服务,2380用于集群节点通信)
   * **pod网络** 
     Pod网络：Pod是k8s的最小工作单元;每个Pod包含一个或多个容器;Pod中的容器会作为一个整体被Master调度到一个Worker上运行;Pod要能够相互通信,Cluster必须部署Pod网络,flannel、calico其中一个可选方案   
+
+# k8s-node组件
+
+  Worker是Pod运行的地方;k8s支持Docker、rkt等容器Runtime;Worker上运行的组件有kubelet、kube-proxy和Pod网络;Worker由Master管理,负责监控并向Master汇报容器的状态,并根据Master的要求管理容器的生命周期  
 
 - **Node工作节点(Master将任务调度到Node以docker方式运行;当Node节点宕机时,Master会自动将Node上的任务调度到其他Node上)**   
   * **kubelet(节点Pod的生命周期管理,定期向Master上报本节点及Pod的基本信息)**   
