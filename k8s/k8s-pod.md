@@ -703,7 +703,7 @@ test-static-pod-test-b-k8s-node01   1/1     Running   0          11s
 [参考](https://mp.weixin.qq.com/s/5Kv7DU34_Ae5y17MAQVO-Q)  
 ## 8. [声明式pod实例](https://github.com/gitseen/gitOps/blob/main/k8s/pod.yaml) 
 
-## 9. Kubernetes中钩子函数详解实例
+## 9. [Kubernetes中钩子函数详解实例](https://www.toutiao.com/article/7214297018754204219/)  
 **钩子函数能够感知自身生命周期中的事件,并在相应的时刻到来时运行用户指定的程序代码**  
 
 kubernetes在主容器的启动之后和停止之前提供了两个钩子函数  
