@@ -8,7 +8,7 @@ metadata: #资源的元数据/属性
     kubernetes.io/cluster-service: "true"
   annotations:            #自定义注解列表
     - name: String        #自定义注解名字
-spec:#specification of the resource content 指定该资源的内容
+spec: #specification of the resource content 指定该资源的内容
   restartPolicy: Always #表明该容器一直运行，默认k8s的策略，在此容器退出后，会立即创建一个相同的容器
   nodeSelector:     #节点选择，先给主机打标签kubectl label nodes kube-node1 zone=node1
     zone: node1
