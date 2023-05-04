@@ -955,5 +955,5 @@ lazykube是一个GitHub上优秀的开源项目,支持鼠标操作和管理K8s�
 
 对比k9s命令行工具,可以不用去记那么多快捷键,直接用鼠标操作。解决公司不使用rancher和dashboard管理K8s,只能通过堡垒机访问的场景。使用该工具只需要终端和鼠标，当然用到搜索功能时还是需要键盘。  
 
-[项目地址](https://github.com/TNK-Studio/lazykube)  
+[lazykube项目地址](https://github.com/TNK-Studio/lazykube)  
 
