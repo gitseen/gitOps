@@ -1,4 +1,6 @@
-# split功能：使用shell的split可以将一个大文件分割成很多个小文件,有时文件太大处理起来不方便就需要使用到了
+# split  
+功能: split可以将一个大文件分割成很多个小文件,有时文件太大处理起来不方便就需要使用到了 
+
 ```
 age: split [OPTION]... [INPUT [PREFIX]]
 Output fixed-size pieces of INPUT to PREFIXaa, PREFIXab, ...; default
