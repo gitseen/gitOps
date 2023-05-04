@@ -335,6 +335,8 @@ kubectl config --kubeconfig=config set-context dev-frontend --cluster=developmen
 kubectl config --kubeconfig=config set-credentials developer --client-certificate=fake-cert-file --client-key=fake-key-seefile
 KUBECONFIG=~/.kube/cluster-a/config:.kube/cluster-b/config:.kube/cluster-c/config kubectl config view --merge --flatten > ~/.kube/config
 kubectl config get-contexts
+
+kubectl config view --template='{{ range .contexts }}{{ if eq .name "'$(kubectl config current-context)'" }}Current user: {{ printf "%s\n" .context.user }}{{ end }}{{ end }}'
 ```
  
 ---
