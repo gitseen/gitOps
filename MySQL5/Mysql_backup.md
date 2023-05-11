@@ -171,19 +171,14 @@ usage: sh $0 test_table_name
 # foure
 ```
 #!/bin/bash
-
 # MySQL备份脚本
-
 # 备份路径
 BACKUP_DIR=/data/backup
-
 # MySQL登录信息
 MYSQL_USER=root
 MYSQL_PASSWORD=123456
-
 # 获取当前时间戳
 TIME=$(date "+%Y%m%d-%H%M%S")
-
 # 获取所有数据库名
 DATABASES=$(mysql -u$MYSQL_USER -p$MYSQL_PASSWORD -e "show databases;" | grep -Ev "(Database|information_schema|performance_schema)")
 
@@ -192,13 +187,10 @@ for DB_NAME in $DATABASES
 do
   # 构造备份文件名
   BACKUP_FILENAME="$DB_NAME-$TIME.sql"
-
   # 备份数据库
   mysqldump -u$MYSQL_USER -p$MYSQL_PASSWORD --databases $DB_NAME > $BACKUP_DIR/$BACKUP_FILENAME
-
   # 压缩备份结果集
   gzip $BACKUP_DIR/$BACKUP_FILENAME
-
   # 添加时间戳到备份文件名
   mv $BACKUP_DIR/$BACKUP_FILENAME.gz $BACKUP_DIR/$BACKUP_FILENAME-$TIME.gz
 done
