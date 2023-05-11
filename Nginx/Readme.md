@@ -208,7 +208,7 @@ location ~ .*\.(html|htm|gif|jpg|jpeg|bmp|png|ico|txt|js|css){
     expires 7d; 
 }
 ~代表匹配时区分大小写
-.*代表任意字符都可以出现零次或多次，即资源名不限制
+.*代表任意字符都可以出现零次或多次,即资源名不限制
 \.代表匹配后缀分隔符.
 (html|...|css)代表匹配括号里所有静态资源类型
 ```
@@ -247,16 +247,16 @@ nginx -s reload
 Nginx是一种高性能的Web服务器和反向代理服务,它可以通过rewrite模块来实现URL重写和重定向等功能  
 常用的rewrite方法和技巧,以及它们的优缺点   
 ## 1、使用正则表达式匹配URL
-使用正则表达式来匹配URL是最常见的rewrite技巧之一。例如，以下规则可以将所有以/test/开头的URL重写到/test.php文件中   
+使用正则表达式来匹配URL是最常见的rewrite技巧之一。例如,以下规则可以将所有以/test/开头的URL重写到/test.php文件中   
 ```
 rewrite ^/test/(.*)$ /test.php?param=$1 last;
 ```
 优点：可以通过复杂的正则表达式来实现灵活的URL重写规则  
 
-缺点：需要熟悉正则表达式语法，并且在处理大量请求时可能会影响性能  
+缺点：需要熟悉正则表达式语法,并且在处理大量请求时可能会影响性能  
 
 ## 2、使用map模块来匹配URL：
-map模块可以将一个字符串映射到另一个字符串，它可以用来实现URL的重写和重定向。例如，以下规则可以将所有以/hello开头的URL重定向到/welcome页面
+map模块可以将一个字符串映射到另一个字符串,它可以用来实现URL的重写和重定向。例如,以下规则可以将所有以/hello开头的URL重定向到/welcome页面
 ```
 map $uri $new_uri {
     /hello   /welcome;
@@ -268,12 +268,12 @@ server {
     ...
 }
 ``` 
-优点：可以将映射规则定义在单独的文件中，方便管理和修改   
+优点：可以将映射规则定义在单独的文件中,方便管理和修改   
 
-缺点：不如正则表达式灵活，只能处理简单的URL重定向和重写   
+缺点：不如正则表达式灵活,只能处理简单的URL重定向和重写   
 
 ## 3、使用if语句来匹配URL：
-if语句可以根据请求的特定属性来判断是否需要进行URL重写或重定向。例如，以下规则可以将所有以http://example.com旧域名开头的URL重定向到https://example.com新域名  
+if语句可以根据请求的特定属性来判断是否需要进行URL重写或重定向。例如,以下规则可以将所有以http://example.com旧域名开头的URL重定向到https://example.com新域名  
 ```
 if ($http_host ~* "^example\.com$") {
     rewrite ^(.*)$ https://example.com$1 permanent;
@@ -281,10 +281,10 @@ if ($http_host ~* "^example\.com$") {
 ```
 优点：可以根据请求的属性灵活判断是否需要进行URL重写或重定向  
 
-缺点：if语句可能会影响性能，并且容易出现错误或歧义，需要谨慎使用  
+缺点：if语句可能会影响性能,并且容易出现错误或歧义,需要谨慎使用  
 
 ## 4、使用proxy_pass重定向URL
-proxy_pass指令可以将请求重定向到另一个URL地址，例如：  
+proxy_pass指令可以将请求重定向到另一个URL地址,例如：  
 ```
 location /old/ {
     proxy_pass http://new.example.com/;
@@ -292,9 +292,48 @@ location /old/ {
 ```
 优点：可以快速简便地实现URL重定向  
 
-缺点：不能进行URL重写，只能进行重定向。此外，需要注意代理的性能问题   
+缺点：不能进行URL重写,只能进行重定向。此外,需要注意代理的性能问题   
 
-**Rewrite模块可以实现URL重写和重定向等功能，可以根据需要选择不同的rewrite方法和技巧。需要注意的是，rewrite规则的性能和正确性都非常重要，必须进行适当的测试和验证**  
+**Rewrite模块可以实现URL重写和重定向等功能,可以根据需要选择不同的rewrite方法和技巧。需要注意的是,rewrite规则的性能和正确性都非常重要,必须进行适当的测试和验证**  
+
+5、nginx维护页面处理
+nginx维护页面处理-全部URL指向同一个页面  
+
+一般来说nginx的维护页面需要把所有访问本站的链接全部重定向到某个指定页面  
+```
+5.1 添加伪静态rewrite
+rewrite ^(.*)$ /lengxi.html break;
+注意这句后面如果有重定向等语句,那么后面执行的重定向等语句需要全部注释掉
+
+5.2 使用状态码
+location /{
+return 503;
+}
+#注意其他location优先级高的匹配均需要注释掉
+error_page 503 /lengxi.html;
+
+每当服务器遇到 502 代码时,就自动转到临时维护的静态页：
+server {
+listen 80;
+server_name mydomain.com;
+# ... 省略掉 N 行代码
+error_page 502 = @tempdown;
+location @tempdown {
+rewrite ^(.*)$ /pages/maintain.html break;
+}
+}
+
+如果你只想要【临时维护页面】就这样写（适合服务器更新东西或者改版）：
+server {
+listen 80;
+server_name mydomain.com;
+# ... 省略掉 N 行代码
+# 所有页面都转跳到维护页
+rewrite ^(.*)$ /pages/maintain.html break;
+}
+注：
+临时维护页要找对正确的路径
+```
 
 # Nginx模块详解
 [Nginx模块详解](https://cloud.tencent.com/developer/article/2057869)  
