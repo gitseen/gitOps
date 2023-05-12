@@ -301,9 +301,9 @@ kubectl提供了各种命令,来管理集群中的pod,但是这些命令都是�
 以Deployment为例 ,详解常用字段  
 
 >>小提示：
-# 在这里,可通过一个命令来查看每种资源的可配置项
-# kubectl explain 资源类型 查看某种资源可以配置的一级属性
-# kubectl explain 资源类型.属性 查看属性的子属性  
+在这里,可通过一个命令来查看每种资源的可配置项  
+kubectl explain 资源类型 查看某种资源可以配置的一级属性  
+kubectl explain 资源类型.属性 查看属性的子属性  
 
 <details>
   <summary>Deployment-yaml-list</summary>
@@ -400,24 +400,24 @@ status: {}
 </details>
 
 **Deployment重要详解**
-- apiversion
+- apiversion  
     用来指定api的版本,定义的语法格式为group/version,比如我们要定义deployment控制器,那么我们的apiVersion：apps/v1,如果我们要定义自主式pod,那么需要定义apiVersion：v1,如果要获取有哪些apiVersion可以用如下命令  
-- kind
+- kind  
     kind字段主要用于定义控制器类型,指的是yml文件定义的资源类型和角色,比如：我们想定义一个自助式pod,那么我们就应该定义kind：Pod,如果我们要定义一个deployment控制器管理的pod,那么我们就应该定义kind：Deployment  
-- metadate
+- metadate  
     对于metadata字段为元数据,我们已经知道k8s是通过标签选择器的方式管理pod,因此,在metadata当中最重要的就是标签,我们可以在metadata当中定义名称空间,标签等,我们如果想查看metadata下可以定义哪些元数据可以使用kubectl explain pod.metadata命令来查看  
-- labels
+- labels  
     标签选择器,labels的值决定service控制器关联pod的重要选项  
-- name
+- name  
     这里是自主式[pod|services|deployment|...]名称,如果是控制器[pod|services|deployment|...],这里是控制器名称  
-- namespace
+- namespace  
     名称空间,默认为default名称空间  
-- annotations
+- annotations  
     资源注解,这里跟labels很像,都是键值对,但是不同点是,不能用于挑选资源对象,仅用于"元数据"  
-- spec字段
+- spec字段  
     spec字段用来定义期望容器达到的状态,在spec字段当中可以定义多个容器,容器的名称,容器的镜像,拖取容器镜像的方式,暴露的端口号,存储卷,容器个数等,也就是说真正定义pod是在spec字段当中定义的  
 
-**查看spec详细用法命令**
+**查看spec详细用法命令**  
 ```
 kubectl explain [pod|services|deployment|...].spec
 ```  
