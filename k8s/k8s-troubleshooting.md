@@ -60,7 +60,7 @@ kubectl describe pod <pod name>
 BackoffLimitExceeded表示Kubernetes作业在多次重启失败后已达到其重试限制。  
 
 Kubernetes中的作业可以控制pod的运行时、监视其状态并在pod出现故障时重新启动。    
-backoffLimit是一个作业配置选项,它控制在作业最终被视为失败之前pod可以失败和重试的次数。此配置设置的默认值为6。这意味着作业将重试六次,之后重试将停止。  
+backoffLimit是一个作业配置选项,它控制在作业最终被视为失败之前pod可以失败和重试的次数。此配置设置的默认值为6。重试六次之后重试将停止    
 执行kubectl descrippod <pod name>命令来确定作业是否因BackoffLimitExceeded错误而失败。    
 
 Kubernetes作业的成功或失败状态取决于它管理的容器的最终退出代码。因此,如果作业的退出代码不是0,则视为失败。作业可能因多种原因而失败,包括指定路径不存在或作业无法找到要处理的输入文件。    
