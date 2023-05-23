@@ -100,6 +100,22 @@ spec:
       type: Container    
 ```
 
+ResourceQuota  
+```
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: kservice
+spec:
+  hard:
+    requests.cpu: "8"
+    requests.memory: 16Gi
+    limits.cpu: "16"
+    limits.memory: 32Gi
+    pods: "2"
+    services: "2"
+```
+
 # [服务质量等级](https://www.toutiao.com/article/7203310230536667707/)
 [平凡人笔记](https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/quality-service-pod/)  
 **K8s的三种服务质量等级**  
