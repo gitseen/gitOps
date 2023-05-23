@@ -48,7 +48,7 @@ kubectl describe pod <pod name>
 3、如果使用nodeSelector安排pod在Kubernetes集群中的特定节点上运行,就会发生这种情况。  
 
 # 三、Out-of-Memory
-1、当容器因OOM错误而终止时,通常会出现资源短缺或内存泄漏 
+1、当容器因OOM错误而终止时,通常会出现资源短缺或内存泄漏   
 执行kubectl describe pod <pod name>命令来确定pod中的容器是否已达到资源限制。如果是这样,终止的原因将显示为OOMKilled。此错误表明Pod的容器已尝试使用超过配置限制的内存。
 
 要解决OOMKilled,请增加容器的内存限制作为pod规范的一部分。如果pod仍然失败,检查应用是否存在内存泄漏,并通过在应用前端修复内存泄漏问题及时解决。
