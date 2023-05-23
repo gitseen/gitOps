@@ -49,18 +49,17 @@ kubectl describe pod <pod name>
 
 # 三、Out-of-Memory
 1、当容器因OOM错误而终止时,通常会出现资源短缺或内存泄漏   
-执行kubectl describe pod <pod name>命令来确定pod中的容器是否已达到资源限制。如果是这样,终止的原因将显示为OOMKilled。此错误表明Pod的容器已尝试使用超过配置限制的内存。
+执行kubectl describe pod <pod name>命令来确定pod中的容器是否已达到资源限制。如果是这样,终止的原因将显示为OOMKilled。此错误表明Pod的容器已尝试使用超过配置限制的内存。  
 
-要解决OOMKilled,请增加容器的内存限制作为pod规范的一部分。如果pod仍然失败,检查应用是否存在内存泄漏,并通过在应用前端修复内存泄漏问题及时解决。
+要解决OOMKilled,请增加容器的内存限制作为pod规范的一部分。如果pod仍然失败,检查应用是否存在内存泄漏,并通过在应用前端修复内存泄漏问题及时解决。  
 
-为了最大限度地减少OOM错误的可能性并优化您的Kubernetes环境,您可以在指定pod时定义容器需要多少资源,
+为了最大限度地减少OOM错误的可能性并优化您的Kubernetes环境,您可以在指定pod时定义容器需要多少资源,  
 例如CPU和内存。kube-scheduler根据对其容器的资源请求选择哪个节点来引导pod。然后,kubelet为该容器分配该节点资源的一部分。此外,kubelet对已定义的容器实施资源限制(limits),防止正在运行的容器使用超出预期的资源。
 
-
 # 四、BackOffLimitsExceeded
-BackoffLimitExceeded表示Kubernetes作业在多次重启失败后已达到其重试限制。
+BackoffLimitExceeded表示Kubernetes作业在多次重启失败后已达到其重试限制。  
 
-Kubernetes中的作业可以控制pod的运行时、监视其状态并在pod出现故障时重新启动。  
+Kubernetes中的作业可以控制pod的运行时、监视其状态并在pod出现故障时重新启动。    
 backoffLimit是一个作业配置选项,它控制在作业最终被视为失败之前pod可以失败和重试的次数。此配置设置的默认值为6。这意味着作业将重试六次,之后重试将停止。  
 执行kubectl descrippod <pod name>命令来确定作业是否因BackoffLimitExceeded错误而失败。    
 
@@ -80,4 +79,4 @@ Pod有四个阶段的生命周期：Pending、Running、Succeeded 和 Failed。�
 
 
 # 结论
-在Kubernetes中进行故障排除似乎是一项艰巨的任务。但是,通过正确诊断问题并了解其背后的原因,您会发现故障排除过程更易于管理,也不会那么令人沮丧。
+在Kubernetes中进行故障排除似乎是一项艰巨的任务。但是,通过正确诊断问题并了解其背后的原因,您会发现故障排除过程更易于管理,也不会那么令人沮丧。  
