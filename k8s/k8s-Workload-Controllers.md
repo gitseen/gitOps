@@ -115,10 +115,10 @@ kubectl describe deployment web -n aliang-cka
 RS在其中不断调谐副本数量,实现滚动策略。
 kubectl set image deployment web web=nginx:1.18 --record  # record记录到发布版本里
 ```
-3.6 Deployment删除 
-最后,项目下线：  
-- kubectl delete deploy/web
-- kubectl delete svc/web 
+3.6 Deployment删除   
+最后项目下线    
+- kubectl delete deploy/web  
+- kubectl delete svc/web  
 
 3.7 Deployment控制器用途  
 - Pod副本数量管理,不断对当前Pod数量与期望pod数量  
@@ -126,7 +126,7 @@ kubectl set image deployment web web=nginx:1.18 --record  # record记录到发�
 Kubectl get rs 查看RS记录  
 Kubectl rollout history deployment web #版本对应RS记录  
 
-**Deployment: 一般用来部署长期运行的、无状态的应用;特点：集群之中,随机部署**  
+**Deployment: 一般用来部署长期运行的、无状态的应用; 特点：集群之中,随机部署**  
 [Deployment-官方文档](https://kubernetes.io/zh-cn/docs/concepts/workloads/controllers/deployment/)  
 
 ## StatefulSet
