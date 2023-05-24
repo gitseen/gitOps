@@ -48,8 +48,9 @@ spec:
 - kubectl apply -f xxx.yaml  
 - kubectl set image deployment/web nginx=nginx:1.17
 - kubectl edit deploment/web #使用系统编辑打开
-![xx](https://img2023.cnblogs.com/blog/1283445/202302/1283445-20230228233041523-1343991503.png)   
->>滚动升级：k8s对pod升级的默认策略,通过使用新版本pod逐步更新旧版pod,实现零停机发布,用户无感知  
+![xx](https://img2023.cnblogs.com/blog/1283445/202302/1283445-20230228233041523-1343991503.png)  
+![xx](https://ask.qcloudimg.com/http-save/yehe-6193404/64et9h881a.png?imageView2/2/w/1200)     
+>>滚动升级：k8s对pod升级的默认策略,通过使用新版本pod逐步更新旧版pod,实现零停机发布,用户无感知   
 
 3.3 Deployment滚动升级在k8s中实现  
 - 1个deployment  
