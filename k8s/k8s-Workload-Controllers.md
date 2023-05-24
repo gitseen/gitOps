@@ -37,7 +37,8 @@ spec:
    - name: web
      image: nginx:1.16
   </code></pre>
-</details>
+</details>  
+
 - kubectl apply -f xxx.yaml  
 - kubectl create deployment web --image=nginx:1.16 --replicas=3  
  
@@ -50,14 +51,14 @@ spec:
 >>滚动升级：k8s对pod升级的默认策略,通过使用新版本pod逐步更新旧版pod,实现零停机发布,用户无感知  
 
 3.3 Deployment滚动升级在k8s中实现  
-- 1个deployment
-- 2个ReplicaSet
+- 1个deployment  
+- 2个ReplicaSet  
 ![](https://img2023.cnblogs.com/blog/1283445/202302/1283445-20230228233041495-195266682.png)  
  
 3.4 Deployment水平扩缩溶  
-水平扩缩容(启动多实例,提供并发)
-- 修改yaml里replicas值,再apply
-- Kubectl scale deployment web -replicas=10
+水平扩缩容(启动多实例,提供并发)  
+- 修改yaml里replicas值,再apply  
+- Kubectl scale deployment web -replicas=10  
 >>注意：replicas参数控制pod的副本数量  
 ![xx](https://img2023.cnblogs.com/blog/1283445/202302/1283445-20230228233847579-488572200.png)  
 
