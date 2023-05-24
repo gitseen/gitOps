@@ -8,7 +8,8 @@
 - 使用场景：网站、API、微服务  
  
 Pod与控制器的关系图  
-![https://www.cnblogs.com/yypc/articles/17166489.html](https://img2023.cnblogs.com/blog/1283445/202302/1283445-20230228232534364-1236199343.png)  
+`![https://www.cnblogs.com/yypc/articles/17166489.html](https://img2023.cnblogs.com/blog/1283445/202302/1283445-20230228232534364-1236199343.png)  
+![xx](https://ask.qcloudimg.com/http-save/yehe-6193404/dvsz4q57wz.png?imageView2/2/w/1200)   
 
 **2、Deployment应用生命周期管理流程**  
 ![https://www.cnblogs.com/yypc/articles/17166489.html](https://img2023.cnblogs.com/blog/1283445/202302/1283445-20230228232534286-869392573.png) 
