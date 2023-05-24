@@ -71,9 +71,9 @@ Kubectl rollout undo deployment/web 回滚上一个版本
 Kubectl rollout undo deployment/web -to-revision=2 #回滚历史指定版本  
 注意:回滚是重新部署某一次部署的状态,即当时版本所有配置  
 ```
-**查询service关联的pod**     
+查询service关联的pod      
 kubectl get endpoints -n aliang-cka  
-replicaSet（RS）：副本集,是一个控制器,具体是管理Pod副本的,他是deployment小弟,是滚动升级的执行者  
+replicaSet(RS)：副本集,是一个控制器,具体是管理Pod副本的,他是deployment小弟,是滚动升级的执行者  
 - 滚动升级执行者  
 - 发布版本记录者  
 ```
