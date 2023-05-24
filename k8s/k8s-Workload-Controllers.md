@@ -7,7 +7,7 @@ Deployment主要功能
 Deployment应用场景  
 - 网站、API、微服务  
 Pod与控制器的关系图  
-![xx](https://p3-sign.toutiaoimg.com/tos-cn-i-qvj2lq49k0/37b2ecc6bec54e9bb94f3a90a9d2f5fc~noop.image?_iz=58558&from=article.pc_detail&x-expires=1676454852&x-signature=%2FtYvWV8gDW6YTPlrjmUaEmNmeC4%3D) 
+![xx](https://img2023.cnblogs.com/blog/1283445/202302/1283445-20230228232534364-1236199343.png)  
  
 ## StatefulSet
 ## DaemonSet
