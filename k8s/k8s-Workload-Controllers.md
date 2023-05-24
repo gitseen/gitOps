@@ -60,7 +60,17 @@ spec:
 3.4 Deployment水平扩缩溶  
 水平扩缩容(启动多实例,提供并发)  
 - 修改yaml里replicas值,再apply  
-- Kubectl scale deployment web -replicas=10  
+- Kubectl scale deployment web -replicas=10 
+```
+弹性扩容  
+kubectl edit deployments.apps web  
+kubectl patch deployments.apps ewb -p '{"spec":{"replicas":4}}' #打标签
+kubectl scale deployment/web  --replicas=1  
+更新 
+kubectl patch deployments.apps web -p '{"spec":{"template":{"spec":{"containers":[{"image":"nginx:1.17.0", "name":"nginx"}]}}}}'  #打标签  
+kubectl set image deployment/deployment nginx=nginx:1.16.0   
+kubectl edit deployments.apps deployment
+```
 >>注意：replicas参数控制pod的副本数量  
 
 ![xx](https://img2023.cnblogs.com/blog/1283445/202302/1283445-20230228233847579-488572200.png)  
@@ -71,7 +81,7 @@ kubectl set image deployment web web=nginx:1.18 --record  #record记录到发布
 3.4：回滚（项目升级失败恢复到正常版本） 
 Kubectl rollout history deployment/web #查看历史版本  
 Kubectl rollout undo deployment/web 回滚上一个版本   
-Kubectl rollout undo deployment/web -to-revision=2 #回滚历史指定版本  
+Kubectl rollout undo deployment/web --to-revision=2 #回滚历史指定版本  
 注意:回滚是重新部署某一次部署的状态,即当时版本所有配置  
 ```
 查询service关联的pod      
