@@ -60,6 +60,7 @@ spec:
 - 修改yaml里replicas值,再apply  
 - Kubectl scale deployment web -replicas=10  
 >>注意：replicas参数控制pod的副本数量  
+
 ![xx](https://img2023.cnblogs.com/blog/1283445/202302/1283445-20230228233847579-488572200.png)  
 
 3.5 Deployment回滚  
