@@ -1,4 +1,5 @@
 # k8s工作负载控制器
+# [k8s原来不是直接创建Pod-小心程序猿QAQ](https://www.toutiao.com/article/7235184706738962948/)  
 ## Deployment
 Deployment主要功能  
 - 管理Pod和ReplicaSet
