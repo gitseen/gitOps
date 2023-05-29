@@ -29,6 +29,12 @@ k9s context name
 k9s -n namespace
 k9s --readonly
 ```
+
+
+#[K9s如何加速Kubernetes的集群管理](https://juejin.cn/post/6847902224983539720)  
+
+---
+
 # Readme
 <img src="assets/k9s.png" alt="k9s">
 
