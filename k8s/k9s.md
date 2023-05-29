@@ -31,7 +31,7 @@ k9s --readonly
 ```
 
 
-#[K9s如何加速Kubernetes的集群管理](https://juejin.cn/post/6847902224983539720)  
+# [K9s如何加速Kubernetes的集群管理](https://juejin.cn/post/6847902224983539720)  
 
 ---
 
