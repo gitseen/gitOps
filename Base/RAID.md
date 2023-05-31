@@ -115,4 +115,6 @@ Raid10是Raid1和Raid0的组合体，Raid10技术至少需要4块硬盘组建。
 **主流RAID等级对比**    
 ![主流RAID等级对比](pic/6.png)  
 [RAID0、RAID1、RAID5、RAID10特点和所需的硬盘数量-不能再碌碌无为](https://www.toutiao.com/article/7232519688486683175/)  
+[RAID选择](https://www.toutiao.com/article/7238109181994123791/)  
 
+  
