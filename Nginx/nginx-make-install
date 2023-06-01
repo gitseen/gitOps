@@ -107,3 +107,45 @@ cd /usr/local/src/nginx/sbin
 /usr/local/src/nginx/sbin/nginx -s reopen 
 #停止服务
 /usr/local/src/nginx/sbin/nginx -s stop 
+
+
+
+
+#centos7-nginx安装脚本
+#!/bin/bash
+systemctl stop firewalld
+result()
+{
+	if [[ $1 != 0 ]];then
+			printf -- "\e[1;5;31m错误\e[0m,code: $1\n"
+			exit 1
+	else
+			printf -- "\e[1;32m完成\e[0m\n"
+	fi
+}
+
+install_nginx()
+{
+	printf -- "\n\e[1m安装Nginx:\e[0m\n"
+    mkdir -p /home/{www,conf/nginx}
+	re=`rpm -qa|grep nginx`
+	if [[ -z $re ]];then
+		if [[ ! -f nginx-1.16.1-1.el7.ngx.x86_64.rpm ]];then
+			rpm -Uvh http://nginx.org/packages/centos/7/noarch/RPMS/nginx-release-centos-7-0.el7.ngx.noarch.rpm
+			yum install -y nginx
+		else
+			yum install -y nginx-1.16.1-1.el7.ngx.x86_64.rpm
+		fi
+        mv /etc/nginx/conf.d/default.conf /home/conf/nginx/
+		ln -s /home/conf/nginx/default.conf /etc/nginx/conf.d/
+        cp /usr/share/nginx/html /home/www/
+        sed -i "s/\/usr\/share\/nginx\/html/\/home\/www\/html/g" /home/conf/nginx/default.conf
+		systemctl start nginx.service \
+		&& systemctl enable nginx.service
+		result $?
+	else
+		echo "$re已存在，跳过安装."
+	fi
+	shellwidth=`stty size|awk '{print $2}'`;yes "-" | sed $shellwidth'q' | tr -d '\n'
+}
+install_nginx
