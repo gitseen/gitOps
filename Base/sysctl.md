@@ -182,6 +182,55 @@ cat /proc/net/ip_conntrack | cut -d ' ' -f 10 | cut -d '=' -f 2 | sort | uniq -c
 cat /proc/net/ip_conntrack | perl -pe s/^\(.*?\)src/src/g | cut -d ' ' -f1 | cut -d '=' -f2 | sort | uniq -c | sort -nr | head -n 10
 ```
 
+
+# [Linux sysctl命令用法](https://www.toutiao.com/article/7239337185844019716/) 
+```
+sysctl 命令是一个 Unix 和 Linux 中的系统管理工具，用于动态地修改系统内核的运行参数，例如，一个能够通过 sysctl 命令进行修改的参数是 kernel.hostname。
+选项：
+-a：显示当前所有系统的内核参数；
+-A：显示所有系统内核参数及当前值，不建议使用，因为如果系统内核参数非常多的时候会导致屏幕上输出的信息过于庞大；
+-e：忽略任何内核参数加载错误；
+-n：只显示数值，不显示名称，默认情况下sysctl命令会同时显示内核参数的名称和对应的数值；
+-w：修改内核参数的值，如：sysctl -w net.ipv4.tcp_tw_recycle = 1；
+-p：从sysctl.conf文件中重新读取内核参数的设定；
+-q：安静模式，不显示任何提示信息，只有在出现错误时才会报错；
+-r：使用正则表达式的方式进行查找内核参数；
+-s：显示内核参数的详细信息，包括数值与描述；
+--system：加载指定文件中的内核参数设定，文件路径为/etc/sysctl.conf；
+--user：加载指定文件中的用户设定，文件路径为/etc/sysctl.d，以.conf或者.conf.d结尾的文件都会被加载；
+--load：从指定文件中重载sysctl.conf中的内核参数设定，文件路径为/etc/sysctl.conf；
+--prefix：以指定的前缀来查找内核参数；
+--ignore：忽略指定的内核参数，可以使用逗号将多个名称分隔开来；
+--show：指定要显示的内核参数，可以使用逗号将多个名称分隔开来。
+
+以下是一些常见的 sysctl 命令用法：
+1. 查询命令
+要查询系统内核参数，可以使用以下命令：
+sysctl -a # 查询所有内核参数
+sysctl -n kernel.hostname # 查询主机名
+sysctl -n vm.swappiness # 查询交换空间使用情况
+sysctl -n net.ipv4.tcp_fin_timeout # 查询 TCP 连接 FIN_WAIT2 等待的超时时间
+
+2. 修改命令
+要修改系统内核参数，需要使用以下命令：
+sysctl -w kernel.hostname=newhostname # 修改主机名
+sysctl -w net.ipv4.tcp_fin_timeout=30 # 修改 TCP 连接 FIN_WAIT2 等待的超时时间为30秒
+需要注意的是，修改网络相关的参数需要使用root权限。
+
+3. 持久化修改
+
+为了让修改的内核参数在系统重启后仍然有效，需要将修改写入到配置文件中。可以使用以下命令将修改写入到配置文件中：
+sysctl -p # 加载/etc/sysctl.conf配置文件
+sysctl -p /etc/sysctl.d/*.conf # 加载/etc/sysctl.d/目录下的所有配置文件
+
+4. 内核参数文件
+Linux系统的内核参数保存在/proc/sys目录下。可以通过/sys/class/目录下的文件访问和修改内核参数。如果需要修改系统内核参数，可以通过修改配置文件/etc/sysctl.conf或在/etc/sysctl.d/目录下创建配置文件来实现。
+
+总结：
+sysctl命令非常方便易用，通过它可以查询和修改系统的内核参数，可以有效地优化系统的性能。使用sysctl命令时需要注意权限和参数名，避免误操作导致系统出现异常。
+```
+  
+
 # [linux内核参数优化](https://blog.51cto.com/liuzhengwei521/2311250)  
 ![sysctl](https://s2.51cto.com/images/blog/201901/18/5b3b0289ea4af2db3726919bb984dc2a.png?x-oss-process=image/watermark,size_16,text_QDUxQ1RP5Y2a5a6i,color_FFFFFF,t_30,g_se,x_10,y_10,shadow_20,type_ZmFuZ3poZW5naGVpdGk=/format,webp/resize,m_fixed,w_1184)  
 
