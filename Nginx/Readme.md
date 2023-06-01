@@ -233,7 +233,7 @@ server {
       server_name localhost;
   
       location / {
-                try_files $uri $uri/ =404;
+                try_files $uri $uri/ =404; #location/表示处理根目录请求,try_files uriuri/ =404表示如果请求的页面存在,则返回该页面,否则返回404页面
                 auth_basic "Restricted Content";
                 auth_basic_user_file /etc/nginx/.htpasswd;
       }
