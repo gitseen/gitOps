@@ -142,6 +142,13 @@ Kubectl rollout history deployment web #版本对应RS记录
 **Deployment: 一般用来部署长期运行的、无状态的应用; 特点：集群之中,随机部署**  
 [Deployment-官方文档](https://kubernetes.io/zh-cn/docs/concepts/workloads/controllers/deployment/)  
 
+---
+
 ## StatefulSet
+
+
+
+---
+
 ## DaemonSet
 
