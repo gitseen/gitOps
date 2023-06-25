@@ -4,13 +4,13 @@
 
 - 配置管理工具：Ansible、SaltStack、Puppet、Chef
 
-- 日志管理工具：Logstash、Graylog、ELK Stack、Splunk
+- 日志管理工具：Logstash、Graylog、ELK Stack、Splunk、Loki(轻量级)
 
 - 容器管理工具：Docker、Kubernetes、OpenShift、Rancher
 
 - 网络管理工具：Wireshark、OpenNMS、Nmap、Netflow、Fiddler
 
-- 数据库管理工具：MySQL Workbench、pgAdmin、Navicat、Oracle SQL Developer、Toad
+- 数据库管理工具：MySQL Workbench、pgAdmin、phpmyadmin、SQL Studio、DBeaver、Navicat、Oracle SQL Developer、Toad
 
 - 云管理工具：AWS Management Console、Azure Management Portal、Google Cloud Console、OpenStack Dashboard
 
