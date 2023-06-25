@@ -22,7 +22,7 @@
 
 - 版本控制工具：Git、SVN、Mercurial、Perforce、TFS
 
-- 运维自动化工具：Jenkins、GitLab CI/CD、CircleCI、Travis CI、Bamboo
+- 运维自动化工具：Jenkins、GitLab CI/CD、CircleCI、Travis CI、Bamboo、Argocd
 
 - 虚拟化工具：VMware、VirtualBox、Hyper-V、Xen、KVM
 
