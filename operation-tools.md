@@ -4,7 +4,7 @@
 
 - 配置管理工具：Ansible、SaltStack、Puppet、Chef
 
-- 日志管理工具：Logstash、Graylog、ELK Stack、Splunk、Loki(轻量级)
+- 日志管理工具：Logstash、Graylog、ELK Stack、Splunk、Flume、Loki(轻量级)
 
 - 容器管理工具：Docker、Kubernetes、OpenShift、Rancher
 
