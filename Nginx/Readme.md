@@ -117,16 +117,16 @@ Nginx的模块从功能上分为如下三类
       hash $request_uri;#实现每个url定向到同一个后端服务器
       hash_method crc32;
      }
-    upstream backend{
-    least_conn;
-    server 192.168.200.146:9001;
-    server 192.168.200.146:9002;
-    server 192.168.200.146:9003;
-    }
-    server {
-    listen 8083;
-    server_name localhost;
-    location /{
+     upstream backend{
+     least_conn;
+     server 192.168.200.146:9001;
+     server 192.168.200.146:9002;
+     server 192.168.200.146:9003;
+     }
+     server {
+     listen 8083;
+     server_name localhost;
+     location /{
         proxy_pass http://backend;
     }
     }
