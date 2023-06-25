@@ -90,7 +90,7 @@ Nginx的模块从功能上分为如下三类
       server 192.168.0.15:80;
      }
    ```
-   ## least_conn
+   ## [least_conn](https://www.toutiao.com/article/7246780199151862312)
    把请求转发给连接数较少的后端服务器。轮询算法是把请求平均的转发给各个后端,使它们的负载大致相同；但是,有些请求占用的时间很长,会导致其所在的后端负载较高。这种情况下,least_conn这种方式就可以达到更好的负载均衡效果。  
    ```bash
       upstream backserver {
