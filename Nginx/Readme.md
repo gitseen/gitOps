@@ -98,6 +98,20 @@ Nginx的模块从功能上分为如下三类
       server 192.168.0.14:88;
       server 192.168.0.15:80;
       }
+
+upstream backend{
+    least_conn;
+    server 192.168.200.146:9001;
+    server 192.168.200.146:9002;
+    server 192.168.200.146:9003;
+}
+server {
+    listen 8083;
+    server_name localhost;
+    location /{
+        proxy_pass http://backend;
+    }
+}
    ```
    ## fair(第三方)
    按后端服务器的响应时间来分配请求,响应时间短的优先分配。  
@@ -117,19 +131,6 @@ Nginx的模块从功能上分为如下三类
       hash $request_uri;#实现每个url定向到同一个后端服务器
       hash_method crc32;
      }
-     upstream backend{
-     least_conn;
-     server 192.168.200.146:9001;
-     server 192.168.200.146:9002;
-     server 192.168.200.146:9003;
-     }
-     server {
-     listen 8083;
-     server_name localhost;
-     location /{
-        proxy_pass http://backend;
-    }
-    }
    ```
    ## [nginx 负载均衡示例](https://www.toutiao.com/article/7195169258300342842/)  
    
