@@ -10,7 +10,7 @@
 
 - 网络管理工具：Wireshark、OpenNMS、Nmap、Netflow、Fiddler
 
-- 数据库管理工具：MySQL Workbench(比较费资源)、pgAdmin、phpmyadmin、SQL Studio、DBeaver、Navicat、Oracle SQL Developer、Toad
+- 数据库管理工具：MySQL Workbench、pgAdmin、phpmyadmin、SQL Studio、DBeaver、Navicat、Oracle SQL Developer、Toad
 
 - 云管理工具：AWS Management Console、Azure Management Portal、Google Cloud Console、OpenStack Dashboard
 
