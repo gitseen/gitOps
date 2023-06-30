@@ -3,4 +3,5 @@
 
 shell中的printf vs echo到底哪个更好用  https://m.toutiao.com/is/yYEuL17/
 
+退出shell脚本的正确姿势与最佳实践 https://m.toutiao.com/is/y8GoQSX/
 
