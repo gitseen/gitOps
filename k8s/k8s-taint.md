@@ -442,3 +442,16 @@ nodeName这个字段建议在生产环境中还是少用，所有Pod都在一个
 [不背锅运维-K8S之污点、污点容忍](https://www.google.com/)
 
 
+# k8s的token默认是24小时的可以在master节点创建一个永不过期的token
+```
+1、列出现在的24小时的token：
+kubeadm token list
+2、删除掉快过期的token：
+kubeadm token delete 查出的token值
+3、创建一个永不过期的token：
+kubeadm token create --ttl 0
+4、打印node节点加入集群的命令：
+kubeadm token create  --print-join-command
+```
+https://m.toutiao.com/is/i8AkG1n/
+
