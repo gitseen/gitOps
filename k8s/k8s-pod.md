@@ -1,7 +1,7 @@
 # K8S-Pod知识点
 ## pod-yaml
 <details>
-  <summary>livenessProbe-exec</summary>
+  <summary>k8s-pod-yaml</summary>
   <pre><code>
 apiVersion: v1 #指定api版本，此值必须在kubectl apiversion中
 kind: Pod #指定创建资源的角色/类型
