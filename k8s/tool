@@ -2,3 +2,87 @@
 https://www.toutiao.com/article/7201284614336332344
 
 
+#velero & MinIO 对kubernetes进行备份恢复
+https://m.toutiao.com/is/iR43Qh1/
+https://www.toutiao.com/c/user/token/MS4wLjABAAAAoDOK1T2YcIKmNbeiykJ5FHotu6fz4EmwaKkmk9EzE5U/?source=tuwen_detail&log_from=719073bd9ce92_1688095163869
+
+#15款备受推崇的K8S可视化工具，你都玩过哪些？
+https://m.toutiao.com/is/i8AdDU3/
+```
+对于那些热爱探索新技术、寻找简化操作方式的运维工程师来说，如何更好地管理和操作K8S集群？本篇将分享15款备受推崇的K8S可视化工具，让你轻松管理和操作集群中的各种资源。你可能已经玩过其中的一些工具，这将是一个与你分享经验的机会哦！
+
+备受推崇的15款
+Kubernetes Dashboard: https://github.com/kubernetes/dashboard
+KubeSphere: https://kubesphere.io/
+Rancher: https://rancher.com/
+Lens: https://k8slens.dev/
+Octant: https://octant.dev/
+K9s: https://k9scli.io/
+Shipyard: https://shipyard-project.io/
+Kontena Lens: https://www.kontena.io/lens/
+Kubernetic: https://kubernetic.com/
+Loodse Kubermatic: https://www.kubermatic.com/
+Portainer: https://www.portainer.io/
+Kubevious: https://kubevious.io/
+Kuboard: https://github.com/eip-work/kuboard-press
+Grafana: https://grafana.com/
+Weave Scope: https://www.weave.works/oss/scope/
+每款工具的简述
+K8S Dashboard：
+作为K8S官方提供的仪表盘工具，它以简洁而直观的界面展示和管理K8S集群中的各类资源。
+
+KubeSphere：
+作为一款开源的K8S平台，KubeSphere为你提供了可视化的控制台和管理界面，助你轻松管理应用程序的部署、监控和日志查看等功能。
+
+Rancher：
+作为一个开源的容器管理平台，Rancher支持多个K8S集群的管理，具备强大的应用程序管理、监控和自动化部署等功能。
+
+Lens：
+作为一款跨平台的K8S可视化工具，Lens支持Windows、macOS和Linux操作系统，提供直观的界面，帮助你查看和操作K8S集群中的各种资源。
+
+Octant：
+作为一款开源的K8S可视化工具，Octant提供了简洁而功能丰富的用户界面，支持自定义插件和扩展，助你更好地查看和管理K8S集群。
+
+K9s：
+作为一款基于终端的K8S管理工具，K9s提供了交互式的界面，让你可以轻松查看和操作K8S资源，实时监控、日志查看、资源过滤等功能一应俱全。
+
+Shipyard：
+作为一款开源的容器管理平台，Shipyard提供了可视化界面，帮助你管理和监控K8S集群，支持应用程序部署、资源管理和事件触发等功能。
+
+Kontena Lens：
+作为一款跨平台的K8S管理工具，Kontena Lens提供了直观的用户界面，让你可以轻松查看和操作K8S集群中的资源，支持多集群管理、监控和日志查看等功能。
+
+Kubernetic：
+作为一款面向开发人员和运维人员的K8S可视化工具，Kubernetic提供了强大的功能和直观的用户界面，帮助你更好地管理和操作K8S集群，支持实时监控、事件触发、日志查看等功能。
+
+Loodse Kubermatic：
+作为一款开源的K8S管理平台，Loodse Kubermatic提供了可视化界面，帮助你管理多个K8S集群，具备应用程序部署、自动扩展、监控和日志查看等功能。
+
+Portainer：
+作为一款开源的容器管理工具，Portainer提供了可视化界面，支持管理Docker和K8S集群，实现应用程序部署、资源监控和日志查看等功能。
+
+Kubevious：
+作为一款开源的K8S可视化工具，Kubevious提供了直观的界面，帮助你查看和管理K8S集群中的资源，支持拓扑图展示、配置审计和资源关系分析等功能。
+
+Kuboard：
+作为一款开源的K8S可视化仪表板，Kuboard提供了用户友好的界面，帮助你监控和管理K8S集群，支持资源概览、事件查看和日志管理等功能。
+
+Grafana：
+虽然主要是一款监控和可视化工具，Grafana也可以与K8S集成，提供对集群的可视化展示。通过Grafana的仪表盘功能，你可以创建和定制自己的K8S集群监控视图。
+
+Weave Scope：
+作为一款开源的容器和微服务可视化工具，Weave Scope提供了直观的界面，帮助你查看和管理K8S集群中的资源，支持拓扑图展示、性能监控和流量分析等功能。
+
+最后
+这些仅仅是15款备受推崇的K8S可视化工具的一部分，它们都拥有独特的特点和功能，能够满足不同用户的需求。无论你是正在探索K8S的小鲜肉，还是已经熟练运用K8S的老腊肉，这些可视化工具都将成为你提升运维乐趣和效率的利器。那么，你已经尝试过其中的哪些工具呢？评论留言分享你的使用心得，和号主一起共同探索。
+
+【K8S（专注于深入研究K8S相关的各种技术和知识分享。）】：
+https://mp.weixin.qq.com/mp/appmsgalbum?action=getalbum&__biz=MzUzMTkyODc4NQ==&scene=1&album_id=2474851867500544003&count=3#wechat_redirect
+
+【Go&Py（涵盖了Go和Python两种流行的编程语言。）】：
+https://mp.weixin.qq.com/mp/appmsgalbum?action=getalbum&__biz=MzUzMTkyODc4NQ==&scene=1&album_id=2869340550028771330&count=3#wechat_redirect
+
+【Ops（运维领域的讨论和交流。）】：
+https://mp.weixin.qq.com/mp/appmsgalbum?action=getalbum&__biz=MzUzMTkyODc4NQ==&scene=1&album_id=2869345486221262853&count=3#wechat_redirect
+```
+
