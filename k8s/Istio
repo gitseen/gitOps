@@ -96,6 +96,8 @@ Istio的吹嘘与特性，对于国外很多通过RESTful提供内网服务的�
 
 看了上图就容易懂了，biz和proxy相生相伴，就像摩托车(motor)与旁边的车厢(sidecar)。未来，sidecar和proxy就指微服务进程解耦成两个进程之后，提供基础能力的那个代理进程。
 
+# 十分钟Istio安装、部署、验证、卸载
+https://m.toutiao.com/is/iRY63x6/
 
 
 服务网格原理
