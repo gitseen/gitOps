@@ -1,4 +1,8 @@
 from https://www.toutiao.com/article/7196554496028246565  
+
+# [手写K8S的YAML](https://www.toutiao.com/article/7247048547579822627)
+**三把利剑：help、dry-run、explain**  
+
 # K8S集群中yaml文件说明
 # 1、k8s常用指令
 ```
