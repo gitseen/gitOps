@@ -61,3 +61,10 @@ sidecar采集方式,利用k8s同一个pod内的容器可以共享存储卷的特
 # 小结
 [日志通用采集方案-渊在kube](https://www.toutiao.com/article/7174313065696100899/)  
 
+
+# Kubernetes日志采集最佳实践
+[日志采集最佳实践](https://www.toutiao.com/article/6801307364583539214/)  
+[智能日志分析](https://www.toutiao.com/c/user/token/MS4wLjABAAAA3ev_RbfTYE7tn8N5LsLHEfkedh5csHYcp-N5Ypqd0BQ/?source=tuwen_detail&log_from=8ac328f4aa394_1688355251513)  
+
+
+
