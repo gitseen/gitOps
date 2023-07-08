@@ -233,3 +233,4 @@ kubectl get pvc
 #检查状态 STATUS是可用的   CLAIM栏是空白 PV没有与任何PVC绑定
 ```
 
+[kubernetes中的存储卷-Volume](https://m.toutiao.com/is/iB1F3rv/)
