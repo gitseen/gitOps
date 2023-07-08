@@ -37,3 +37,4 @@
   ```
 ![架构关系](https://p3.toutiaoimg.com/large/tos-cn-i-jcdsk5yqko/a2362d25d8654f95976fc8820e3fd8d7)  
 
+[kube-prometheus自动化部署prometheus实现对k8s监控](https://m.toutiao.com/is/iMLW6Tw/)
