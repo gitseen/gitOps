@@ -349,6 +349,41 @@ rewrite ^(.*)$ /pages/maintain.html break;
 临时维护页要找对正确的路径
 ```
 
+# [Nginx-websockets](https://www.toutiao.com/article/7250674746478871055)  
+websocket长连接   http短连接
+```mermaid
+sequenceDiagram
+participant 客户端
+participant 服务器
+客户端->>服务器: 1. 建立TCP连接
+客户端->>服务器: 2. 发送WebSocket握手请求（包含Upgrade和Connection字段）
+服务器-->>客户端: 3. 接收握手请求
+服务器-->>客户端: 4. 返回WebSocket握手响应（包含Upgrade和Connection字段）
+客户端-->>服务器: 5. 握手完成，升级为WebSocket连接
+客户端->>服务器: 6. 双向数据通信
+服务器-->>客户端: 7. 双向数据通信
+客户端->>服务器: 8. 关闭WebSocket连接（发送关闭帧）
+服务器-->>客户端: 9. 接收关闭帧
+客户端->>服务器: 10. 关闭TCP连接
+```
+
+```mermaid
+sequenceDiagram
+participant 浏览器
+participant 服务器
+浏览器->>服务器: 发起HTTP Upgrade请求
+服务器-->>浏览器: 响应101状态码
+浏览器-->>服务器: 发送握手请求
+服务器-->>浏览器: 响应握手
+loop 通信循环
+浏览器->>服务器: 发送websocket消息
+服务器-->>浏览器:响应websocket消息
+end
+浏览器->>服务器: 关闭websocket连接
+服务器-->>浏览器: 响应关闭连接
+```
+
+
 # Nginx模块详解
 [Nginx模块详解](https://cloud.tencent.com/developer/article/2057869)  
 https://www.toutiao.com/article/6679950432736903694/?channel=&source=search_tab  
