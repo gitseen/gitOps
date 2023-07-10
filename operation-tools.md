@@ -57,7 +57,7 @@
 - [LinuxQuestions](https://www.linuxquestions.org/)  
 - [Linux Foundation](https://training.linuxfoundation.cn/)    
 
-# K8S可视化工n
+# K8S可视化工具
 - [Dashboard](https://github.com/kubernetes/dashboard)  
 - [KubeSphere](https://kubesphere.io/) 
 - [Rancher](https://rancher.com/)  
