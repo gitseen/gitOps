@@ -41,3 +41,18 @@
 - 数据可视化工具：Tableau、Power BI、QlikView、Domo、Looker
 
 - 应用性能管理APM: ManageEngine 、New Reclic、Dynatrace商业；[pinpoint](https://github.com/naver/pinpoint)、[Zipkin](https://github.com/openzipkin/zipkin)、[skywalking](https://github.com/apache/incubator-skywalking)
+
+# 运维工程师有哪些常用的技术网站
+- [Stack Overflow](https://stackoverflow.com/)  
+- [DevOps Stack Exchange](https://devops.stackexchange.com/)  
+- [Reddit](https://www.reddit.com/r/devops/)  
+- [Reddit 的 r/sysadmin](https://www.reddit.com/r/sysadmin/)  
+- [InfoQ](https://www.infoq.cn/)  
+- [DZone](https://dzone.com/)  
+- [GitHub](https://github.com/)  
+- [Docker Hub](https://hub.docker.com/)  
+- [Server Fault](https://serverfault.com/) 
+- [DigitalOcean Community](https://www.digitalocean.com/community) 
+- [Linux](https://www.linux.com/)   
+- [LinuxQuestions](https://www.linuxquestions.org/)  
+- [Linux Foundation](https://training.linuxfoundation.cn/)    
