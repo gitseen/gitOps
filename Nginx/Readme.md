@@ -52,6 +52,9 @@ Nginx的模块从功能上分为如下三类
   - Proxies （代理类模块）。此类模块是Nginx的HTTP Upstream之类的模块,这些模块主要与后端一些服务比如FastCGI等进行交互,实现服务代理和负载均衡等功能  
  
 
+# [Location配置及常用配置](https://www.toutiao.com/article/7249216945684496948/) 
+
+
 # 负载均衡方式
   **当一台服务器的单位时间内的访问量越大时,服务器压力就越大,大到超过自身承受能力时,服务器就会崩溃。为了避免服务器崩溃,让用户有更好的体验,我们通过负载均衡的方式来分担服务器压力**  
   **负载均衡策略**  
@@ -350,7 +353,9 @@ rewrite ^(.*)$ /pages/maintain.html break;
 ```
 
 # [Nginx-websockets](https://www.toutiao.com/article/7250674746478871055)  
-websocket长连接   http短连接
+**websocket长连接**   
+**http短连接**  
+
 ```mermaid
 sequenceDiagram
 participant 客户端
