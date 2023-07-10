@@ -58,19 +58,19 @@
 - [Linux Foundation](https://training.linuxfoundation.cn/)    
 
 # K8S可视化工n
-Dashboard: https://github.com/kubernetes/dashboard  
-KubeSphere: https://kubesphere.io/  
-Rancher: https://rancher.com/  
-Lens: https://k8slens.dev/  
-Octant: https://octant.dev/  
-K9s: https://k9scli.io/  
-Shipyard: https://shipyard-project.io/  
-Kontena Lens: https://www.kontena.io/lens/   
-Kubernetic: https://kubernetic.com/  
-Loodse Kubermatic: https://www.kubermatic.com/  
-Portainer: https://www.portainer.io/  
-Kubevious: https://kubevious.io/  
-Kuboard: https://github.com/eip-work/kuboard-press  
-Grafana: https://grafana.com/  
-Weave Scope: https://www.weave.works/oss/scope/  
+- [Dashboard](https://github.com/kubernetes/dashboard)  
+- [KubeSphere](https://kubesphere.io/) 
+- [Rancher](https://rancher.com/)  
+- [Lens](https://k8slens.dev/) 
+- [Octant](https://octant.dev/)  
+- [K9s](https://k9scli.io/)
+- [Shipyard](https://shipyard-project.io/)
+- [Kontena Lens](https://www.kontena.io/lens/)
+- [Kubernetic](https://kubernetic.com/)
+- [Loodse Kubermatic](https://www.kubermatic.com/)  
+- [Portainer](https://www.portainer.io/)
+- [Kubevious](https://kubevious.io/)
+- [Kuboard](https://github.com/eip-work/kuboard-press)    
+- [Grafana](https://grafana.com/)  
+- [Weave Scope](https://www.weave.works/oss/scope/)
 
