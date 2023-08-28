@@ -340,7 +340,7 @@ systemctl status prometheus.service
 ```
 
 ## 2.3.4 验证prometheus web界⾯
-http://x.x.x.x:port/   
+http://x.x.x.x:9090/   
 
 ## 2.3.5 动态(热)加载配置
 ```
@@ -370,6 +370,128 @@ k8s各node节点使⽤⼆进制或者daemonset⽅式安装node_exporter，⽤于
 
 ![exporter](pic/node-exporter.png)
 
+## 2.4.1 解压⼆进制程序
+```
+tar xf node_exporter-1.3.1.linuxamd64.tar.gz
+ln -sfv /usr/local/src/nodeexport/node_exporter-1.3.1.linux-amd64 /usr/local/src/node-export/node-export
+```
+## 2.4.2 创建node-exporter service启动⽂件
+```
+#vim /etc/systemd/system/nodeexport.service
+[Unit]
+Description=Prometheus Node Exporter
+After=network.target
+[Service]
+ExecStart=/usr/local/src/node-export/node-export/node_exporter
+[Install]
+WantedBy=multi-user.target
+```
+## 2.4.3 启动node exporter服务
+```
+systemctl daemon-reload && systemctl enable --now node-export.service
+systemctl status nodeexport.service
+``` 
+## 2.4.4 验证node exporter web界⾯
+http://x.x.x.x:9100/metrics
+
+## 2.4.5 node-exporter指标数据
+[文档说明](https://knowledge.zhaoweiguo.com/build/html/cloudnative/prometheus/metrics/kubernetes-cadvisor.html)
+```
+curl 10.0.0.23:9100/metrics
+
+#node-export默认的监听端⼝为9100，可以使⽤浏览器或curl访问数据：
+# HELP node_cpu_guest_seconds_total Seconds the CPUs spent in guests (VMs) for each mode.
+# TYPE node_cpu_guest_seconds_total counter
+node_cpu_guest_seconds_total{cpu="0",mode="nice"} 0
+node_cpu_guest_seconds_total{cpu="0",mode="user"} 0
+# HELP node_cpu_seconds_total Seconds the CPUs spent in each mode.
+# TYPE node_cpu_seconds_total counter
+node_cpu_seconds_total{cpu="0",mode="idle"} 4168.02
+node_cpu_seconds_total{cpu="0",mode="iowait"} 0.84
+node_cpu_seconds_total{cpu="0",mode="irq"} 0
+node_cpu_seconds_total{cpu="0",mode="nice"} 1.96
+node_cpu_seconds_total{cpu="0",mode="softirq"} 9.33
+node_cpu_seconds_total{cpu="0",mode="steal"} 0
+node_cpu_seconds_total{cpu="0",mode="system"} 167.92
+node_cpu_seconds_total{cpu="0",mode="user"} 290.23
+常⻅的指标：
+node_boot_time：系统⾃启动以后的总结时间
+node_cpu：系统CPU使⽤量
+node_disk*：磁盘IO
+node_filesystem*：系统⽂件系统⽤量
+node_load1：系统CPU负载
+node_memeory*：内存使⽤量
+node_network*：⽹络带宽指标
+node_time：当前系统时间
+go_*：node exporter中go相关指标
+process_*：node exporter⾃身进程相关运⾏指标
+```
+## 2.4.6 使用脚本方式安装prometheus和node-exporter
+```
+tar xf node-exporter-1.3.1-onekey-install.tar.gz
+cat node-exporter-1.3.1-onekeyinstall.sh
+#!/bin/bash
+PKG="node_exporter-1.3.1.linux-amd64.tar.gz"
+S_DIR="node_exporter-1.3.1.linux-amd64"
+mkdir -p /apps
+tar xvf ${PKG} -C /apps/
+ln -sfv /apps/${S_DIR} /apps/node_exporter
+\cp ./node-exporter.service /etc/systemd/system/node-exporter.service
+systemctl daemon-reload && systemctl restart node-exporter && systemctl enable node-exporter
+echo "node-exporter install successful"
+```
+
+## 2.5 配置prometheus server收集node-exporter指标数据
+## 2.5.1：prometheus默认配置⽂件
+```
+cat /apps/prometheus/prometheus.yml
+# my global config
+global:
+  scrape_interval: 15s # Set the scrape interval to every 15 seconds. Default isevery 1 minute. #数据收集间隔时间，如果不配置默认为⼀分钟
+  evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute. #规则扫描间隔时间，如果不配置默认为⼀分钟
+  # scrape_timeout is set to the global default (10s).
+# Alertmanager configuration
+alerting: #报警通知配置
+  alertmanagers:
+    - static_configs:
+        - targets:
+          # - alertmanager:9093
+# Load rules once and periodically evaluate them according to the global
+'evaluation_interval'.
+rule_files: #规则配置
+# - "first_rules.yml"
+# - "second_rules.yml"
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.'
+scrape_configs: #数据采集⽬标配置
+# The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+- job_name: "prometheus"
+
+  # metrics_path defaults to '/metrics'
+  # scheme defaults to 'http'.
+
+  static_configs:
+    - targets: ["localhost:9090"]
+```
+## 2.5.2 添加node节点数据收集
+```
+- job_name: "prometheus-node"
+    static_configs:
+       - targets: ["10.0.0.23:9100","10.0.0.24:9100"]
+```
+## 2.5.3 重启并验证prometheus server状态
+systemctl restart prometheus.service  
+## 2.5.4 验证prometheus server数据采集状态
+http://x.x.x.x:9090/
+## 2.5.5 验证node数据
+http:/x.x.x.x:9100/metrics
+
+## 2.6 grafana
+```
+grafana是⼀个可视化组件，⽤于接收客户端浏览器的请求并连接到prometheus查询数据，最后经过渲染并在浏览器进⾏体系化显示，需要注意的是，grafana查询数据类似于zabbix⼀样需要⾃定义模板，模板可以⼿动制作也可以导⼊已有模板。
+
+``` 
 
 
 
