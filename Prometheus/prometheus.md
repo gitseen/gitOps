@@ -213,7 +213,7 @@ dockercompose up -d -v
 git clone -b release-0.11 https://github.com/prometheus-operator/kube-prometheus.git  
 cd kube-prometheus  
 kubectl apply --server-side -f manifests/setup  
-# grep image: manifests/ -R | grep "k8s.gcr.io" #有部分镜像⽆法下载
+#grep image: manifests/ -R | grep "k8s.gcr.io" #有部分镜像⽆法下载
 ```
 准备kube-state-metrics镜像：
 nerdctl pull bitnami/kube-statemetrics:2.5.0
