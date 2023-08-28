@@ -546,7 +546,7 @@ https://grafana.com/grafana/plugins/grafana-piechart-panel
 
 ```
 
-#三、 PromQL语句简介
+# 三、 PromQL语句简介
 ```
 https://prometheus.io/docs/prometheus/latest/querying/basics/
 Prometheus提供⼀个函数式的表达式语⾔PromQL (Prometheus Query Language)，可以使⽤户实时地查找和聚合时间序列数据，表达式计算结果可以在图表中展示，
