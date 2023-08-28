@@ -366,7 +366,8 @@ WantedBy=multi-user.target
 
 ## 2.4 ⼆进制安装node-exporter
 k8s各node节点使⽤⼆进制或者daemonset⽅式安装node_exporter，⽤于收集各k8snode节点宿主机的监控指标数据，默认监听端⼝为9100。
->> 部署环境：kubernetes的node节点，如果之前已经通过其它⽅式部署了prometheus node-exporter，需要先停⽌再部，避免端⼝冲突
+>> 部署环境：kubernetes的node节点，如果之前已经通过其它⽅式部署了prometheus node-exporter，需要先停⽌再部，避免端⼝冲突  
+
 ![exporter](pic/node-exporter.png)
 
 
