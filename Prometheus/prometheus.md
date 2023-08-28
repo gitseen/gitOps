@@ -485,48 +485,93 @@ systemctl restart prometheus.service
 ## 2.5.4 验证prometheus server数据采集状态
 http://x.x.x.x:9090/
 ## 2.5.5 验证node数据
-http:/x.x.x.x:9100/metrics
+http://x.x.x.x:9100/metrics
 
 ## 2.6 grafana
 ```
-grafana是⼀个可视化组件，⽤于接收客户端浏览器的请求并连接到prometheus查询数据，最后经过渲染并在浏览器进⾏体系化显示，需要注意的是，grafana查询数据类似于zabbix⼀样需要⾃定义模板，模板可以⼿动制作也可以导⼊已有模板。
-
+grafana是⼀个可视化组件，⽤于接收客户端浏览器的请求并连接到prometheus查询数据，最后经过渲染并在浏览器进⾏体系化显示，需要注意的是，
+grafana查询数据类似于zabbix⼀样需要⾃定义模板，模板可以⼿动制作也可以导⼊已有模板。
 ``` 
+[官网](https://grafana.com/)  
+[模板下载](https://grafana.com/grafana/dashboards/)   
+![架构](pic/gra-alt.png)  
 
+## 2.6.1 安装Grafana Server
+```
+https://grafana.com/grafana/download #下载地址
+https://grafana.com/docs/grafana/latest/installation/requirements/ #安装⽂档
 
+部署要求: 可以和prometheus server分离部署，只要⽹络通信正常即可
+部署环境: 172.31.7.202. #grafana server
+apt-get install -y adduser libfontconfig1
+dpkg -i grafana-enterprise_8.4.1_amd64.deb
 
+yum/rpm
+```
+## 2.6.2 grafana server配置⽂件
+```
+# vim /etc/grafana/grafana.ini
+[server]
+# Protocol (http, https, socket)
+protocol = http
+# The ip address to bind to, empty will bind to all interfaces
+http_addr = 0.0.0.0
+# The http port to use
+http_port = 3000
+```
+## 2.6.3 启动grafana
+systemctl restart grafana-server
+systemctl status grafana-server
+## 2.6.4 验证grafana web界⾯
+http://x.x.x.x:3000
+## 2.6.5添加prometheus数据源
+...
+## 2.7 grafana导⼊模板
+https://grafana.com/grafana/dashboards/11074
+...
 
+## 2.7.1 插件管理
+```
+饼图插件未安装，需要提前安装
+https://grafana.com/grafana/plugins/grafana-piechart-panel
 
+在线安装：
+# grafana-cli plugins install grafana-piechart-panel
+离线安装：
+# pwd
+/var/lib/grafana/plugins
+# unzip grafana-piechart-panel-v1.3.8-0-g4f34110.zip
+# mv grafana-piechart-panel-4f34110 grafana-piechart-panel
+# systemctl restart grafana-server
 
+```
 
+#三、 PromQL语句简介
+```
+https://prometheus.io/docs/prometheus/latest/querying/basics/
+Prometheus提供⼀个函数式的表达式语⾔PromQL (Prometheus Query Language)，可以使⽤户实时地查找和聚合时间序列数据，表达式计算结果可以在图表中展示，
+也可以在Prometheus浏览器中以表格形式展示，或者作为数据源, 以HTTP API的⽅式提供给外部系统使⽤。
+```
+## 3.1 PromQL数据基础
+## 3.1.1：PromQL查询数据类型
+```
+https://prometheus.io/docs/prometheus/latest/querying/basics/
 
+瞬时向量、瞬时数据(instant vector):是对⽬标实例查询到的同⼀个时间戳的⼀组时间序列数据(按照时间的推移对数据进存储和展示)，每个时间序列包含单个数据样本，
+⽐如node_memory_MemFree_bytes查询的是当前剩余内存(可⽤内存)就是⼀个瞬时向量，该表达式的返回值中只会包含该时间序列中的最新的⼀个样本值，⽽相应的这样的表达式称之为瞬时向量表达式，
 
+例如：prometheus_http_requests_totalprometheus API查询瞬时数据命令，在没有指定匹配条件的前提下，会返回所有包含此指标数据的实例数据
+curl 'http://172.31.2.101:9090/api/v1/query' --data 'query=node_memory_MemFree_bytes' --data time=1662516384
+查询指定实例的范围数据：
+范围向量、范围数据(range vector):是指在任何⼀个时间范围内，抓取的所有度量指标数据.⽐如最近⼀天的⽹卡流量趋势图，
 
+例如：prometheus_http_requests_total[5m]
+curl 'http://172.31.2.101:9090/api/v1/query' --data 'query=node_memory_MemFree_bytes{instance="172.31.2.181:9100"}[1m]' --data time=1662516384
+标量、纯量数据(scalar)：是⼀个浮点数类型的数据值，使⽤node_load1获取到时⼀个瞬时向量后，在使⽤prometheus的内置函数scalar()将瞬时向量转换为标量，
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+例如：scalar(sum(node_load1))
+curl 'http://172.31.2.101:9090/api/v1/query' --data 'query=scalar(sum(node_load1{instance="172.31.2.181:9100"}))' --data time=1662516384
+字符串(string):简单的字符串类型的数据，⽬前未使⽤，（a simple string value; currentlyunused）
+```
 
 
