@@ -139,8 +139,9 @@ Config File Provider
 ![S-credentials](pic/nexus-credentials.png)  
 还需要注意nexus默认情况下是需要认证的，配置认证信息。  
 ![Content](pic/content.png)  
-创建用于构建后端java项目docker镜像的dockerfile模板  
-![java-dockerfile](pic/dockerfile.png)
+
+## 2.2.1 创建用于构建后端java项目docker镜像的dockerfile模板  
+![java-dockerfile](pic/dockerfile.png)  
 文件内容  
 ```
 FROM 10.114.233.12/baisc/kmbtjdk:v1
@@ -153,4 +154,22 @@ ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom
 ```
 ![java-dockerfile](pic/dockerfile2.png)  
 
+
+## 2.2.2  创建用于构建前段vue项目docker镜像的dockerfile模板
+文件内容  
+```
+FROM nginx:1.16.1-alpine
+ARG HTML_PATH=/usr/share/nginx/html
+WORKDIR ${HTML_PATH}
+RUN rm ${HTML_PATH}/*
+COPY dist/ ${HTML_PATH}/
+COPY default.conf /etc/nginx/conf.d/default.conf
+RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo "Asia/Shanghai" > /etc/timezone
+ENV PATH /usr/local/nginx/sbin:$PATH
+CMD ["nginx", "-g", "daemon off;"]
+EXPOSE 80
+
+```
+![vue-docker](pic/vue-nginx.png)  
+创建vue项目的nginx配置文件  
 
