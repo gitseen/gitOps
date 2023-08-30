@@ -104,6 +104,15 @@ cat /data/jenkins/secrets/initialAdminPassword
 
 # 二 Jenkins管理
 ## 2.1 管理插件
+![Manage](pic/manage.png)  
+![Plugins](pic/plugins)  
+
+安装以下插件  
+```
+Git Parameter
+Build With Parameters
+Config File Provider
+```
 
 
 
