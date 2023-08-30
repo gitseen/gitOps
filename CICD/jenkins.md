@@ -188,6 +188,18 @@ server {
 
 ```
 ## 2.3 配置凭据
-![配置凭据](pic/cre.png)  
+![配置凭据](pic/cre.png)   
+点击 System - 全局凭据  
+![全局凭据](pic/system.png)  
+![全局凭据](pic/unrest.png)  
+ 
+## 2.3.1 添加凭据-gitlab认证凭据
+添加用于拉取代码的gitlab认证凭据  
+![pullgit](pic/pullgit.png)  
+
+## 2.3.1 添加凭据-harbor(push images)  
 
 
+
+
+  
