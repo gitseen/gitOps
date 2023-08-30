@@ -209,6 +209,179 @@ server {
 
 
 ## 2.4 创建JOB
+为了便于统一管理，job一律采用pipeline流水线的方式配置。  
+
+## 2.4.1 创建基于java的后端服务job
+![job](pic/job1.png)   
+配置构建保留的数量，节省磁盘空间  
+![job](pic/job1-config.png)  
+流水线脚本内容如下  
+
+```
+env.GIT_URL = "https://172.16.0.208/nohup/applife_nohup.git" // 代码git仓库地址
+env.JAR_FILE = "trunk/ydmall-service/orders/target/orders.jar" // 构建结果jar路径
+env.IMAGE = "${JOB_NAME}" // 镜像名称
+env.IMAGETAG = "dev-${new Date().format('yyyyMMddHHmmss')}" // 镜像tag
+env.NAMESPACE = "dev" // 在k8s上部署的命名空间
+env.RegistryUrl = "172.16.0.219" // habor仓库地址
+properties([
+    parameters([
+        gitParameter(
+            branch: '',
+            branchFilter: 'origin/(.*)',
+            defaultValue: 'master',
+            name: 'GIT_BRANCH',
+            quickFilterEnabled: false,
+            selectedValue: 'NONE',
+            sortMode: 'DESCENDING_SMART',
+            tagFilter: '*',
+            type: 'PT_BRANCH_TAG'
+        )
+    ])
+])
+node {
+    stage('拉取代码') {
+        echo "1.拉取代码"
+        git credentialsId: 'gitlab', url: "$GIT_URL", branch: "${params.GIT_BRANCH}", changelog: true, poll: false
+    }
+    
+    stage('Maven编译打包') {
+        try {
+            echo "2. Maven编译打包"
+            configFileProvider([configFile(fileId: 'nexus', targetLocation: 'settings.xml')]) {
+    // 打包命令，根据实际情况改写
+                sh """
+                    mvn -am -pl ydmall-service/orders \
+                    clean package -T 1C \
+                    -Dmaven.test.skip=true \
+                    -Dmaven.compile.fork=true \
+                    -f trunk/pom.xml \
+                    --settings settings.xml
+                """
+            }
+        } catch (exc) {
+            println "Maven构建失败 - ${currentBuild.fullDisplayName}"
+            throw(exc)
+        }
+    }
+    stage('构建 Docker 镜像') {
+        withCredentials([usernamePassword(
+            credentialsId: 'harbor',
+            usernameVariable: 'DOCKER_HUB_USER',
+            passwordVariable: 'DOCKER_HUB_PASSWORD')]) {
+                echo "3. 构建 Docker 镜像"
+                configFileProvider([configFile(fileId: 'dockerfile-java', targetLocation: 'Dockerfile')]) {
+                    sh """
+                        sed -i "s#<jar-file>#${JAR_FILE}#g" Dockerfile
+                        docker login ${RegistryUrl} -u ${DOCKER_HUB_USER} -p ${DOCKER_HUB_PASSWORD} && \
+                        docker build -t ${RegistryUrl}/项目名称/${IMAGE}:${IMAGETAG} . && \
+                        docker push ${RegistryUrl}/项目名称/${IMAGE}:${IMAGETAG} && \
+                        docker logout ${RegistryUrl}
+                    """
+                }
+            }
+    }
+    
+    stage('使用kubectl部署') {
+        withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+            echo "4. 部署到Kubernetes"
+            sh """
+                cat ${KUBECONFIG} > kconfig
+                kubectl --kubeconfig kconfig patch -n ${NAMESPACE} deployment ${IMAGE} -p '{"spec":{"template":{"spec":{"containers":[{"name":"${IMAGE}","image":"${RegistryUrl}/项目名称/${IMAGE}:${IMAGETAG}"}]}}}}'
+                rm -f kconfig
+            """
+        }
+    }
+}
+
+```
+>> 注意：  
+1、由于代码分支采用git参数化动态指定，根据其插件规则，项目首次构建需要使用默认分支构建一次来初始化项目，后续则可以自由选择分支来进行构建；  
+2、pipeline脚本内容这里作为参考，需要根据实际情况进行修改。  
+
+
+## 2.4.2 创建基于vue的前端服务job
+流水线脚本内容如下
+```
+env.GIT_URL = "https://172.16.0.208/frontpage/admin.git"
+env.IMAGE = "${JOB_NAME}"
+env.IMAGETAG = "dev-${new Date().format('yyyyMMddHHmmss')}"
+env.NAMESPACE = "dev"
+env.RegistryUrl = "172.16.0.219"
+properties([
+    parameters([
+        gitParameter(
+            branch: '',
+            branchFilter: 'origin/(.*)',
+            defaultValue: 'master',
+            name: 'GIT_BRANCH',
+            quickFilterEnabled: false,
+            selectedValue: 'NONE',
+            sortMode: 'DESCENDING_SMART',
+            tagFilter: '*',
+            type: 'PT_BRANCH_TAG'
+        )
+    ])
+])
+node {
+    stage('拉取代码') {
+        echo "1.拉取代码"
+        git credentialsId: 'gitlab', url: "$GIT_URL", branch: "${params.GIT_BRANCH}", changelog: true, poll: false
+    }
+    
+    stage('Node编译打包') {
+        try {
+            echo "2. Node编译打包"
+            sh """
+                PATH=/bin:/usr/bin:/usr/local/bin:/data/node-v14.17.5-linux-x64/bin  # 使用变量来指定node版本
+                npm install
+                npm run build:dev
+            """
+        } catch (exc) {
+            println "Node构建失败 - ${currentBuild.fullDisplayName}"
+            throw(exc)
+        }
+    }
+    stage('构建 Docker 镜像') {
+        withCredentials([usernamePassword(
+            credentialsId: 'harbor',
+            usernameVariable: 'DOCKER_HUB_USER',
+            passwordVariable: 'DOCKER_HUB_PASSWORD')]) {
+                echo "3. 构建 Docker 镜像"
+                configFileProvider([configFile(fileId: 'vue-nginx.conf', targetLocation: 'default.conf'), configFile(fileId: 'dockerfile-vue', targetLocation: 'Dockerfile')]) {
+                    sh """
+                        docker login ${RegistryUrl} -u ${DOCKER_HUB_USER} -p ${DOCKER_HUB_PASSWORD} && \
+                        docker build -t ${RegistryUrl}/dev/${IMAGE}:${IMAGETAG} . && \
+                        docker push ${RegistryUrl}/dev/${IMAGE}:${IMAGETAG} && \
+                        docker logout ${RegistryUrl}
+                    """
+                }
+            }
+    }
+    
+    stage('使用kubectl部署') {
+        withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+            echo "4. 部署到Kubernetes"
+            sh """
+                cat ${KUBECONFIG} > kconfig
+                kubectl --kubeconfig kconfig patch -n ${NAMESPACE} deployment ${IMAGE} -p '{"spec":{"template":{"spec":{"containers":[{"name":"${IMAGE}","image":"${RegistryUrl}/dev/${IMAGE}:${IMAGETAG}"}]}}}}'
+                rm -f kconfig
+            """
+        }
+    }
+}
+
+```
+## 2.4.3 配置自签ca证书
+如果gitlab采用的是https协议且为自签名证书，则需要将其ca证书添加到 /etc/pki/tls/certs/ca-bundle.crt文件  
+![ca](pic/gitlab-ca.png)  
+
+如果harbor采用的是自签名证书，则需要将其ca证书添加到 /etc/docker/certs.d/服务器名称目录下   
+![ca](pic/harbor-ca.png) 
+
+  
+
+
  
  
 
