@@ -140,4 +140,4 @@ Config File Provider
 还需要注意nexus默认情况下是需要认证的，配置认证信息。  
 ![Content](pic/content.png)  
 
-
+########
