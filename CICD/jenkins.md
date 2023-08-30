@@ -197,7 +197,20 @@ server {
 添加用于拉取代码的gitlab认证凭据  
 ![pullgit](pic/pullgit.png)  
 
-## 2.3.1 添加凭据-harbor(push images)  
+## 2.3.2 添加凭据-harbor(push images)  
+添加用于向harbor推送docker镜像的认证凭据  
+![pushimages](pic/harbor.png)  
+
+## 2.3.3 添加凭据-harbor
+添加用于访问k8s集群认证的凭据  
+![k8s-env](pic/k8s-env.png)  
+这里的Secret file是从k8s集群的master节点（如果是多个master节点，选择任意一个即可）的/root/.kube/config获取。  
+注意该文件里面的server项为k8s的apiserver地址，确保可以正常访问。此外还需要将master节点的/usr/bin/kubectl拷贝到Jenkins服务器/usr/bin/kubectl位置  
+
+
+## 2.4 创建JOB
+ 
+ 
 
 
 
