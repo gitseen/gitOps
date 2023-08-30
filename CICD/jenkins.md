@@ -372,6 +372,9 @@ node {
 }
 
 ```
+**示例**  
+![示例](pic/eg.jpg)  
+
 ## 2.4.3 配置自签ca证书
 如果gitlab采用的是https协议且为自签名证书，则需要将其ca证书添加到 /etc/pki/tls/certs/ca-bundle.crt文件  
 ![ca](pic/gitlab-ca.png)  
