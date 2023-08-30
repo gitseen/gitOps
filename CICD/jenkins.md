@@ -116,7 +116,7 @@ Config File Provider
 
 ## 2.2 管理Jenkins-Managed files
 ![file](pic/file.png)  
-添加一个新的Config - Maven settings.xml  
+## 2.2.1 添加一个新的Config - Maven settings.xml  
 ![maveflie](pic/mave-xml.png)  
 指定配置文件id  
 ![nexus](pic/nexus.png)  
@@ -140,7 +140,7 @@ Config File Provider
 还需要注意nexus默认情况下是需要认证的，配置认证信息。  
 ![Content](pic/content.png)  
 
-## 2.2.1 创建用于构建后端java项目docker镜像的dockerfile模板  
+## 2.2.2 创建用于构建后端java项目docker镜像的dockerfile模板  
 ![java-dockerfile](pic/dockerfile.png)  
 文件内容  
 ```
@@ -155,7 +155,7 @@ ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom
 ![java-dockerfile](pic/dockerfile2.png)  
 
 
-## 2.2.2  创建用于构建前段vue项目docker镜像的dockerfile模板
+## 2.2.3  创建用于构建前段vue项目docker镜像的dockerfile模板
 文件内容  
 ```
 FROM nginx:1.16.1-alpine
@@ -172,7 +172,7 @@ EXPOSE 80
 ```
 ![vue-docker](pic/vue-nginx.png)  
 
-## 2.2.3  创建vue项目的nginx配置文件  
+## 2.2.4  创建vue项目的nginx配置文件  
 ![vue-nginx](pic/vue-nginx.conf.png)  
 文件内容  
 ```
