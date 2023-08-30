@@ -105,7 +105,7 @@ cat /data/jenkins/secrets/initialAdminPassword
 # 二 Jenkins管理
 ## 2.1 管理插件
 ![Manage](pic/manage.png)  
-![Plugins](pic/plugins)  
+![Plugins](pic/plugins.png)   
 
 安装以下插件  
 ```
