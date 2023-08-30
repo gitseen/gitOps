@@ -171,5 +171,23 @@ EXPOSE 80
 
 ```
 ![vue-docker](pic/vue-nginx.png)  
-创建vue项目的nginx配置文件  
+
+## 2.2.3  创建vue项目的nginx配置文件  
+![vue-nginx](pic/vue-nginx.conf.png)  
+文件内容  
+```
+server {
+    listen       80;
+    server_name  localhost;
+    location / {
+        root   /usr/share/nginx/html;
+        index  index.html;
+        try_files $uri $uri/ /index.html;
+    }
+}
+
+```
+## 2.3 配置凭据
+![配置凭据](pic/cre.png)  
+
 
