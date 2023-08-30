@@ -114,12 +114,30 @@ Build With Parameters
 Config File Provider
 ```
 
+## 2.2 管理Jenkins-Managed files
+![file](pic/file.png)  
+添加一个新的Config - Maven settings.xml  
+![maveflie](pic/mave-xml.png)  
+指定配置文件id  
+![nexus](pic/nexus.png)  
+配置Maven settings.xml的内容，需要指定nexus私有仓库地址的同时，配置公共仓库地址，以便maven为java项目打包时能够拉取到对应的依赖包。  
+```
+    <mirror>
+      <id>nexus</id>
+      <mirrorOf>*</mirrorOf>
+      <name>私服内部Nexus</name>
+      <url>http://172.16.0.217/repository/maven-public</url>
+    </mirror>
+    <mirror>
+      <id>public</id>
+      <mirrorOf>*</mirrorOf>
+      <name>公共仓库</name>
+      <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+    </mirror>
 
-
- 
-
-
-
-
+```
+![S-credentials](pic/nexus-credentials.png)  
+还需要注意nexus默认情况下是需要认证的，配置认证信息。  
+![Content](pic/content.png)  
 
 
