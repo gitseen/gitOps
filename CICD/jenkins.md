@@ -139,5 +139,18 @@ Config File Provider
 ![S-credentials](pic/nexus-credentials.png)  
 还需要注意nexus默认情况下是需要认证的，配置认证信息。  
 ![Content](pic/content.png)  
+创建用于构建后端java项目docker镜像的dockerfile模板  
+![java-dockerfile](pic/dockerfile.png)
+文件内容  
+```
+FROM 10.114.233.12/baisc/kmbtjdk:v1
+ARG PROJECT_PATH=/
+WORKDIR ${PROJECT_PATH}
+COPY <jar-file> ${PROJECT_PATH}/app.jar
+ENV JAVA_OPTS="-Duser.timezone=GMT+08 -Dfile.encoding=utf-8"
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar app.jar"]
 
-########
+```
+![java-dockerfile](pic/dockerfile2.png)  
+
+
