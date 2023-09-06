@@ -36,6 +36,10 @@ prometheus alerting：报警通知
 push gateway：数据收集代理服务器(类似于zabbix proxy)
 data visualization and export： 数据可视化与数据导出(访问客户端)
 ```
+
+[Prometheus on k8s 部署与实战操作进阶篇](https://www.toutiao.com/article/7272029390362526208/)   
+
+
 # 二、部署Prometheus监控系统
 ```
 可以通过不同的⽅式安装部署prometheus监控环境，虽然以下的多种安装⽅式演示了不同的部署⽅式，
