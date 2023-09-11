@@ -1,4 +1,7 @@
 # 一、Prometheus简介
+# [Prometheus on k8s 部署与实战操作进阶篇](https://www.toutiao.com/article/7272029390362526208/)  
+# [使用 Helm 安装 Prometheus Stack](https://todoit.tech/k8s/prometheus/#%E4%BD%BF%E7%94%A8-helm-%E5%AE%89%E8%A3%85-prometheus-stack)  
+
 ## 1.1内容
 ```
 1、监控简介、黑盒监控与白盒监控、常见的监控系统对比
@@ -36,9 +39,6 @@ prometheus alerting：报警通知
 push gateway：数据收集代理服务器(类似于zabbix proxy)
 data visualization and export： 数据可视化与数据导出(访问客户端)
 ```
-
-[Prometheus on k8s 部署与实战操作进阶篇](https://www.toutiao.com/article/7272029390362526208/)   
-
 
 # 二、部署Prometheus监控系统
 ```
