@@ -343,6 +343,8 @@ After=network.target
 [Service]
 #Type=simple
 #User=xx
+#https://developer.aliyun.com/ask/361675 
+
 WorkingDirectory=/usr/local/src/prometheus/prometheus
 ExecStart=/usr/local/src/prometheus/prometheus/prometheus --
 config.file=/usr/local/src/prometheus/prometheus/prometheus.yml
