@@ -341,10 +341,16 @@ Description=Prometheus Server
 Documentation=https://prometheus.io/docs/introduction/overview/
 After=network.target
 [Service]
-Restart=on-failure
+#Type=simple
+#User=xx
 WorkingDirectory=/usr/local/src/prometheus/prometheus
 ExecStart=/usr/local/src/prometheus/prometheus/prometheus --
 config.file=/usr/local/src/prometheus/prometheus/prometheus.yml
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+Restart=on-failure
+#--storage.tsdb.path.path
+#https://blog.csdn.net/weixin_47274578/article/details/127055825
 [Install]
 WantedBy=multi-user.target
 ```
