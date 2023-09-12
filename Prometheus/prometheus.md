@@ -40,6 +40,19 @@ prometheus alerting：报警通知
 push gateway：数据收集代理服务器(类似于zabbix proxy)
 data visualization and export： 数据可视化与数据导出(访问客户端)
 ```
+**组件介绍**
+- Prometheus Server  
+   Prometheus的核心组件，负责收集、存储和查询时间序列数据。它通过HTTP协议暴露API接口，可以接收来自各种数据源的指标数据，并将其存储在本地的时间序列数据库中。Prometheus Server内置的Express Browser UI，通过这个UI可以直接通过PromQL实现数据的查询以及可视化。  
+- ClientLibrary  
+  是一种用于在应用程序中集成Prometheus监控功能的库。它提供了一组API和工具，使应用程序能够方便地生成和暴露指标数据给Prometheus进行收集和存储，通过使用Client Library，应用程序可以方便地将自身的指标数据暴露给Prometheus进行收集和存储，从而实现对应用程序的监控和性能分析  
+- Push Gateway  
+   Pushgateway是一种特殊的Exporter，用于接收短期任务的指标数据。通常情况下，Prometheus是通过Pull方式来收集指标数据的，即定期从数据源拉取数据。但是对于一些短期任务（如批处理任务、临时任务等），由于其生命周期较短，无法被Prometheus及时拉取到数据。这时可以使用Pushgateway，将任务的指标数据推送到Pushgateway中，然后由Prometheus从Pushgateway中拉取数据  
+- Exporters  
+    Prometheus通过Exporters来收集各种不同类型的指标数据。Exporters是一种特殊的应用程序，它可以将应用程序或系统的指标数据暴露为Prometheus可识别的格式。Prometheus提供了一些常用的Exporters，如Node Exporter（用于收集主机指标）、Blackbox Exporter（用于收集网络指标）等，同时也支持用户自定义的Exporters  
+- Alertmanager  
+   Alertmanager是Prometheus的告警管理组件，负责接收、处理和发送告警通知。Prometheus可以通过配置规则来定义告警条件，当条件满足时，Prometheus会生成告警，并将其发送给Alertmanager。Alertmanager可以对告警进行去重、分组和静默等操作，并将告警通知发送给指定的接收者，如邮件、Slack等  
+- Grafana  
+   Grafana是一个开源的数据可视化和监控平台，可以与Prometheus集成，用于展示和分析Prometheus收集到的指标数据。Grafana提供了丰富的图表和面板，可以根据用户的需求自定义展示方式，并支持多种数据源的查询和展示  
 
 # 二、部署Prometheus监控系统
 ```
