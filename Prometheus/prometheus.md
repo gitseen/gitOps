@@ -2,7 +2,7 @@
 # [Prometheus on k8s 部署与实战操作进阶篇](https://www.toutiao.com/article/7272029390362526208/)  
 # [使用 Helm 安装 Prometheus Stack](https://todoit.tech/k8s/prometheus/#%E4%BD%BF%E7%94%A8-helm-%E5%AE%89%E8%A3%85-prometheus-stack)  
 # [Operator部署Prometheus](https://www.yuque.com/coolops/kubernetes/wd2vts)  
-
+# [Prometheus全方位监控K8S](https://www.gl.sh.cn/2021/04/26/prometheus_quan_fang_wei_jian_kong_k8s.html)  
 ## 1.1内容
 ```
 1、监控简介、黑盒监控与白盒监控、常见的监控系统对比
