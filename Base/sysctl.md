@@ -236,5 +236,6 @@ sysctl命令非常方便易用，通过它可以查询和修改系统的内核�
 
 [Linux内核优化参数](https://www.cnblogs.com/struggle-1216/p/12901341.html)  
 [linux系统参数调优分类](https://blog.csdn.net/wuxiaobingandbob/article/details/98942294)  
-
-
+[Centos7系统内核优化脚本](https://www.toutiao.com/article/6924210814777819655/)  
+[脚本之-合集](https://blog.51cto.com/dayu/6066741)  
+[linux系统调优](https://blog.csdn.net/wuxiaobingandbob/article/details/98942294)    
