@@ -21,3 +21,6 @@ do
     find  /opt/logs \( -name "top*" -o -name "vmstat*" -o -name "ss*" \) -mtime +30 |xargs rm  -f
 done
   ```
+
+
+# [Cloud Atlas](https://github.com/huataihuang/cloud-atlas-draft/blob/master/os/linux/security/audit/find_inode_consume.md)
