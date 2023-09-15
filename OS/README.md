@@ -23,4 +23,4 @@ done
   ```
 
 
-# [Cloud Atlas](https://github.com/huataihuang/cloud-atlas-draft/blob/master/os/linux/security/audit/find_inode_consume.md)
+# [Cloud Atlas-安全](https://github.com/huataihuang/cloud-atlas-draft/blob/master/os/linux/security/audit/find_inode_consume.md)
