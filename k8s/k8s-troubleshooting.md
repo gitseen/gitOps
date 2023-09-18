@@ -66,107 +66,75 @@ backoffLimit是一个作业配置选项,它控制在作业最终被视为失败�
 Kubernetes作业的成功或失败状态取决于它管理的容器的最终退出代码。因此,如果作业的退出代码不是0,则视为失败。作业可能因多种原因而失败,包括指定路径不存在或作业无法找到要处理的输入文件。    
 
 
-# Kubernetes故障排查 
-1. Pod启动失败
-
+# [Kubernetes故障排查](https://en.rattibha.com/thread/1702303087929835977)   
+## 1. Pod启动失败
 - 检查YAML语法、镜像设置、资源限制
+- 使用kubectl describe查看详情  
+  kubectl describe pod <pod-name> for details.
 
-- 使用kubectl describe查看详情
-
-kubectl describe pod <pod-name> for details.
-
-2. CPU利用率高
-
+## 2. CPU利用率高
 - 用kubectl top识别资源密集型容器
-
 - 调整资源请求和限制
 
-3. 服务不可达
-
+## 3. 服务不可达
 - 确认服务选择器与Pod标签匹配
-
 - 检查防火墙规则和网络策略
 
-4. CrashLoopBackOff
-
+## 4. CrashLoopBackOff
 - 用kubectl logs分析Crash原因
-
 - 修复代码或依赖问题
 
-5. 内存不足
-
+## 5. 内存不足
 - 增加内存限制或优化容器内存使用
 
-6. 节点不可达
-
+## 6. 节点不可达
 - 使用kubectl get nodes调查节点状态
-
 - 修复网络或节点问题
 
-7. PersistentVolumeClaim挂起
-
+## 7. PersistentVolumeClaim挂起
 - 检查存储类和容量
-
 - 修正PV/PVC的YAML或存储后端
 
-8. DNS解析失败
-
+## 8. DNS解析失败
 - 验证Pod中的DNS配置
-
 - 检查CoreDNS或自定义DNS
 
-9. 资源配额超限
-
+## 9. 资源配额超限
 - 用kubectl describe quota审查资源使用
-
 - 调整资源请求或申请更多配额
 
-10. 未授权访问
-
+## 10. 未授权访问
 - 确保RBAC策略正确配置
-
 - 用kubectl auth can-i测试权限
 
-11. Pod终止状态异常
-
+## 11. Pod终止状态异常
 - 使用kubectl edit pod手动删除finalizers强制终止
 
-12. Ingress未路由流量
-
+## 12. Ingress未路由流量
 - 检查Ingress YAML和后端服务
-
 - 确认Ingress controller运行正常
 
-13. 集群扩容问题
-
+## 13. 集群扩容问题
 - 监控节点健康,升级组件,调整自动扩缩容设置
 
-14. Pod驱逐
-
+## 14. Pod驱逐
 - 排查资源压力问题,调整资源请求/限制或启用抢占
 
-15. Pod之间时间偏差
-
+## 15. Pod之间时间偏差
 - 确保跨节点时间同步
 
-16. Helm chart部署失败
-
+## 16. Helm chart部署失败
 - 检查chart配置和依赖
-
 - 使用helm install --dry-run做预检
 
-17. ConfigMap/Secret更新不生效
-
+## 17. ConfigMap/Secret更新不生效
 - 重启使用配置的Pod或启用自动重载
 
-18. 节点磁盘使用过高
-
+## 18. 节点磁盘使用过高
 - 使用kubectl du识别使用过多磁盘的Pod
 
-19. ImagePullBackOff
-
+## 19. ImagePullBackOff
 - 验证镜像可用性、凭证和网络连接
 
-20. Pod无法访问外部服务
-
+## 20. Pod无法访问外部服务
 - 检查网络策略、出站规则和防火墙设置
