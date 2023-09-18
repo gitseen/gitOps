@@ -383,6 +383,8 @@ node {
 ![ca](pic/harbor-ca.png) 
 
   
+# [学习参考](https://www.linux98.com/categories/cicd)   
+ 
 
 
  
