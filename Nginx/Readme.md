@@ -393,6 +393,8 @@ end
 [Nginx模块详解](https://cloud.tencent.com/developer/article/2057869)  
 https://www.toutiao.com/article/6679950432736903694/?channel=&source=search_tab  
 
+# [http to https](https://www.toutiao.com/article/7277748350630249012)    
+
 # nginx for k8s
 [nginx for k8s](https://jamesdefabia.github.io/docs/user-guide/kubectl/kubectl_run/)  
 [nginx for run pod](https://dockerlabs.collabnix.com/kubernetes/beginners/workshop/lab00-running-nginx-pod/)    
