@@ -73,4 +73,4 @@
 - [Kuboard](https://github.com/eip-work/kuboard-press)    
 - [Grafana](https://grafana.com/)  
 - [Weave Scope](https://www.weave.works/oss/scope/)
-
+- [kuboard.cn](https://kuboard.cn/install/install-k8s.html#kuboard-spray)  
