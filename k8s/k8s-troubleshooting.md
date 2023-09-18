@@ -1,4 +1,9 @@
+# [K8S运维必备排查手册-dbaplus社群](https://www.toutiao.com/article/7278881534839669303)   
+ 
+
+
 # [Kubernetes-排障方法](https://thenewstack.io/kubernetes-troubleshooting-primer/)
+
 
 Kubernetes集群进行调试和故障排除对运维服务稳定至关重要。故障排除包括识别、诊断和解决Kubernetes集群、节点、Pod、容器和其他资源中的各类问题。   
 
