@@ -65,18 +65,108 @@ backoffLimit是一个作业配置选项,它控制在作业最终被视为失败�
 
 Kubernetes作业的成功或失败状态取决于它管理的容器的最终退出代码。因此,如果作业的退出代码不是0,则视为失败。作业可能因多种原因而失败,包括指定路径不存在或作业无法找到要处理的输入文件。    
 
-通过对作业定义执行故障分析来克服此作业故障。执行kubectl logs <pod name>命令来检查pod的日志,这通常会发现失败的原因。  
 
-# 五、Probe Failures
-为了监控和响应Pod的状态,Kubernetes提供了探针(健康检查)以确保只有健康的Pod才能为请求提供服务。每个探针(Startup、Liveness、Readiness)都有助于Kubernetes pod在不健康时进行自我修复。当探针处于挂起状态的时间过长或者未就绪或无法安排时,它可能会失败。  
+# Kubernetes故障排查 
+1. Pod启动失败
 
-Pod有四个阶段的生命周期：Pending、Running、Succeeded 和 Failed。它的当前阶段取决于其主要容器的终止状态。如果pod卡在Pending中,则无法将其调度到节点上。在大多数情况下,调度会因资源不足而受阻。  
+- 检查YAML语法、镜像设置、资源限制
 
-查看kubectl describe命令的输出将使您更加清楚。如果pod保持挂起状态,则可能是一个问题,根本原因可能是节点中的资源不足。或者,如果您为不可用的容器指定主机端口,或者该端口已在Kubernetes集群的所有节点中使用,则pod可能未就绪。  
+- 使用kubectl describe查看详情
 
-不管失败的原因是什么,都可以使用kubectl describe pod命令来找出pod失败的原因。下一步将根据失败的原因而有所不同。  
-   eg:如果在容器中运行的应用程序响应时间比配置的探测超时时间长,则Kubernetes中可能会发生探测失败。通过增加探测超时、监视日志和手动测试探测来排除故障。确定根本原因后,优化应用程序、扩展资源或调整探针配置。 
+kubectl describe pod <pod-name> for details.
 
+2. CPU利用率高
 
-# 结论
-在Kubernetes中进行故障排除似乎是一项艰巨的任务。但是,通过正确诊断问题并了解其背后的原因,您会发现故障排除过程更易于管理,也不会那么令人沮丧。  
+- 用kubectl top识别资源密集型容器
+
+- 调整资源请求和限制
+
+3. 服务不可达
+
+- 确认服务选择器与Pod标签匹配
+
+- 检查防火墙规则和网络策略
+
+4. CrashLoopBackOff
+
+- 用kubectl logs分析Crash原因
+
+- 修复代码或依赖问题
+
+5. 内存不足
+
+- 增加内存限制或优化容器内存使用
+
+6. 节点不可达
+
+- 使用kubectl get nodes调查节点状态
+
+- 修复网络或节点问题
+
+7. PersistentVolumeClaim挂起
+
+- 检查存储类和容量
+
+- 修正PV/PVC的YAML或存储后端
+
+8. DNS解析失败
+
+- 验证Pod中的DNS配置
+
+- 检查CoreDNS或自定义DNS
+
+9. 资源配额超限
+
+- 用kubectl describe quota审查资源使用
+
+- 调整资源请求或申请更多配额
+
+10. 未授权访问
+
+- 确保RBAC策略正确配置
+
+- 用kubectl auth can-i测试权限
+
+11. Pod终止状态异常
+
+- 使用kubectl edit pod手动删除finalizers强制终止
+
+12. Ingress未路由流量
+
+- 检查Ingress YAML和后端服务
+
+- 确认Ingress controller运行正常
+
+13. 集群扩容问题
+
+- 监控节点健康,升级组件,调整自动扩缩容设置
+
+14. Pod驱逐
+
+- 排查资源压力问题,调整资源请求/限制或启用抢占
+
+15. Pod之间时间偏差
+
+- 确保跨节点时间同步
+
+16. Helm chart部署失败
+
+- 检查chart配置和依赖
+
+- 使用helm install --dry-run做预检
+
+17. ConfigMap/Secret更新不生效
+
+- 重启使用配置的Pod或启用自动重载
+
+18. 节点磁盘使用过高
+
+- 使用kubectl du识别使用过多磁盘的Pod
+
+19. ImagePullBackOff
+
+- 验证镜像可用性、凭证和网络连接
+
+20. Pod无法访问外部服务
+
+- 检查网络策略、出站规则和防火墙设置
