@@ -163,3 +163,33 @@ export HISTIGNORE= "ls:history"
 #copy
 :1,x co $
 ```
+```bash
+#init
+alias vi='vim'
+alias cat='/usr/local/bin/lolcat'
+alias wget='wget -c'
+alias ping='ping -c 6'
+
+#############
+export JAVA_HOME=/usr/local/java/jdk1.8.0_191
+export JRE_HOME=$JAVA_HOME/jre
+export CLASSPATH=$JAVA_HOME/lib:$JRE_HOME/lib:$CLASSPATH
+export PATH=$JAVA_HOME/bin:$JRE_HOME/bin:$PATH
+#############
+
+##
+
+
+if [ $(ps -ef | grep defunct | grep -v grep | wc -l) -ge 1 ];then
+log ""
+log "僵尸进程";
+ps -ef | head -n1
+ps -ef | grep defunct | grep -v grep
+fi
+log ""
+log "========== 内存占用TOP10========== "
+echo -e "PID %MEM RSS COMMAND
+$(ps aux | awk '{print $2, $4, $6, $11}' | sort -k3rn | head -n 10 )"| column -t
+log ""
+echo "========== CPU占用TOP10 ========== "
+```
