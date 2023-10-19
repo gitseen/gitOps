@@ -9,5 +9,23 @@ curl提供了很多非常有用的功能，包括代理访问、用户认证、f
 
 curl cht.sh/curl
 
+
+#curl "https://oapi.dingtalk.com/rohot/send?access_token=3832743fefc17693e79144aad39f3f86a01d03844abh4721d02ac5ffbbb5cc8" \
+#-H 'Content-Type: application/json' \
+#-d '{ "msgtype": "text","text": {"content": "202308102214"}}'
+#!/bin/bash
+
+# 启用xtrace
+set -x
+
+echo "这是一个演示脚本。"
+name="Alice"
+age=30
+echo "你好，$name！你的年龄是 $age 岁。"
+
+# 禁用xtrace（如果需要）
+set +x
+
+echo "脚本执行完毕。"
 ```
 

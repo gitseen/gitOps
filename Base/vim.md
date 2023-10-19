@@ -157,4 +157,9 @@ export HISTSIZE=1000
 export HISTFILESIZE=200000
 export HISTTIMEFORMAT= "%F %T "
 export HISTIGNORE= "ls:history"
+
+
+
+#copy
+:1,x co $
 ```
