@@ -29,3 +29,4 @@ set +x
 echo "脚本执行完毕。"
 ```
 
+# [curl使用正向代理的各种用法示例](https://www.toutiao.com/w/1780817358215244/)
