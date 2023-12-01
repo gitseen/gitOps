@@ -41,4 +41,6 @@ unset 取消设置 kubeconfig 文件中的一个单个值
 use-context 设置 kubeconfig 文件中的当前上下文
 view 显示合并的 kubeconfig 配置或一个指定的 kubeconfig 文件
 
-
+https://juejin.cn/post/6996471451364622366
+https://kubernetes.io/zh-cn/docs/concepts/configuration/organize-cluster-access-kubeconfig/
+https://kubernetes.io/zh-cn/docs/concepts/configuration/organize-cluster-access-kubeconfig/#上下文（Context）
