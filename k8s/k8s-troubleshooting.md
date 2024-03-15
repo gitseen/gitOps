@@ -1,4 +1,35 @@
+# [Kubernetes-Node-Not Ready问题排查](https://mp.weixin.qq.com/s/GxTtiqMpcrDWK9toaK5CMw) 
+from-云原生运维圈
+```bash
+kubectl get nodes
+kubectl describe node xx
+
+/var/log/syslog
+/var/log/messages
+/var/log/kern.log
+journalctl -u kubelet
+
+systemctl restart kubelet 
+
+df -Th;free -mh;top
+
+ping node-ip
+nc -zv master 6443
+
+kubectl get componentstatuses=cs
+
+
+```
+
+
+
+
+
+
+
 # [K8S运维必备排查手册-dbaplus社群](https://www.toutiao.com/article/7278881534839669303)   
+
+
  
 
 
