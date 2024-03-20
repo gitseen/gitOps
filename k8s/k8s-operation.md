@@ -304,6 +304,9 @@ cat config|grep "zzjz-test"
   name: zzjz-test-k8s-admin@kubernetes
 current-context: zzjz-test-k8s-admin@kubernetes
 - name: zzjz-test-k8s-admin
+
+#设置默认namespace为xx而不是default
+kubectl config set-context $(kubectl config current-context) --namespace=mynamespace
 ```
 
 **如何为Kubectl配置对多个群集的访问**  
