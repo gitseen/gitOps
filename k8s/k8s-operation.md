@@ -306,7 +306,16 @@ current-context: zzjz-test-k8s-admin@kubernetes
 - name: zzjz-test-k8s-admin
 
 #设置默认namespace为xx而不是default
-kubectl config set-context $(kubectl config current-context) --namespace=mynamespace
+kubectl config set-context $(kubectl config current-context) --namespace=mynamespace  
+
+#创建namepace
+apiVersion: v1 
+kind: Namespace 
+metadata: 
+  name: mynamespace
+
+kubectl create -f my-namespace.yaml  == kubectl create namespace my-namespace
+namespace/my-namespace created 
 ```
 
 **如何为Kubectl配置对多个群集的访问**  
