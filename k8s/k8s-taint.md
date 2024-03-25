@@ -19,7 +19,7 @@
 ```
 kubectl taint node xxxx key=value:[effect]
 ```
-**effect(效果)**  
+**effect(效果)/污点有三种策略**  
   - NoSchedule：不能被调度
   - PreferNoSchedule：尽量不要调度
   - NoExecute：不但不会调度,还会驱逐Node上已有的pod  
