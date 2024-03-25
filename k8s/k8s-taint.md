@@ -1,4 +1,6 @@
-# K8S之污点污点容忍
+# [K8S之污点污点容忍](https://www.toutiao.com/article/7345726602490200591/)    
+>> Taints（污点）存在于node，Tolerations（容忍度）存在于pod  
+
 **什么是污点**  
 >>
 节点亲和性是Pod的一种属性,它使Pod被吸引到一类特定的节点(这可能出于一种偏好,也可能是硬性要求)  
@@ -454,4 +456,10 @@ kubeadm token create --ttl 0
 kubeadm token create  --print-join-command
 ```
 https://m.toutiao.com/is/i8AkG1n/
+五分钟搞懂K8S的污点和容忍度[](https://www.51cto.com/article/767450.html)  
+  
+[基础--污点和容忍度](https://www.toutiao.com/article/7268107319135961663/)  
+  
+[k8s-污点 (Taint)和容忍 (Tolerations)](https://www.toutiao.com/article/7268101356882543139/)  
+ 
 
