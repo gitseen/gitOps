@@ -35,7 +35,6 @@ curl 127.0.0.1:22
 curl https://github.com/coreos/flannel/blob/master/Documentation/kube-flannel-rbac.yml -o
 curl https://github.com/coreos/flannel/blob/master/Documentation/kube-flannel-rbac.yml -O
 curl -# -O http://example.com/largefile.zip  #显示进度
-curl -XGET https://opensearch.local.choral.io -u 'admin:Xa6lr8j4ZYmh9Bq6xSYlk9MN'
 curl -IS www.xx.com
 curl -I -m 10 -o /dev/null -s -w %{http_code} http://192.168.1.70
 
@@ -44,6 +43,10 @@ curl -i -H "Content-Type:application/json" -X POST -d '{"contractRoot":{"body":{
 
 curl -k -v -XGET -H "Accept: application/json, */*" -H "User-Agent: kubectl/v1.21.3 (linux/amd64) kubernetes/ca643a4" 'http://localhost:8080/api?timeout=32s'
 curl -XGET http://xxxx/xx
+curl -XGET https://opensearch.local.choral.io -u 'admin:Xa6lr8j4ZYmh9Bq6xSYlk9MN'
+curl -XPUT https://opensearch.local.choral.io/_cluster/settings -u 'admin:Xa6lr8j4ZYmh9Bq6xSYlk9MN' \
+  -H 'Content-Type: application/json' \
+  -d '{"persistent":{"compatibility.override_main_response_version":true}}'
 
 curl -T /root/a.txt ftp:sa:sa123@ip:port/tpm/a.txt
 curl -F password=@/etc/passwd www.mypasswords.com
