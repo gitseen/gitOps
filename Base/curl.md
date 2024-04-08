@@ -35,7 +35,7 @@ curl 127.0.0.1:22
 curl https://github.com/coreos/flannel/blob/master/Documentation/kube-flannel-rbac.yml -o
 curl https://github.com/coreos/flannel/blob/master/Documentation/kube-flannel-rbac.yml -O
 curl -# -O http://example.com/largefile.zip  #显示进度
-
+curl -XGET https://opensearch.local.choral.io -u 'admin:Xa6lr8j4ZYmh9Bq6xSYlk9MN'
 curl -IS www.xx.com
 curl -I -m 10 -o /dev/null -s -w %{http_code} http://192.168.1.70
 
@@ -120,4 +120,5 @@ echo "你好，$name！你的年龄是 $age 岁。"
 set +x
 echo "脚本执行完毕。"
 ```
+
 
