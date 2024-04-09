@@ -7,7 +7,8 @@ Service基于TCP和UDP协议进行访问转发，为集群提供了四层负载�
 
 Ingress是Kubernetes集群中一种独立的资源，制定了集群外部访问流量的转发规则;用户可根据域名和路径对转发规则进行自定义，完成对访问流量的细粒度划分;如图1所示用户可根据域名和路径对转发规则进行自定义，完成对访问流量的细粒度划分  
 
-图1 Ingress示意图
+图1 Ingress示意图  
+
 ![图1](https://support.huaweicloud.com/usermanual-cce/zh-cn_image_0000001243981115.png)
 
 # Ingress
