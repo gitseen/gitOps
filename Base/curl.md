@@ -28,9 +28,9 @@ curl -sS --connect-timeout 10 -m 60 http://www.bt.cn/api/index/get_time
 curl -s --unix-socket /var/run/docker.sock localhost/containers/json | jq '.'  #https://www.baeldung.com/ops/docker-engine-api-container-info
 curl -s http://172.17.0.1:2375/events | jq '.'
 
-#k8s-api 从Pod中访问KubernetesAPI #ttps://kubernetes.io/zh-cn/docs/tasks/run-application/access-api-from-pod/
+#k8s-api 从Pod中访问KubernetesAPI #https://kubernetes.io/zh-cn/docs/tasks/run-application/access-api-from-pod/
 curl --cacert ${CACERT} --header "Authorization: Bearer ${TOKEN}" -X GET ${APISERVER}/api
-curl -k -XGET https://x.x.x.x:5443/api/v1/namespaces/nsnamce/pods  #https://kubernetes.io/zh-cn/docs/reference/using-api/api-concepts/
+curl -k -XGET https://x.x.x.x:5443/api/v1/namespaces/nsnamce/pods  #https://kubernetes.io/zh-cn/docs/reference/using-api/api-concepts/ #https://www.jianshu.com/p/a25e9e613f2c
 
 curl -fsSL http://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add -curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 curl -sSL https://get.daocloud.io/daotools/set_mirror.sh | sh -s http://f1361db2.m.daocloud.io
