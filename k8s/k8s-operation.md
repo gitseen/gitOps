@@ -417,6 +417,7 @@ from: https://www.toutiao.com/article/7353117756822405651
 for ns in $(kubectl get ns |awk 'NR>1{print $1}')
 do 
   kubectl get pod -n ${ns} |grep "Evicted"|awk '{print $1}' | xargs kubectl delete pod -n ${ns}
+done
 ```
 
 
