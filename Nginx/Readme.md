@@ -388,6 +388,10 @@ end
 服务器-->>浏览器: 响应关闭连接
 ```
 
+# NginxConfig工具
+[NginxConfig在线工具](https://www.digitalocean.com/community/tools/nginx?global.app.lang=zhCN)  
+[Nginconfig](https://nginxconfig.org/?domains.0.php.php=false&domains.0.routing.index=index.html&domains.0.routing.fallbackHtml=true&global.app.lang=zhCN)  
+
 
 # Nginx模块详解
 [Nginx模块详解](https://cloud.tencent.com/developer/article/2057869)  
