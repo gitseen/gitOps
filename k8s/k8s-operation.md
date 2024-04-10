@@ -394,8 +394,8 @@ kubectl get pods --all-namespaces -o wide | grep Evicted   | awk '{print $1,$2}'
 kubectl get pods --all-namespaces -o wide | grep Error     | awk '{print $1,$2}' | xargs -L1 kubectl delete pod -n  #clean error 
 kubectl get pods --all-namespaces -o wide | grep Completed | awk '{print $1,$2}' | xargs -L1 kubectl delete pod -n  #clean compete
 kubectl get pods --all-namespaces -o wide | grep -E "Evicted|Error|Completed" | awk '{print $1,$2}' | xargs -L1 kubectl delete pod -n
+
 #k8s-Evicted-脚本
-```bash
 #!/bin/bash
 ## 获取当前状态为Evicted的pod;并输出到一个临时文件内
 #kubectl get pods --all-namespaces | awk '/Evicted/ {print $1 "\t" $2}'  > evicted_pods.txt
@@ -418,8 +418,6 @@ for ns in $(kubectl get ns |awk 'NR>1{print $1}')
 do 
   kubectl get pod -n ${ns} |grep "Evicted"|awk '{print $1}' | xargs kubectl delete pod -n ${ns}
 done
-```
-
 
 
 #强制删除指定namespace下Terminating状态的pod
