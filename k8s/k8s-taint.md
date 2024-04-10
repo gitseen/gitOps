@@ -14,11 +14,28 @@
 
 再用大白话理解一下,也就是说,基于节点标签的分配,是站在Pod的角度上,它是通过在pod上添加属性来确定pod是否要调度到指定的node上的。其实,也还可以站在Node的角度上,通过在node上添加污点属性,来避免pod被分配到不合适的节点上  
 
+# k8s污点、容忍、亲和性
+**在Kubernetes中,污点(Taints)、容忍度(Tolerations)和亲和性(Affinity)是调度策略的重要组成部分,它们共同决定了Pod如何在集群中的节点上被调度**  
+
+- 1、污点(Taints)污点是节点上的标记,用于指示节点上的某些不良条件或者特殊用途。它们可以阻止某些Pod被调度到这些节点上,除非这些Pod具有匹配的容忍度。污点由键key、值value和效果effect组成
+NoSchedule : 阻止所有不容忍该污点的Pod被调度到该节点上  
+PreferNoSchedule : 尽可能不调度不容忍该污点的Pod到该节点上,但如果没有其他可用节点,Pod仍可能被调度至此  
+NoExecute ：不仅阻止新Pod调度，还会驱逐已经存在于该节点上的不容忍该污点的Pod  
+
+- 2、容忍度(Tolerations)容忍度是Pod规格中的属性,允许Pod被调度到带有特定污点的节点上。Pod可以具有多个容忍度,每个容忍度都可以指定它能够容忍的污点的键/值和效果
+
+- 3、亲和性(Affinity)亲和性允许你指定Pod应该或倾向于调度到具有特定特征的节点上(它分为两种类型)
+     - 节点亲和性(Node Affinity)：定义了Pod应该或倾向于调度到哪些节点上,基于节点的标签
+     - Pod亲和性和反亲和性(Pod Affinity and Anti-Affinity)：定义了Pod应该或倾向于调度到哪些已运行的Pod附近,或者避免调度到某些Pod附近
+**结合使用污点和亲和性,你可以更精细地控制Pod在K8s集群中的分布,从而优化资源利用、提高应用程序的可靠性和性能**  
+
+
 # 语法格式
 ## 节点添加污点的语法格式
 ```
 kubectl taint node xxxx key=value:[effect]
 ```
+
 **effect(效果)/污点有三种策略**  
   - NoSchedule：不能被调度
   - PreferNoSchedule：尽量不要调度
