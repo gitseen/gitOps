@@ -384,6 +384,9 @@ node {
 
   
 # [学习参考](https://www.linux98.com/categories/cicd)   
+# [jenksinfile](https://www.toutiao.com/article/7355888450664464933/)  
+# [jenkins部署-lisanmengmeng](https://www.toutiao.com/article/7353088744833974820/)  
+  
  
 
 
