@@ -22,7 +22,7 @@ curl "https://oapi.dingtalk.com/rohot/send?access_token=3832743fefc17693e79144aa
 
 curl -Ss --connect-timeout 3 -m 60 http://download.bt.cn/install/yumRepo_select.sh|bash
 curl -sS --connect-timeout 10 -m 60 http://www.bt.cn/api/index/get_time
-
+curl -sO http://ip/xxx.tar.gz
 
 #docker-api  https://cloud.tencent.com/developer/article/2285275
 curl -s --unix-socket /var/run/docker.sock localhost/containers/json | jq '.'  #https://www.baeldung.com/ops/docker-engine-api-container-info
