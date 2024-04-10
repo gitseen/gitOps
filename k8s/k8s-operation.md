@@ -394,6 +394,32 @@ kubectl get pods --all-namespaces -o wide | grep Evicted   | awk '{print $1,$2}'
 kubectl get pods --all-namespaces -o wide | grep Error     | awk '{print $1,$2}' | xargs -L1 kubectl delete pod -n  #clean error 
 kubectl get pods --all-namespaces -o wide | grep Completed | awk '{print $1,$2}' | xargs -L1 kubectl delete pod -n  #clean compete
 kubectl get pods --all-namespaces -o wide | grep -E "Evicted|Error|Completed" | awk '{print $1,$2}' | xargs -L1 kubectl delete pod -n
+#k8s-Evicted-脚本
+```bash
+#!/bin/bash
+## 获取当前状态为Evicted的pod;并输出到一个临时文件内
+#kubectl get pods --all-namespaces | awk '/Evicted/ {print $1 "\t" $2}'  > evicted_pods.txt
+#kubectl get pods --all-namespaces | awk '/Evicted/ {print $1 " " $2}'  > evicted_pods.txt
+## 这是按空格示例，截取文本解析成字段:命名空间和pod名
+while IFS=' ' read -r namespace pod_name; do
+## 这是按制表符tab键示例，截取文本解析成字段
+#while IFS=$'\t' read -r namespace pod_name; do
+  ## 验证命名空间和 Pod 名称是否存在
+  if [[ ! -z "$namespace" && ! -z "$pod_name" ]]; then
+    echo "kubectl delete pod $pod_name -n $namespace:"
+    kubectl delete pod "$pod_name" -n "$namespace"
+  fi
+done < evicted_pods.txt
+## 可选是否清理临时文件rm -f evicted_pods.txt
+from: https://www.toutiao.com/article/7353117756822405651
+
+#使用简单脚本
+for ns in $(kubectl get ns |awk 'NR>1{print $1}')
+do 
+  kubectl get pod -n ${ns} |grep "Evicted"|awk '{print $1}' | xargs kubectl delete pod -n ${ns}
+```
+
+
 
 #强制删除指定namespace下Terminating状态的pod
 kubectl get pod -n $namespace |grep Terminating|awk '{print $1}'|xargs kubectl delete pod --grace-period=0 --force
