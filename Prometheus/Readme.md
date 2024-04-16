@@ -1,4 +1,4 @@
-# 监控体系
+[]# 监控体系
 **打造一个高可用、高稳定的系统、监控体系是其中非常关键的一个环节**  
 - 1、资源监控
   ```
@@ -38,3 +38,13 @@
 ![架构关系](https://p3.toutiaoimg.com/large/tos-cn-i-jcdsk5yqko/a2362d25d8654f95976fc8820e3fd8d7)  
 
 [kube-prometheus自动化部署prometheus实现对k8s监控](https://m.toutiao.com/is/iMLW6Tw/)
+
+
+# CPU_usagerate_total
+```bash
+https://www.cnblogs.com/Hackerman/p/16084360.html  #常规
+https://www.cnblogs.com/t-road/p/15604040.html  
+https://wu.run/posts/promql-calculate-cpu-utilization/   #公式计算
+https://zhuanlan.zhihu.com/p/511620387
+https://blog.csdn.net/qing_dan_mo_cai/article/details/123938464 
+```
