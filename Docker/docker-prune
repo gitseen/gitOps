@@ -53,3 +53,9 @@ $ journalctl --vacuum-size=500M
 $ journalctl --vacuum-time=1month
 # 检查日志文件一致性
 $ journalctl –-verify
+
+journalctl --disk-usage  #日志容量
+
+https://www.baeldung.com/linux/journalctl-check-logs
+https://www.geeksforgeeks.org/journalctl-command-in-linux-with-examples/  
+
