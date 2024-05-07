@@ -26,3 +26,7 @@ https://www.jyshare.com/imglibs/
 https://edu.magedu.com/course/opennessCourseDetail/1631?userCode=ff9bbb22-1745-4dab-b90b-b5a1be6e390a&shortChainKey=e35cac8e
 https://github.com/iKubernetes/learning-k8s/tree/master/ansible-k8s-install
 http://www.wangxiaochun.com:8888/
+
+
+echo  -e "http://mirrors.aliyun.com/alpine/latest-stable/main/\nhttp://mirrors.aliyun.com/alpine/latest-stable/community/"  >a.txt
+printf   "http://mirrors.aliyun.com/alpine/latest-stable/main/\nhttp://mirrors.aliyun.com/alpine/latest-stable/community/"  >a.txt
