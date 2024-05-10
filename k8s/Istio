@@ -119,7 +119,7 @@ Istio的吹嘘与特性,对于国外很多通过RESTful提供内网服务的公�
 # [实例](https://www.cnblogs.com/dai-zhe/p/15821950.html)  
 
 
-关于 ingress、lstio、apisix
+[关于 ingress、lstio、apisix](https://cloud.tencent.com/developer/article/2371166)
 Ingress、Istio 和 APISIX 都是与云原生环境紧密相关的技术，在现代应用部署中扮演着重要角色，尤其是在微服务架构中。今天这篇文章内容，先弄明白他们都是干嘛的，然后有什么区别，后面的文章再分别深入展开实例了解。
 
 官方文档：
