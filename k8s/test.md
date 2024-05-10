@@ -1,7 +1,7 @@
 # 1、k8s-Ephemeral Volumes临时卷
 k8s为了不同的用途,支持几种不同类型的临时卷 
-- [emptyDir](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#k8s-Ephemeral-emptyDir)： Pod启动时为空,存储空间来自本地的kubelet根目录(通常是根磁盘)或内存
-- [configMap](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#k8s-Ephemeral-configMap)、 downwardAPI、 secret： 将不同类型的K8s数据注入到Pod中
+- [emptyDir](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#k8s-Ephemeral-emptyDir)： Pod启动时为空,存储空间来自本地的kubelet根目录(通常是根磁盘)或内存
+- [configMap](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#k8s-Ephemeral-configMap)、 downwardAPI、 secret： 将不同类型的K8s数据注入到Pod中
 - CSI临时卷： 类似于前面的卷类型,但由专门支持此特性的指定CSI驱动程序提供
 - 通用临时卷： 它可以由所有支持持久卷的存储驱动程序提供
 >emptyDir、configMap、downwardAPI、secret是作为本地临时存储提供的。它们由各个节点上的kubelet管理
