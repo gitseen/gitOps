@@ -295,7 +295,12 @@ spec:
 
 
 # 2、k8s-Projected Volumes投射卷
-
+一个projected卷可以将若干现有的卷源映射到同一个目录之上;目前，以下类型的卷源可以被投射  
++ [configMap](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#12-configmap)
++ [secret](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#13-configmap)
++ [downwardAPI](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#14-configmap)
++ serviceAccountToken
++ clusterTrustBundle
 
 # 3、k8s-Persistent Volumes持久卷
 hostpath
