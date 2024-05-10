@@ -6,7 +6,7 @@ k8s为了不同的用途,支持几种不同类型的临时卷
 - 通用临时卷： 它可以由所有支持持久卷的存储驱动程序提供
 >emptyDir、configMap、downwardAPI、secret是作为本地临时存储提供的。它们由各个节点上的kubelet管理
 
-# k8s-Ephemeral-emptyDir
+## k8s-Ephemeral-emptyDir
 1. 概念
 emptyDir是在Pod被分配到Node时创建的,它的初始为空,且无须指定host上对应的目录文件,因为k8s会自动分配目录,当Pod销毁时,EmptyDir中的数据也会被永久删除。用途如下：
    - 临时空间,例如用于某些应用程序运行时所需的临时目录,且无须永久保留
@@ -50,7 +50,7 @@ spec:
 </details>
 
 
-# k8s-Ephemeral-configMap
+## k8s-Ephemeral-configMap
 <details>
   <summary>configMap清单</summary>
   <pre><code>
