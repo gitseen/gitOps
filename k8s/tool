@@ -49,7 +49,10 @@ Kubevious: https://kubevious.io/
 Kuboard: https://github.com/eip-work/kuboard-press
 Grafana: https://grafana.com/
 Weave Scope: https://www.weave.works/oss/scope/
-每款工具的简述
+
+
+
+每款工具的简述      https://www.toutiao.com/article/7315309929718841907/?log_from=5c00b5a457a12_1715131100747
 K8S Dashboard：
 作为K8S官方提供的仪表盘工具,它以简洁而直观的界面展示和管理K8S集群中的各类资源。
 
@@ -95,8 +98,16 @@ Grafana：
 Weave Scope：
 作为一款开源的容器和微服务可视化工具,Weave Scope提供了直观的界面,帮助你查看和管理K8S集群中的资源,支持拓扑图展示、性能监控和流量分析等功能。
 
+Kubeshark:
+[https://kubeshark.co/](https://www.toutiao.com/article/7316091613871112767/?log_from=d9ea9609d93e2_1715130666969)
+Kubeshark 提供实时的 K8s 协议级别的可见性，可以捕获和监控所有在容器、Pod、节点和集群之间进出和流动的流量和负载。可以把它想象成专门针对 Kubernetes 重新发明的 TCPDump 和 Wireshark 工具。
+
+istio-kiali
+
+
 最后
 这些仅仅是15款备受推崇的K8S可视化工具的一部分,它们都拥有独特的特点和功能,能够满足不同用户的需求。无论你是正在探索K8S的小鲜肉,还是已经熟练运用K8S的老腊肉,这些可视化工具都将成为你提升运维乐趣和效率的利器。那么,你已经尝试过其中的哪些工具呢？评论留言分享你的使用心得,和号主一起共同探索。
+
 
 【K8S（专注于深入研究K8S相关的各种技术和知识分享。）】：
 https://mp.weixin.qq.com/mp/appmsgalbum?action=getalbum&__biz=MzUzMTkyODc4NQ==&scene=1&album_id=2474851867500544003&count=3#wechat_redirect
