@@ -1,6 +1,6 @@
 # [k8s-storage-DOC](https://kubernetes.io/zh-cn/docs/concepts/storage)
 # k8s-Volume卷
-- [1、k8s-EphemeralVolumes临时卷](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#1、k8s-EphemeralVolumes临时卷)
+- [1-k8s-EphemeralVolumes临时卷](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#1-k8s-EphemeralVolumes临时卷)
   + [emptyDir](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#emptyDir)
   + [configMap](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#configMap)
   + [secret](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#secret)
@@ -26,7 +26,7 @@ pod中的所有容器都可以使用卷,但必须先将它挂载在每个需要�
 
 ![k8s-storage](pic/k8s-storage.png)  
 
-# 1、k8s-EphemeralVolumes临时卷
+# 1-k8s-EphemeralVolumes临时卷
 k8s为了不同的用途,支持几种不同类型的临时卷 
 - emptyDir： Pod启动时为空,存储空间来自本地的kubelet根目录(通常是根磁盘)或内存
 - configMap、 downwardAPI、 secret： 将不同类型的K8s数据注入到Pod中
@@ -300,7 +300,7 @@ spec:
   </code></pre>
 </details>
 
-# 2、[k8s-ProjectedVolumes投射卷](https://kubernetes.io/zh-cn/docs/concepts/storage/projected-volumes/)
+# 2-[k8s-ProjectedVolumes投射卷](https://kubernetes.io/zh-cn/docs/concepts/storage/projected-volumes/)
 一个projected卷可以将若干现有的卷源映射到同一个目录之上;目前，以下类型的卷源可以被投射  
 + configMap
 + secret
@@ -308,9 +308,9 @@ spec:
 + serviceAccountToken
 + clusterTrustBundle
 
-# 3、k8s-PersistentVolumes持久卷
+# 3-k8s-PersistentVolumes持久卷
 hostpath
 subPath
-# 4、k8s-StoageClasses存储类
+# 4-k8s-StoageClasses存储类
 
 
