@@ -308,8 +308,74 @@ spec:
  + [serviceAccountToken](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#serviceAccountToken)
  + [clusterTrustBundle](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#clusterTrustBundle) 
 # serviceAccountToken
+<details>
+  <summary>serviceAccountToken投射卷</summary>
+  <pre><code>
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sa-token-test
+spec:
+  containers:
+  - name: container-test
+    image: busybox:1.28
+    volumeMounts:
+    - name: token-vol
+      mountPath: "/service-account"
+      readOnly: true
+  serviceAccountName: default
+  volumes:
+  - name: token-vol
+    projected:
+      sources:
+      - serviceAccountToken:
+          audience: api
+          expirationSeconds: 3600
+          path: token
+
+```
+  </code></pre>
+</details>
+
 # clusterTrustBundle
-# 配置清单
+<details>
+  <summary>clusterTrustBundle投射卷</summary>
+  <pre><code>
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sa-ctb-name-test
+spec:
+  containers:
+  - name: container-test
+    image: busybox
+    command: ["sleep", "3600"]
+    volumeMounts:
+    - name: token-vol
+      mountPath: "/root-certificates"
+      readOnly: true
+  serviceAccountName: default
+  volumes:
+  - name: root-certificates-vol
+    projected:
+      sources:
+      - clusterTrustBundle:
+          name: example
+          path: example-roots.pem
+      - clusterTrustBundle:
+          signerName: "example.com/mysigner"
+          labelSelector:
+            matchLabels:
+              version: live
+          path: mysigner-roots.pem
+          optional: true
+```
+  </code></pre>
+</details>
+
+---
 <details>
   <summary>带有 Secret、DownwardAPI 和 ConfigMap 的配置示例</summary>
   <pre><code>
@@ -388,6 +454,7 @@ spec:
 ```
   </code></pre>
 </details>
+
 
 
 
