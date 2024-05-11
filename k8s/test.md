@@ -307,6 +307,86 @@ spec:
  + [downwardAPI](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#downwardAPI)
  + [serviceAccountToken](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#serviceAccountToken)
  + [clusterTrustBundle](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#clusterTrustBundle) 
+<details>
+  <summary>带有 Secret、DownwardAPI 和 ConfigMap 的配置示例</summary>
+  <pre><code>
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: volume-test
+spec:
+  containers:
+  - name: container-test
+    image: busybox:1.28
+    volumeMounts:
+    - name: all-in-one
+      mountPath: "/projected-volume"
+      readOnly: true
+  volumes:
+  - name: all-in-one
+    projected:
+      sources:
+      - secret:
+          name: mysecret
+          items:
+            - key: username
+              path: my-group/my-username
+      - downwardAPI:
+          items:
+            - path: "labels"
+              fieldRef:
+                fieldPath: metadata.labels
+            - path: "cpu_limit"
+              resourceFieldRef:
+                containerName: container-test
+                resource: limits.cpu
+      - configMap:
+          name: myconfigmap
+          items:
+            - key: config
+              path: my-group/my-config
+```
+  </code></pre>
+</details>
+
+
+<details>
+  <summary>带有非默认权限模式设置的 Secret 的配置示例</summary>
+  <pre><code>
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: volume-test
+spec:
+  containers:
+  - name: container-test
+    image: busybox:1.28
+    volumeMounts:
+    - name: all-in-one
+      mountPath: "/projected-volume"
+      readOnly: true
+  volumes:
+  - name: all-in-one
+    projected:
+      sources:
+      - secret:
+          name: mysecret
+          items:
+            - key: username
+              path: my-group/my-username
+      - secret:
+          name: mysecret2
+          items:
+            - key: password
+              path: my-group/my-password
+              mode: 511
+```
+  </code></pre>
+</details>
+
+
 # serviceAccountToken
 ```bash
 #serviceAccountToken投射卷
@@ -334,10 +414,8 @@ spec:
 ```
 
 # clusterTrustBundle
-<details>
-  <summary>clusterTrustBundle投射卷</summary>
-  <pre><code>
-```
+```bash
+#clusterTrustBundle投射卷
 apiVersion: v1
 kind: Pod
 metadata:
@@ -367,10 +445,7 @@ spec:
           path: mysigner-roots.pem
           optional: true
 ```
-  </code></pre>
-</details>
 
----
 <details>
   <summary>带有 Secret、DownwardAPI 和 ConfigMap 的配置示例</summary>
   <pre><code>
