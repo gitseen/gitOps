@@ -308,10 +308,8 @@ spec:
  + [serviceAccountToken](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#serviceAccountToken)
  + [clusterTrustBundle](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#clusterTrustBundle) 
 # serviceAccountToken
-<details>
-  <summary>serviceAccountToken投射卷</summary>
-  <pre><code>
-```
+```bash
+#serviceAccountToken投射卷
 apiVersion: v1
 kind: Pod
 metadata:
@@ -334,8 +332,6 @@ spec:
           expirationSeconds: 3600
           path: token
 ```
-  </code></pre>
-</details>
 
 # clusterTrustBundle
 <details>
