@@ -450,7 +450,6 @@ spec:
             - key: password
               path: my-group/my-password
               mode: 511
-
 ```
   </code></pre>
 </details>
