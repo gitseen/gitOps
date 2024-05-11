@@ -7,6 +7,7 @@
   + [downwardAPI](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#downwardAPI)
   + [CSI临时卷](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#CSI临时卷)
   + [通用临时卷](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#CSI临时卷)
+  + [hostPath](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#hostPath)
 - [2-k8s-ProjectedVolumes投射卷](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#2-k8s-ProjectedVolumes投射卷)
 - [3-k8s-PersistentVolumes持久卷](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#3-k8s-PersistentVolumes持久卷)
 - [4-k8s-StoageClasses存储类](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#4-k8s-StoageClasses存储类)
@@ -31,6 +32,7 @@ k8s为了不同的用途,支持几种不同类型的临时卷
 - configMap、 downwardAPI、 secret： 将不同类型的K8s数据注入到Pod中
 - CSI临时卷： 类似于前面的卷类型,但由专门支持此特性的指定CSI驱动程序提供
 - 通用临时卷： 它可以由所有支持持久卷的存储驱动程序提供
+- hostPath:  将node主机中一目录挂在到Pod中供容器使用(半持久化)
 >emptyDir、configMap、downwardAPI、secret是作为本地临时存储提供的。它们由各个节点上的kubelet管理
 
 # emptyDir
@@ -317,7 +319,14 @@ spec:
   </code></pre>
 </details>
 
-# [2-k8s-ProjectedVolumes投射卷](https://kubernetes.io/zh-cn/docs/concepts/storage/projected-volumes/)
+# hostPath
+
+由于emptyDir中数据不会被持久化,它会随着Pod的结束而销毁,如果想简单的将数据持久化到主机中,可以选择HostPath  
+
+hostPath就是将Node主机中一个实际目录挂在到Pod供容器使用,这样的设计就可以保证Pod销毁了,但是数据依据可以存在于Node主机上  
+
+hostPath同一节点可上共享hostPath卷,使用相同路径的pod相同的文件(共享不同pod,pod挂同一hostPath)
+
 一个projected卷可以将若干现有的卷源映射到同一个目录之上;目前，以下类型的卷源可以被投射  
  + [emptyDir](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#emptyDir)
  + [configMap](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#configMap)
