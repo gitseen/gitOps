@@ -7,9 +7,9 @@
   + [downwardAPI](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#downwardAPI)
   + [CSI临时卷](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#CSI临时卷)
   + [通用临时卷](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#CSI临时卷)
-- 2、k8s-ProjectedVolumes投射卷
-- 3、k8s-PersistentVolumes持久卷
-- 4、k8s-StoageClasses存储类
+- 2-k8s-ProjectedVolumes投射卷
+- 3-k8s-PersistentVolumes持久卷
+- 4-k8s-StoageClasses存储类
 
 # [k8s-storage-DOC](https://kubernetes.io/zh-cn/docs/concepts/storage)
 # k8s-Volume卷
