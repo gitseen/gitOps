@@ -327,6 +327,7 @@ hostPath就是将Node主机中一个实际目录挂在到Pod供容器使用,这�
 
 hostPath同一节点可上共享hostPath卷,使用相同路径的pod相同的文件(共享不同pod,pod挂同一hostPath)
 
+# [2-k8s-ProjectedVolumes投射卷](https://kubernetes.io/zh-cn/docs/concepts/storage/projected-volumes/)
 一个projected卷可以将若干现有的卷源映射到同一个目录之上;目前，以下类型的卷源可以被投射  
  + [emptyDir](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#emptyDir)
  + [configMap](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#configMap)
