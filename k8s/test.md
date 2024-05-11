@@ -1,4 +1,16 @@
-[toc]
+k8s-storage
+k8s-Volume卷
+1、k8s-EphemeralVolumes临时卷
+emptyDir
+configMap
+secret
+downwardAPI
+CSI临时卷
+通用临时卷
+2、k8s-ProjectedVolumes投射卷
+
+3、k8s-PersistentVolumes持久卷
+4、k8s-StoageClasses存储类
 # [k8s-storage](https://kubernetes.io/zh-cn/docs/concepts/storage)
 # k8s-Volume卷
 1. 概念  
