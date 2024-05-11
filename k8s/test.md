@@ -333,7 +333,6 @@ spec:
           audience: api
           expirationSeconds: 3600
           path: token
-
 ```
   </code></pre>
 </details>
