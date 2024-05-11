@@ -190,6 +190,12 @@ spec:
 </details>
 
 # secret
+在k8s集群中,有一些配置属性信息是非常敏感的,所以这些信息在传递的过程中,是不希望外人能够看到的,所以K8s提供了一种加密场景中的配置管理资源对象Secret  
+
+它在进行数据传输之前,会对数据进行编码,在数据获取的时候,会对数据进行解码。从而保证整个数据传输过程的安全  
+
+>这些数据是根据不同的应用场景,采用不同的加密机制 
+
 <details>
   <summary>secret清单</summary>
   <pre><code>
@@ -236,6 +242,11 @@ spec:
 </details>
 
 # downwardAPI
+downwardAPI 为运行在pod中的应用容器提供了一种反向引用。让容器中的应用程序了解所处pod或Node的一些基础属性信息  
+
+从严格意义上来说,downwardAPI不是存储卷,它自身就存在。相较于configmap、secret等资源对象需要创建后才能使用;  
+而downwardAPI引用的是Pod自身的运行环境信息,这些信息在Pod启动的时候就存在  
+
 <details>
   <summary>downwardAPI清单</summary>
   <pre><code>
