@@ -11,7 +11,7 @@
 - 3、k8s-PersistentVolumes持久卷
 - 4、k8s-StoageClasses存储类
 
-# [k8s-storage](https://kubernetes.io/zh-cn/docs/concepts/storage)
+# [k8s-storage-DOC](https://kubernetes.io/zh-cn/docs/concepts/storage)
 # k8s-Volume卷
 1. 概念  
   K8s的卷是pod的一个组成部分,因此像容器一样在pod的规范中就定义了。它们不是独立的K8s对象,也不能单独创建或删除。  
