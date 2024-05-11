@@ -1,16 +1,16 @@
-k8s-storage
-k8s-Volume卷
-1、k8s-EphemeralVolumes临时卷
-emptyDir
-configMap
-secret
-downwardAPI
-CSI临时卷
-通用临时卷
-2、k8s-ProjectedVolumes投射卷
+# [k8s-storage-DOC](https://kubernetes.io/zh-cn/docs/concepts/storage)
+# k8s-Volume卷
+- [1、k8s-EphemeralVolumes临时卷](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#1、k8s-EphemeralVolumes临时卷)
+  + [emptyDir](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#emptyDir)
+  + [configMap](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#configMap)
+  + [secret](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#secret)
+  + [downwardAPI](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#downwardAPI)
+  + [CSI临时卷](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#CSI临时卷)
+  + [通用临时卷](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#CSI临时卷)
+- 2、k8s-ProjectedVolumes投射卷
+- 3、k8s-PersistentVolumes持久卷
+- 4、k8s-StoageClasses存储类
 
-3、k8s-PersistentVolumes持久卷
-4、k8s-StoageClasses存储类
 # [k8s-storage](https://kubernetes.io/zh-cn/docs/concepts/storage)
 # k8s-Volume卷
 1. 概念  
