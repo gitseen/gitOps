@@ -77,6 +77,13 @@ spec:
 
 
 # configMap
+Configmap是Kubernetes集群中非常重要的一种配置管理资源对象。借助于ConfigMap API向pod中的容器中注入配置信息的机制  
+
+ConfigMap不仅仅可以保存环境变量或命令行参数等属性，也可以用来保存整个配置文件或者JSON格式的文件  
+
+各种配置属性和数据以k/v或嵌套k/v样式存在到Configmap中  
+>所有的配置信息都是以明文的方式来进行传递，实现资源配置的快速获取或者更新。 
+
 <details>
   <summary>configMap清单</summary>
   <pre><code>
