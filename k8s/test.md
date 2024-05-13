@@ -367,6 +367,38 @@ spec:
 </details>
 
 
+<details>
+  <summary>hostPath-FileOrCreate清单</summary>
+  <pre><code>
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-webserver
+spec:
+  containers:
+  - name: test-webserver
+    image: registry.k8s.io/test-webserver:latest
+    volumeMounts:
+    - mountPath: /var/local/aaa
+      name: mydir
+    - mountPath: /var/local/aaa/1.txt
+      name: myfile
+  volumes:
+  - name: mydir
+    hostPath:
+      # 确保文件所在目录成功创建。
+      path: /var/local/aaa
+      type: DirectoryOrCreate
+  - name: myfile
+    hostPath:
+      path: /var/local/aaa/1.txt
+      type: FileOrCreate
+```
+  </code></pre>
+</details>
+
+
 **emptyDir与hostPath区别**
 ```bash
 emptyDir和hostPath在功能上的异同分,二者都是node节点的本地存储卷方式
