@@ -325,7 +325,66 @@ spec:
 
 hostPath就是将Node主机中一个实际目录挂在到Pod供容器使用,这样的设计就可以保证Pod销毁了,但是数据依据可以存在于Node主机上  
 
-hostPath同一节点可上共享hostPath卷,使用相同路径的pod相同的文件(共享不同pod,pod挂同一hostPath)
+<details>
+  <summary>hostPath清单</summary>
+  <pre><code>
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: volume-hostpath
+  namespace: dev
+spec:
+  containers:
+  - name: nginx
+    image: nginx:1.17.1
+    ports:
+    - containerPort: 80
+    volumeMounts:
+    - name: logs-volume
+      mountPath: /var/log/nginx
+  - name: busybox
+    image: busybox:1.30
+    command: ["/bin/sh","-c","tail -f /logs/access.log"]
+    volumeMounts:
+    - name: logs-volume
+      mountPath: /logs
+  volumes:
+  - name: logs-volume
+    hostPath: 
+      path: /root/logs
+      type: DirectoryOrCreate  # 目录存在就使用，不存在就先创建后使用
+关于type的值的一点说明：
+    DirectoryOrCreate 目录存在就使用，不存在就先创建后使用
+    Directory   目录必须存在
+    FileOrCreate  文件存在就使用，不存在就先创建后使用
+    File 文件必须存在 
+    Socket  unix套接字必须存在
+    CharDevice  字符设备必须存在
+    BlockDevice 块设备必须存在
+```
+  </code></pre>
+</details>
+
+
+**emptyDir与hostPath区别**
+```bash
+emptyDir和hostPath在功能上的异同分,二者都是node节点的本地存储卷方式
+
+  emptyDir可以选择把数据存到tmpfs类型的本地文件系统中去,hostPath并不支持这一点;
+  emptyDir是临时存储空间,完全不提供持久化支持;
+  hostPath的卷数据是持久化在node节点的文件系统中的,即便pod已经被删除了,volume卷中的数据还会留存在node节点上;
+  hostPath除了支持挂载目录外,还支持File、Socket、CharDevice、BlockDevice,既支持把已有的文件和目录挂载到容器中,也提供了“如果文件或目录不存在,就创建一个”的功能;  
+```
+
+>警告：
+HostPath卷存在许多安全风险，最佳做法是尽可能避免使用HostPath。当必须使用HostPath卷时，它的范围应仅限于所需的文件或目录,并以只读方式挂载  
+如果通过AdmissionPolicy限制HostPath对特定目录的访问,则必须要求volumeMounts使用readOnly挂载以使策略生效  
+
+
+
+
+
 
 # [2-k8s-ProjectedVolumes投射卷](https://kubernetes.io/zh-cn/docs/concepts/storage/projected-volumes/)
 一个projected卷可以将若干现有的卷源映射到同一个目录之上;目前，以下类型的卷源可以被投射  
