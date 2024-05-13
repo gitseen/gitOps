@@ -413,9 +413,76 @@ emptyDir和hostPath在功能上的异同分,二者都是node节点的本地存�
 HostPath卷存在许多安全风险，最佳做法是尽可能避免使用HostPath。当必须使用HostPath卷时，它的范围应仅限于所需的文件或目录,并以只读方式挂载  
 如果通过AdmissionPolicy限制HostPath对特定目录的访问,则必须要求volumeMounts使用readOnly挂载以使策略生效  
 
+# subPath
+有时，在单个Pod中共享卷以供多方使用是很有用;volumeMounts.subPath属性可用于指定所引用的卷内的子路径,而不是其根路径  
 
+<details>
+  <summary>subPath-LAMP清单</summary>
+  <pre><code>
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-lamp-site
+spec:
+    containers:
+    - name: mysql
+      image: mysql
+      env:
+      - name: MYSQL_ROOT_PASSWORD
+        value: "rootpasswd"
+      volumeMounts:
+      - mountPath: /var/lib/mysql
+        name: site-data
+        subPath: mysql
+    - name: php
+      image: php:7.0-apache
+      volumeMounts:
+      - mountPath: /var/www/html
+        name: site-data
+        subPath: html
+    volumes:
+    - name: site-data
+      persistentVolumeClaim:
+        claimName: my-lamp-site-data
+```
+  </code></pre>
+</details>
 
+使用带有扩展环境变量的subPath;使用subPathExpr字段可以基于downwardAPI环境变量来构造subPath目录名;subPatht和subPathExpr属性是互斥  
 
+<details>
+  <summary>subPath-subPathExpr</summary>
+  <pre><code>
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod1
+spec:
+  containers:
+  - name: container1
+    env:
+    - name: POD_NAME
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: metadata.name
+    image: busybox:1.28
+    command: [ "sh", "-c", "while [ true ]; do echo 'Hello'; sleep 10; done | tee -a /logs/hello.txt" ]
+    volumeMounts:
+    - name: workdir1
+      mountPath: /logs
+      # 包裹变量名的是小括号,而不是大括号
+      subPathExpr: $(POD_NAME)
+  restartPolicy: Never
+  volumes:
+  - name: workdir1
+    hostPath:
+      path: /var/log/pods
+```
+  </code></pre>
+</details>
 
 
 # [2-k8s-ProjectedVolumes投射卷](https://kubernetes.io/zh-cn/docs/concepts/storage/projected-volumes/)
