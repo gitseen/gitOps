@@ -495,7 +495,7 @@ spec:
  + [serviceAccountToken](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#serviceAccountToken)
  + [clusterTrustBundle](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#clusterTrustBundle) 
 <details>
-  <summary>带有 Secret、DownwardAPI 和 ConfigMap 的配置示例</summary>
+  <summary>带有Secret、DownwardAPI和ConfigMap的配置示例</summary>
   <pre><code>
 ```
 apiVersion: v1
@@ -539,7 +539,7 @@ spec:
 
 
 <details>
-  <summary>带有非默认权限模式设置的 Secret 的配置示例</summary>
+  <summary>带有非默认权限模式设置的Secret的配置示例</summary>
   <pre><code>
 ```
 apiVersion: v1
@@ -575,7 +575,11 @@ spec:
 
 
 # serviceAccountToken
-```bash
+将当前服务账号的令牌注入到Pod中特定路径下  
+<details>
+  <summary>serviceAccountToken清单</summary>
+  <pre><code>
+```
 #serviceAccountToken投射卷
 apiVersion: v1
 kind: Pod
@@ -599,9 +603,16 @@ spec:
           expirationSeconds: 3600
           path: token
 ```
+  </code></pre>
+</details>
 
 # clusterTrustBundle
-```bash
+clusterTrustBundle投射卷源将一个或多个ClusterTrustBundle对象的内容作为一个自动更新的文件注入到容器文件系统中  
+clusterTrustBundle可以通过名称或签名者名称被选中;要按名称选择可以使用name字段指定单个ClusterTrustBundle对象  
+<details>
+  <summary>clusterTrustBundle清单</summary>
+  <pre><code>
+```
 #clusterTrustBundle投射卷
 apiVersion: v1
 kind: Pod
@@ -632,10 +643,11 @@ spec:
           path: mysigner-roots.pem
           optional: true
 ```
+  </code></pre>
+</details>
 
 # 3-k8s-PersistentVolumes持久卷
-hostpath
-subPath
+
 # 4-k8s-StoageClasses存储类
 
 
