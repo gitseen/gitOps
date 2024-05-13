@@ -8,6 +8,7 @@
   + [CSI临时卷](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#CSI临时卷)
   + [通用临时卷](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#CSI临时卷)
   + [hostPath](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#hostPath)
+  + [subPath](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#subPath)
 - [2-k8s-ProjectedVolumes投射卷](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#2-k8s-ProjectedVolumes投射卷)
 - [3-k8s-PersistentVolumes持久卷](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#3-k8s-PersistentVolumes持久卷)
 - [4-k8s-StoageClasses存储类](https://github.com/gitseen/gitOps/blob/main/k8s/test.md#4-k8s-StoageClasses存储类)
