@@ -1,5 +1,17 @@
-
-# [k8s-storage](https://kubernetes.io/zh-cn/docs/concepts/storage)
+# [k8s-storage-DOC](https://kubernetes.io/zh-cn/docs/concepts/storage)
+# k8s-Volume卷
+- [1-k8s-EphemeralVolumes临时卷](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#1-k8s-EphemeralVolumes临时卷)
+  + [emptyDir](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#emptyDir)
+  + [configMap](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#configMap)
+  + [secret](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#secret)
+  + [downwardAPI](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#downwardAPI)
+  + [CSI临时卷](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#CSI临时卷)
+  + [通用临时卷](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#CSI临时卷)
+  + [hostPath](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#hostPath)
+  + [subPath](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#subPath)
+- [2-k8s-ProjectedVolumes投射卷](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#2-k8s-ProjectedVolumes投射卷)
+- [3-k8s-PersistentVolumes持久卷](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#3-k8s-PersistentVolumes持久卷)
+- [4-k8s-StoageClasses存储类](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#4-k8s-StoageClasses存储类)
 
 # k8s-Volume卷
 1. 概念  
@@ -15,15 +27,16 @@ pod中的所有容器都可以使用卷,但必须先将它挂载在每个需要�
 
 ![k8s-storage](pic/k8s-storage.png)  
 
-# 1、k8s-Ephemeral Volumes临时卷
+# 1-k8s-EphemeralVolumes临时卷
 k8s为了不同的用途,支持几种不同类型的临时卷 
 - emptyDir： Pod启动时为空,存储空间来自本地的kubelet根目录(通常是根磁盘)或内存
 - configMap、 downwardAPI、 secret： 将不同类型的K8s数据注入到Pod中
 - CSI临时卷： 类似于前面的卷类型,但由专门支持此特性的指定CSI驱动程序提供
 - 通用临时卷： 它可以由所有支持持久卷的存储驱动程序提供
+- hostPath:  将node主机中一目录挂在到Pod中供容器使用(半持久化)
 >emptyDir、configMap、downwardAPI、secret是作为本地临时存储提供的。它们由各个节点上的kubelet管理
 
-## 1.1 emptyDir
+# emptyDir
 1. 概念
 emptyDir是在Pod被分配到Node时创建的,它的初始为空,且无须指定host上对应的目录文件,因为k8s会自动分配目录,当Pod销毁时,EmptyDir中的数据也会被永久删除。用途如下：
    - 临时空间,例如用于某些应用程序运行时所需的临时目录,且无须永久保留
@@ -35,7 +48,6 @@ emptyDir是在Pod被分配到Node时创建的,它的初始为空,且无须指定
 <details>
   <summary>emptyDir-pod示例清单</summary>
   <pre><code>
-
 ```
 apiVersion: v1
 kind: Pod
@@ -67,7 +79,14 @@ spec:
 </details>
 
 
-## 1.2 configMap
+# configMap
+Configmap是Kubernetes集群中非常重要的一种配置管理资源对象。借助于ConfigMap API向pod中的容器中注入配置信息的机制  
+
+ConfigMap不仅仅可以保存环境变量或命令行参数等属性，也可以用来保存整个配置文件或者JSON格式的文件  
+
+各种配置属性和数据以k/v或嵌套k/v样式存在到Configmap中  
+>所有的配置信息都是以明文的方式来进行传递，实现资源配置的快速获取或者更新。 
+
 <details>
   <summary>configMap清单</summary>
   <pre><code>
@@ -173,7 +192,13 @@ spec:
   </code></pre>
 </details>
 
-## 1.3 secret
+# secret
+在k8s集群中,有一些配置属性信息是非常敏感的,所以这些信息在传递的过程中,是不希望外人能够看到的,所以K8s提供了一种加密场景中的配置管理资源对象Secret  
+
+它在进行数据传输之前,会对数据进行编码,在数据获取的时候,会对数据进行解码。从而保证整个数据传输过程的安全  
+
+>这些数据是根据不同的应用场景,采用不同的加密机制 
+
 <details>
   <summary>secret清单</summary>
   <pre><code>
@@ -219,7 +244,12 @@ spec:
   </code></pre>
 </details>
 
-## 1.4 downwardAPI
+# downwardAPI
+downwardAPI 为运行在pod中的应用容器提供了一种反向引用。让容器中的应用程序了解所处pod或Node的一些基础属性信息  
+
+从严格意义上来说,downwardAPI不是存储卷,它自身就存在。相较于configmap、secret等资源对象需要创建后才能使用;  
+而downwardAPI引用的是Pod自身的运行环境信息,这些信息在Pod启动的时候就存在  
+
 <details>
   <summary>downwardAPI清单</summary>
   <pre><code>
@@ -229,9 +259,7 @@ watting...........................
   </code></pre>
 </details>
 
-
----
-## 1.5 CSI临时卷
+# CSI临时卷
 <details>
   <summary>CSI临时卷-Pod的示例清单</summary>
   <pre><code>
@@ -258,8 +286,7 @@ spec:
   </code></pre>
 </details>
 
---- 
-## 1.6 通用临时卷
+# 通用临时卷
 <details>
   <summary>通用临时卷-Pod的示例清单</summary>
   <pre><code>
@@ -293,18 +320,334 @@ spec:
   </code></pre>
 </details>
 
+# hostPath
 
-# 2、k8s-Projected Volumes投射卷
+由于emptyDir中数据不会被持久化,它会随着Pod的结束而销毁,如果想简单的将数据持久化到主机中,可以选择HostPath  
+
+hostPath就是将Node主机中一个实际目录挂在到Pod供容器使用,这样的设计就可以保证Pod销毁了,但是数据依据可以存在于Node主机上  
+
+<details>
+  <summary>hostPath清单</summary>
+  <pre><code>
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: volume-hostpath
+  namespace: dev
+spec:
+  containers:
+  - name: nginx
+    image: nginx:1.17.1
+    ports:
+    - containerPort: 80
+    volumeMounts:
+    - name: logs-volume
+      mountPath: /var/log/nginx
+  - name: busybox
+    image: busybox:1.30
+    command: ["/bin/sh","-c","tail -f /logs/access.log"]
+    volumeMounts:
+    - name: logs-volume
+      mountPath: /logs
+  volumes:
+  - name: logs-volume
+    hostPath: 
+      path: /root/logs
+      type: DirectoryOrCreate  # 目录存在就使用，不存在就先创建后使用
+关于type的值的一点说明：
+    DirectoryOrCreate 目录存在就使用，不存在就先创建后使用
+    Directory   目录必须存在
+    FileOrCreate  文件存在就使用，不存在就先创建后使用
+    File 文件必须存在 
+    Socket  unix套接字必须存在
+    CharDevice  字符设备必须存在
+    BlockDevice 块设备必须存在
+```
+  </code></pre>
+</details>
+
+
+<details>
+  <summary>hostPath-FileOrCreate清单</summary>
+  <pre><code>
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-webserver
+spec:
+  containers:
+  - name: test-webserver
+    image: registry.k8s.io/test-webserver:latest
+    volumeMounts:
+    - mountPath: /var/local/aaa
+      name: mydir
+    - mountPath: /var/local/aaa/1.txt
+      name: myfile
+  volumes:
+  - name: mydir
+    hostPath:
+      # 确保文件所在目录成功创建。
+      path: /var/local/aaa
+      type: DirectoryOrCreate
+  - name: myfile
+    hostPath:
+      path: /var/local/aaa/1.txt
+      type: FileOrCreate
+```
+  </code></pre>
+</details>
+
+
+**emptyDir与hostPath区别**
+```bash
+emptyDir和hostPath在功能上的异同分,二者都是node节点的本地存储卷方式
+
+  emptyDir可以选择把数据存到tmpfs类型的本地文件系统中去,hostPath并不支持这一点;
+  emptyDir是临时存储空间,完全不提供持久化支持;
+  hostPath的卷数据是持久化在node节点的文件系统中的,即便pod已经被删除了,volume卷中的数据还会留存在node节点上;
+  hostPath除了支持挂载目录外,还支持File、Socket、CharDevice、BlockDevice,既支持把已有的文件和目录挂载到容器中,也提供了“如果文件或目录不存在,就创建一个”的功能;  
+```
+
+>警告：
+HostPath卷存在许多安全风险，最佳做法是尽可能避免使用HostPath。当必须使用HostPath卷时，它的范围应仅限于所需的文件或目录,并以只读方式挂载  
+如果通过AdmissionPolicy限制HostPath对特定目录的访问,则必须要求volumeMounts使用readOnly挂载以使策略生效  
+
+# subPath
+有时，在单个Pod中共享卷以供多方使用是很有用;volumeMounts.subPath属性可用于指定所引用的卷内的子路径,而不是其根路径  
+
+<details>
+  <summary>subPath-LAMP清单</summary>
+  <pre><code>
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-lamp-site
+spec:
+    containers:
+    - name: mysql
+      image: mysql
+      env:
+      - name: MYSQL_ROOT_PASSWORD
+        value: "rootpasswd"
+      volumeMounts:
+      - mountPath: /var/lib/mysql
+        name: site-data
+        subPath: mysql
+    - name: php
+      image: php:7.0-apache
+      volumeMounts:
+      - mountPath: /var/www/html
+        name: site-data
+        subPath: html
+    volumes:
+    - name: site-data
+      persistentVolumeClaim:
+        claimName: my-lamp-site-data
+```
+  </code></pre>
+</details>
+
+使用带有扩展环境变量的subPath;使用subPathExpr字段可以基于downwardAPI环境变量来构造subPath目录名;subPatht和subPathExpr属性是互斥  
+
+<details>
+  <summary>subPath-subPathExpr</summary>
+  <pre><code>
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod1
+spec:
+  containers:
+  - name: container1
+    env:
+    - name: POD_NAME
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: metadata.name
+    image: busybox:1.28
+    command: [ "sh", "-c", "while [ true ]; do echo 'Hello'; sleep 10; done | tee -a /logs/hello.txt" ]
+    volumeMounts:
+    - name: workdir1
+      mountPath: /logs
+      # 包裹变量名的是小括号,而不是大括号
+      subPathExpr: $(POD_NAME)
+  restartPolicy: Never
+  volumes:
+  - name: workdir1
+    hostPath:
+      path: /var/log/pods
+```
+  </code></pre>
+</details>
+
+
+# [2-k8s-ProjectedVolumes投射卷](https://kubernetes.io/zh-cn/docs/concepts/storage/projected-volumes/)
 一个projected卷可以将若干现有的卷源映射到同一个目录之上;目前，以下类型的卷源可以被投射  
-+ [configMap](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md##12-configMap)
-+ [secret](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#13-configmap)
-+ [downwardAPI](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#14-configmap)
-+ serviceAccountToken
-+ clusterTrustBundle
+ + [emptyDir](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#emptyDir)
+ + [configMap](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#configMap)
+ + [secret](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#secret)
+ + [downwardAPI](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#downwardAPI)
+ + [serviceAccountToken](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#serviceAccountToken)
+ + [clusterTrustBundle](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#clusterTrustBundle) 
+<details>
+  <summary>带有Secret、DownwardAPI和ConfigMap的配置示例</summary>
+  <pre><code>
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: volume-test
+spec:
+  containers:
+  - name: container-test
+    image: busybox:1.28
+    volumeMounts:
+    - name: all-in-one
+      mountPath: "/projected-volume"
+      readOnly: true
+  volumes:
+  - name: all-in-one
+    projected:
+      sources:
+      - secret:
+          name: mysecret
+          items:
+            - key: username
+              path: my-group/my-username
+      - downwardAPI:
+          items:
+            - path: "labels"
+              fieldRef:
+                fieldPath: metadata.labels
+            - path: "cpu_limit"
+              resourceFieldRef:
+                containerName: container-test
+                resource: limits.cpu
+      - configMap:
+          name: myconfigmap
+          items:
+            - key: config
+              path: my-group/my-config
+```
+  </code></pre>
+</details>
 
-# 3、k8s-Persistent Volumes持久卷
-hostpath
-subPath
-# 4、k8s-Stoage Classes存储类
+
+<details>
+  <summary>带有非默认权限模式设置的Secret的配置示例</summary>
+  <pre><code>
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: volume-test
+spec:
+  containers:
+  - name: container-test
+    image: busybox:1.28
+    volumeMounts:
+    - name: all-in-one
+      mountPath: "/projected-volume"
+      readOnly: true
+  volumes:
+  - name: all-in-one
+    projected:
+      sources:
+      - secret:
+          name: mysecret
+          items:
+            - key: username
+              path: my-group/my-username
+      - secret:
+          name: mysecret2
+          items:
+            - key: password
+              path: my-group/my-password
+              mode: 511
+```
+  </code></pre>
+</details>
+
+
+# serviceAccountToken
+将当前服务账号的令牌注入到Pod中特定路径下  
+<details>
+  <summary>serviceAccountToken清单</summary>
+  <pre><code>
+```
+#serviceAccountToken投射卷
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sa-token-test
+spec:
+  containers:
+  - name: container-test
+    image: busybox:1.28
+    volumeMounts:
+    - name: token-vol
+      mountPath: "/service-account"
+      readOnly: true
+  serviceAccountName: default
+  volumes:
+  - name: token-vol
+    projected:
+      sources:
+      - serviceAccountToken:
+          audience: api
+          expirationSeconds: 3600
+          path: token
+```
+  </code></pre>
+</details>
+
+# clusterTrustBundle
+clusterTrustBundle投射卷源将一个或多个ClusterTrustBundle对象的内容作为一个自动更新的文件注入到容器文件系统中  
+clusterTrustBundle可以通过名称或签名者名称被选中;要按名称选择可以使用name字段指定单个ClusterTrustBundle对象  
+<details>
+  <summary>clusterTrustBundle清单</summary>
+  <pre><code>
+```
+#clusterTrustBundle投射卷
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sa-ctb-name-test
+spec:
+  containers:
+  - name: container-test
+    image: busybox
+    command: ["sleep", "3600"]
+    volumeMounts:
+    - name: token-vol
+      mountPath: "/root-certificates"
+      readOnly: true
+  serviceAccountName: default
+  volumes:
+  - name: root-certificates-vol
+    projected:
+      sources:
+      - clusterTrustBundle:
+          name: example
+          path: example-roots.pem
+      - clusterTrustBundle:
+          signerName: "example.com/mysigner"
+          labelSelector:
+            matchLabels:
+              version: live
+          path: mysigner-roots.pem
+          optional: true
+```
+  </code></pre>
+</details>
+
+# 3-k8s-PersistentVolumes持久卷
+
+# 4-k8s-StoageClasses存储类
 
 
