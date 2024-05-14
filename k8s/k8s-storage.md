@@ -690,7 +690,7 @@ Provisioning提供商-->Binding绑定-->Using使用-->Releasing释放-->Recyclin
 + Bound 该卷已与某个PVC绑定
 + Released 绑定的PVC已经删除,资源已释放,但没有被集群回收
 + Failed 自动资源回收失败
->说明：
+>说明：  
 1、一个PV创建完后状态会变成Available,等待被PPV绑定  
 2、一旦被PVC邦定,PV的状态会变成Bound,就可以被定义了相应PVC的Pod使用  
 3、Pod使用完后会释放PV,Pv的状态变成Released  
