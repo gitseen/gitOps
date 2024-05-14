@@ -702,10 +702,10 @@ Provisioning提供商-->Binding绑定-->Using使用-->Releasing释放-->Recyclin
   - Filesystem  文件系统,默认值
   - Block  块设备
 + accessModes访问模式
-  - ReadwriteOnce         #(RWO）卷可以被一个节点以读写方式挂载
-  - ReadonlyMany          #(ROX）卷可以被多个节点以只读方式挂载
-  - ReadwriteMany         #(RWX）卷可以被多个节点以读写方式挂载
-  - ReadWriteOncePod      #(RWO) 卷可以被单个Pod以读写方式挂载
+  - ReadwriteOnce        &emsp; #(RWO）卷可以被一个节点以读写方式挂载
+  - ReadonlyMany         &emsp; #(ROX）卷可以被多个节点以只读方式挂载
+  - ReadwriteMany        &emsp; #(RWX）卷可以被多个节点以读写方式挂载
+  - ReadWriteOncePod     &emsp; #(RWO) 卷可以被单个Pod以读写方式挂载
 + ReclaimPolicy回收策略(persistentVolumeReclaimPolicy)
   - Retain  -- (保留)保留数据需手工处理;当删除与之绑定的PVC时PV被标记为released数据依然保存在PV上,但该PV不可用,需要手动来处理这些数据并删除该PV  
   - Recycle -- (回收)删除数据,简单清除文件的操作rm -rf /thevolume/*  
