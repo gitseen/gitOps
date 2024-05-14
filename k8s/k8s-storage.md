@@ -758,7 +758,6 @@ spec:
   <summary>nfs-pv/pvc示例</summary>
   <pre><code>
 ```
-
 #PV编排
 apiVersion: v1
 kind: PersistentVolume
@@ -779,7 +778,7 @@ spec:
     server: 10.20.1.20
     readOnly: false
     
-#####
+--- 
 #PVC编排通过selector查找PV,K8S里的资源查找都是通过selector查找label标签
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -797,7 +796,7 @@ spec:
   selector:
     matchLabels:
       pv: nfs-pv1
-###
+--- 
 #Pod挂载PVC这里为了测试,直接通过node节点的hostPort暴露服务
 apiVersion: v1
 kind: Pod
