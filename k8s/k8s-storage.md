@@ -752,6 +752,7 @@ spec:
     matchExpressions:
     - {key: environment, operator: In, values: [dev]}
 ```
+
 <details>
   <summary>nfs-pv/pvc示例</summary>
   <pre><code>
@@ -769,14 +770,14 @@ spec:
     storage: 1Gi
   accessModes:
     - ReadWriteOnce
-  # Recycle 删除PVC会同步删除PV | Retain 删除PVC不会同步删除PV
+  #Recycle 删除PVC会同步删除PV | Retain 删除PVC不会同步删除PV
   persistentVolumeReclaimPolicy: Recycle
   nfs:
     path: /data/nfstest/share/pv1
     server: 10.20.1.20
     readOnly: false
     
----
+#####
 #PVC编排通过selector查找PV,K8S里的资源查找都是通过selector查找label标签
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -795,8 +796,7 @@ spec:
     matchLabels:
       pv: nfs-pv1
 
----
-
+###
 #Pod挂载PVC这里为了测试,直接通过node节点的hostPort暴露服务
 apiVersion: v1
 kind: Pod
