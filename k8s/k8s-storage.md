@@ -698,7 +698,7 @@ Provisioning提供商-->Binding绑定-->Using使用-->Releasing释放-->Recyclin
 
 # PV/PVC关键配置参数
 + capacity存储能力 描述存储设备具备的能力,支持对存储空间的设置storage=xx
-+ volumeModes存储卷模式
++ volumeMode存储卷模式
   - Filesystem  文件系统,默认值
   - Block  块设备
 + accessModes访问模式
@@ -710,7 +710,8 @@ Provisioning提供商-->Binding绑定-->Using使用-->Releasing释放-->Recyclin
   - Retain  -- (保留)保留数据需手工处理;当删除与之绑定的PVC时PV被标记为released数据依然保存在PV上,但该PV不可用,需要手动来处理这些数据并删除该PV  
   - Recycle -- (回收)删除数据,简单清除文件的操作rm -rf /thevolume/*  
   - Delete  -- (删除)删除存储卷;删除与PV相连的后端存储资源(只有AWS,EBS,GCE PD,Azure Disk和,Cinder、cee等支持) 
->对于Kubernetes1.30来说,只有nfs和hostPath卷类型支持回收Recycle
+>对于Kubernetes1.30来说,只有nfs和hostPath卷类型支持回收Recycle  
+
 **PV示例**
 ```bash
 apiVersion: v1
@@ -732,6 +733,97 @@ spec:
     path: /tmp
     server: 172.17.0.2 #后端存储
 ```
+**PVC示例**
+```bash
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc
+spec:
+  accessModes:  #访问模式
+  - ReadWriteOnce
+  resources: #申请资源，8Gi存储空间
+    requests:
+      storage: 8Gi
+  storageClassName: slow #存储类别
+  selector:
+    matchLabels:
+      release: "stable"
+    matchExpressions:
+    - {key: environment, operator: In, values: [dev]}
+```
+<details>
+  <summary>nfs-pv/pvc示例</summary>
+  <pre><code>
+```
+#PV编排
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nfs-pv1
+  namespace: dev1
+  labels:
+    pv: nfs-pv1
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  # Recycle 删除PVC会同步删除PV | Retain 删除PVC不会同步删除PV
+  persistentVolumeReclaimPolicy: Recycle
+  nfs:
+    path: /data/nfstest/share/pv1
+    server: 10.20.1.20
+    readOnly: false
+    
+---
+#PVC编排通过selector查找PV,K8S里的资源查找都是通过selector查找label标签
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nfs-pvc1
+  namespace: dev1
+  labels:
+    pv: nfs-pvc1
+spec:
+  resources:
+    requests:
+      storage: 100Mi
+  accessModes:
+    - ReadWriteOnce
+  selector:
+    matchLabels:
+      pv: nfs-pv1
+
+---
+
+#Pod挂载PVC这里为了测试,直接通过node节点的hostPort暴露服务
+apiVersion: v1
+kind: Pod
+metadata:
+  name: webapp
+  namespace: dev1
+  labels:
+    app: webapp
+spec:
+  containers:
+    - name: webapp
+      image: nginx
+      imagePullPolicy: IfNotPresent
+      ports:
+        - containerPort: 80
+          hostPort: 8081
+      volumeMounts:
+        - name: workdir
+          mountPath: /usr/share/nginx/html
+  volumes:
+    - name: workdir
+      persistentVolumeClaim:
+        claimName: nfs-pvc1
+```
+  </code></pre>
+</details>
+
 
 
 
