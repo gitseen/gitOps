@@ -691,7 +691,7 @@ Provisioning提供商-->Binding绑定-->Using使用-->Releasing释放-->Recyclin
 + Released 绑定的PVC已经删除,资源已释放,但没有被集群回收
 + Failed 自动资源回收失败
 >说明：  
-1、一个PV创建完后状态会变成Available,等待被PPV绑定  
+1、一个PV创建完后状态会变成Available,等待被PV绑定  
 2、一旦被PVC邦定,PV的状态会变成Bound,就可以被定义了相应PVC的Pod使用  
 3、Pod使用完后会释放PV,Pv的状态变成Released  
 4、变成Released的PVC会根据定义的回收策略做相应的回收工作  
@@ -711,6 +711,29 @@ Provisioning提供商-->Binding绑定-->Using使用-->Releasing释放-->Recyclin
   - Recycle -- (回收)删除数据,简单清除文件的操作rm -rf /thevolume/*  
   - Delete  -- (删除)删除存储卷;删除与PV相连的后端存储资源(只有AWS,EBS,GCE PD,Azure Disk和,Cinder、cee等支持) 
 >对于Kubernetes1.30来说,只有nfs和hostPath卷类型支持回收Recycle
+**PV示例**
+```bash
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: test
+spec:
+  capacity: 
+    storage: 5Gi #存储能力并指定大小
+  volumeMode: Filesystem  #存储模式
+  accessModes:
+    - ReadWriteOnce #访问模式
+  persistentVolumeReclaimPolicy: Recycle #回收策略
+  storageClassName: slow  #存储类别
+  mountOptions:
+    - hard
+    - nfsvers=4.1  #挂载参数
+  nfs:
+    path: /tmp
+    server: 172.17.0.2 #后端存储
+```
+
+
 
 
 
