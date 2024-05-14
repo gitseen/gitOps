@@ -648,17 +648,20 @@ spec:
 
 # 3-k8s-PersistentVolumes持久卷
 持久卷存储的管理是一个与计算实例的管理完全不同的问题  
-PersistentVolume子系统为用户和管理员提供了一组API,该API从如何使用存储中抽象出如何提供存储的详细信息,为此引入两个新的API资源：<font color=#FF0000>PersistentVolume和PersistentVolumeClaim</font>  
+PersistentVolume子系统为用户和管理员提供了一组API,该API从如何使用存储中抽象出如何提供存储的详细信息,为此引入两个新的API资源  
+- PersistentVolume(PV)
+- PersistentVolumeClaim(PVC)
 
 # PV概述
 PersistentVolume(PV)是集群中由管理员提供或使用存储类动态提供的一块存储。它是集群中的资源,就像节点是集群资源一样   
 
-PV是对K8S存储资源的抽象,PV一般由运维人员创建和配置,供容器申请使用;PV是与Volumes类似的卷插件<font color=#FF0000>但其生命周期与使用PV的任何单个Pod无关</font>。由此API对象捕获存储的实现细节,不管是NFS、iSCSI还是特定于云提供商的存储系统  
+PV是对K8S存储资源的抽象,PV一般由运维人员创建和配置,供容器申请使用;PV是与Volumes类似的卷插件但其生命周期与使用PV的任何单个Pod无关  
+由API对象捕获存储的实现细节,不管是NFS、iSCSI还是特定于云提供商的存储系统  
 
 PV作为存储资源主要包括存储能力、访问模式、存储类型、回收策略、后端存储类型等关键信息的设置   
 
 # PVC概述
-PersistentVolumeClaim(PVC)是用户对存储资源的申请。就像Pod消费Node资源一样,PVC能够消费PV资源,PVC可以申请特定的存储空间和访问模式  
+PersistentVolumeClaim(PVC)是用户对存储资源的申请。就像Pod消费Node资源一样,PVC能够消费PV资源,PVC可申请特定的存储空间和访问模式  
 
 PVC是Pod对存储资源的一个申请,主要包括存储空间申请、访问模式等;创建PV后,Pod就可以通过PVC向PV申请磁盘空间  
 
