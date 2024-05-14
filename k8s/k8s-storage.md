@@ -754,13 +754,7 @@ spec:
     - {key: environment, operator: In, values: [dev]}
 ```
 
-
-
-
-
-
-
-一句话总结：PV、PVC是K8S用来做存储管理的资源对象，它们让存储资源的使用变得可控，从而保障系统的稳定性、可靠性。Stols>
+<details>
   <summary>nfs-pv-pvc示例</summary>
   <pre><code>
 ```
