@@ -691,10 +691,10 @@ Provisioning提供商-->Binding绑定-->Using使用-->Releasing释放-->Recyclin
 + Released 绑定的PVC已经删除,资源已释放,但没有被集群回收
 + Failed 自动资源回收失败
 >说明：
-1、一个PV创建完后状态会变成Available,等待被PPV绑定
-2、一旦被PVC邦定,PV的状态会变成Bound,就可以被定义了相应PVC的Pod使用
-3、Pod使用完后会释放PV,Pv的状态变成Released
-4、变成Released的PVC会根据定义的回收策略做相应的回收工作
+1、一个PV创建完后状态会变成Available,等待被PPV绑定  
+2、一旦被PVC邦定,PV的状态会变成Bound,就可以被定义了相应PVC的Pod使用  
+3、Pod使用完后会释放PV,Pv的状态变成Released  
+4、变成Released的PVC会根据定义的回收策略做相应的回收工作  
 
 # PV/PVC关键配置参数
 + capacity存储能力 描述存储设备具备的能力,支持对存储空间的设置storage=xx
