@@ -760,7 +760,75 @@ spec:
 
 
 
-一句话总结：PV、PVC是K8S用来做存储管理的资源对象，它们让存储资源的使用变得可控，从而保障系统的稳定性、可靠性。StorageClass则是为了减少人工的工作量而去自动化创建PV的组件。所有Pod使用存储只有一个原则：先规划 → 后申请 → 再使用。
+一句话总结：PV、PVC是K8S用来做存储管理的资源对象，它们让存储资源的使用变得可控，从而保障系统的稳定性、可靠性。Stols>
+  <summary>nfs-pv-pvc示例</summary>
+  <pre><code>
+```
+#PV编排
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nfs-pv1
+  namespace: dev1
+  labels:
+    pv: nfs-pv1
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  # Recycle 删除PVC会同步删除PV | Retain 删除PVC不会同步删除PV
+  persistentVolumeReclaimPolicy: Recycle
+  nfs:
+    path: /data/nfstest/share/pv1
+    server: 10.20.1.20
+    readOnly: false
+---
+#PVC编排通过selector查找PV,K8S里的资源查找都是通过selector查找label标签
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nfs-pvc1
+  namespace: dev1
+  labels:
+    pv: nfs-pvc1
+spec:
+  resources:
+    requests:
+      storage: 100Mi
+  accessModes:
+    - ReadWriteOnce
+  selector:
+    matchLabels:
+      pv: nfs-pv1
+---
+#Pod挂载PVC,这里为了测试,直接通过node节点的hostPort暴露服务
+apiVersion: v1
+kind: Pod
+metadata:
+  name: webapp
+  namespace: dev1
+  labels:
+    app: webapp
+spec:
+  containers:
+    - name: webapp
+      image: nginx
+      imagePullPolicy: IfNotPresent
+      ports:
+        - containerPort: 80
+          hostPort: 8081
+      volumeMounts:
+        - name: workdir
+          mountPath: /usr/share/nginx/html
+  volumes:
+    - name: workdir
+      persistentVolumeClaim:
+        claimName: nfs-pvc1
+```
+  </code></pre>
+</details>
+
 
 
 # 4-k8s-StoageClasses存储类
