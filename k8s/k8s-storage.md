@@ -667,9 +667,9 @@ PVC是Pod对存储资源的一个申请,主要包括存储空间申请、访问�
 PVC作为用户对存储资源的需求申请,主要包括存储空间请求、访问模式、PV选择条件和存储类别等信息的设置  
 
  
-生命周期
-PV和PVC之间的相互作用遵循这个生命周期,资源周期使用过程如图所示：
-![PV和PVC生命周期](https://ask.qcloudimg.com/http-save/yehe-6475469/xudbbyzzxw.png)
+# PV和PVC生命周期
+PV和PVC之间的相互作用遵循这个生命周期,资源周期使用过程如图所示：  
+![PV和PVC生命周期](https://ask.qcloudimg.com/http-save/yehe-6475469/xudbbyzzxw.png)  
 ```mermaid
 graph LR
 Provisioning提供商-->Binding绑定-->Using使用-->Releasing释放-->Recycling回收
@@ -678,7 +678,7 @@ Provisioning提供商-->Binding绑定-->Using使用-->Releasing释放-->Recyclin
   - 静态模式：集群管理员手工创建许多PV,在定义PV时需要将后端存储的特性进行设置    
     ![静态资源供应模式](https://ask.qcloudimg.com/http-save/yehe-6475469/j6iuof3utd.png) 
   - 动态模式：集群管理员无需手工创建PV
-    ![动态资源供应模](https://ask.qcloudimg.com/http-save/yehe-6475469/3o40ig6gws.png)
+    ![动态资源供应模](https://ask.qcloudimg.com/http-save/yehe-6475469/3o40ig6gws.png)  
     通过StorageClass的设置对后端存储进行描述,标记为某种类型。此时要求PVC对存储的类型进行声明,系统将自动完成PV的创建及与PVC的绑定。PVC可以声明Class为"",说明该PVC禁止使用动态模式。
 - Binding将pv分配给pvc
 - Using Pod通过pvc使用该Volume
