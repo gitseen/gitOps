@@ -1,5 +1,5 @@
 # [k8s-storage-DOC](https://kubernetes.io/zh-cn/docs/concepts/storage)
-# k8s-Volume卷
+# k8s-Volume-listings
 - [1-k8s-EphemeralVolumes临时卷](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#1-k8s-EphemeralVolumes临时卷)
   + [emptyDir](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#emptyDir)
   + [configMap](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#configMap)
@@ -646,11 +646,11 @@ spec:
   </code></pre>
 </details>
 
-[# 3-k8s-PersistentVolumes持久卷](https://kubernetes.io/zh-cn/docs/concepts/storage/persistent-volumes)
+# [3-k8s-PersistentVolumes持久卷](https://kubernetes.io/zh-cn/docs/concepts/storage/persistent-volumes)
 持久卷存储的管理是一个与计算实例的管理完全不同的问题  
 PersistentVolume子系统为用户和管理员提供了一组API,该API从如何使用存储中抽象出如何提供存储的详细信息,为此引入两个新的API资源  
-- PersistentVolume(PV)
-- PersistentVolumeClaim(PVC)
+  - PersistentVolume(PV)
+  - PersistentVolumeClaim(PVC)
 
 # PV概述
 PersistentVolume(PV)是集群中由管理员提供或使用存储类动态提供的一块存储。它是集群中的资源,就像节点是集群资源一样   
