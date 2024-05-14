@@ -733,6 +733,7 @@ spec:
     path: /tmp
     server: 172.17.0.2 #后端存储
 ```
+
 **PVC示例**
 ```bash
 apiVersion: v1
@@ -757,6 +758,7 @@ spec:
   <summary>nfs-pv/pvc示例</summary>
   <pre><code>
 ```
+
 #PV编排
 apiVersion: v1
 kind: PersistentVolume
@@ -795,7 +797,6 @@ spec:
   selector:
     matchLabels:
       pv: nfs-pv1
-
 ###
 #Pod挂载PVC这里为了测试,直接通过node节点的hostPort暴露服务
 apiVersion: v1
