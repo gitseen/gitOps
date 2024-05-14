@@ -671,7 +671,7 @@ PVC作为用户对存储资源的需求申请,主要包括存储空间请求、�
 PV和PVC之间的相互作用遵循这个生命周期,资源周期使用过程如图所示：  
 ![PV和PVC生命周期](https://ask.qcloudimg.com/http-save/yehe-6475469/xudbbyzzxw.png)  
 ```mermaid
-graph LR
+graph RL
 Provisioning提供商-->Binding绑定-->Using使用-->Releasing释放-->Recycling回收
 ```
 - Provisioning即pv的创建.资源供应的结果就是创建好的PV  
