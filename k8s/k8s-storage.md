@@ -968,9 +968,9 @@ from:https://zhuanlan.zhihu.com/p/434209418
 
 # 总结
 
-**<table><tr><td bgcolor=red>PV、PVC是K8S用来做存储管理的资源对象,它们让存储资源的使用变得可控,从而保障系统的稳定性、可靠性</td></tr></table>**  
+**PV、PVC是K8S用来做存储管理的资源对象,它们让存储资源的使用变得可控,从而保障系统的稳定性、可靠性  
+StorageClass则是为了减少人工的工作量而去自动化创建PV的组件;所有Pod使用存储只有一个原则：先规划-->后申请-->再使用**  
 
-**<table><tr><td bgcolor=red>StorageClass则是为了减少人工的工作量而去自动化创建PV的组件;所有Pod使用存储只有一个原则：先规划-->后申请-->再使用</td></tr></table>** 
 
 
 
