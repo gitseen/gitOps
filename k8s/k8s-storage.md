@@ -10,8 +10,18 @@
   + [hostPath](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#hostPath)
   + [subPath](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#subPath)
 - [2-k8s-ProjectedVolumes投射卷](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#2-k8s-ProjectedVolumes投射卷)
+  + [projected](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#projected)
 - [3-k8s-PersistentVolumes持久卷](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#3-k8s-PersistentVolumes持久卷)
+  + [PV和PVC概述](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#pv概述)
+  + [PV和PVC生命周期](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#PV和PVC生命周期)
+  + [PV和PVC生命周期阶段状态](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#PV和PVC生命周期阶段状态)
+  + [PV和PVC关键配置参数](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#PV和PVC关键配置参数)
+  + [持久卷的类型](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#持久卷的类型)
 - [4-k8s-StoageClasses存储类](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#4-k8s-StoageClasses存储类)
+  + [StoageClasses存储类概述](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#StoageClasses存储类概述)
+  + [StorageClassAPI](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#StorageClassAPI)
+  + [StorageClassAPI示例](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#StorageClassAPI示例)
+
 
 # k8s-Volume卷
 1. 概念  
@@ -487,6 +497,7 @@ spec:
 
 
 # [2-k8s-ProjectedVolumes投射卷](https://kubernetes.io/zh-cn/docs/concepts/storage/projected-volumes/)
+# projected
 一个projected卷可以将若干现有的卷源映射到同一个目录之上;目前，以下类型的卷源可以被投射  
  + [emptyDir](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#emptyDir)
  + [configMap](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-storage.md#configMap)
@@ -685,7 +696,7 @@ Provisioning提供商-->Binding绑定-->Using使用-->Releasing释放-->Recyclin
 - Releasing Pod释放volume并删除PVC
 - Reclaiming回收PV,可以保留PV以便下次使用,也可以直接从云存储中删除
 
-# PV/PVC生命周期阶段状态
+# PV和PVC生命周期阶段状态
 + Available 可用状态,还未与某个PVC绑定
 + Bound 该卷已与某个PVC绑定
 + Released 绑定的PVC已经删除,资源已释放,但没有被集群回收
@@ -696,7 +707,7 @@ Provisioning提供商-->Binding绑定-->Using使用-->Releasing释放-->Recyclin
 3、Pod使用完后会释放PV,Pv的状态变成Released  
 4、变成Released的PVC会根据定义的回收策略做相应的回收工作  
 
-# PV/PVC关键配置参数
+# PV和PVC关键配置参数
 + capacity存储能力 描述存储设备具备的能力,支持对存储空间的设置storage=xx
 + volumeMode存储卷模式
   - Filesystem  文件系统,默认值
@@ -823,6 +834,7 @@ spec:
   </code></pre>
 </details>
 
+# [持久卷的类型](https://kubernetes.io/zh-cn/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes)  
 
 
 # 4-k8s-StoageClasses存储类
@@ -832,7 +844,7 @@ StorageClass为管理员提供了描述存储"类"的方法;不同的类型可�
 K8s提供了一套可以自动创建PV的机制(Dynamic Provisioning)而这个机制的核心在于StorageClass这个API对象  
 **StorageClassAPI会定义下面两部分内容**   
 - PV的属性 :比如存储类型、Volume的大小等
-- 创建这种PV需要用到的存储插件,即存储制备器 
+- 创建这种PV需要用到的存储插件,即存储制备器(后端提供者) 
 >K8s就能够根据用户提交的PVC,找到一个对应的StorageClass; 
 之后K8s就会调用该StorageClass声明的存储插件,进而创建出需要的PV
 
@@ -953,5 +965,11 @@ from:https://zhuanlan.zhihu.com/p/434209418
 ```
   </code></pre>
 </details>
+
+# 总结
+*PV、PVC是K8S用来做存储管理的资源对象,它们让存储资源的使用变得可控,从而保障系统的稳定性、可靠性。*  
+*StorageClass则是为了减少人工的工作量而去自动化创建PV的组件;所有Pod使用存储只有一个原则：先规划-->后申请-->再使用。*  
+
+
 
 
