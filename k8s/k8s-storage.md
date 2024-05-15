@@ -826,5 +826,132 @@ spec:
 
 
 # 4-k8s-StoageClasses存储类
+# StoageClasses存储类概述
+StorageClass为管理员提供了描述存储"类"的方法;不同的类型可能会映射到不同的服务质量等级或备份策略或是由集群管理员制定的任意策略  
+
+K8s提供了一套可以自动创建PV的机制(Dynamic Provisioning)而这个机制的核心在于StorageClass这个API对象  
+**StorageClassAPI会定义下面两部分内容**   
+- PV的属性 :比如存储类型、Volume的大小等
+- 创建这种PV需要用到的存储插件,即存储制备器 
+>K8s就能够根据用户提交的PVC,找到一个对应的StorageClass; 
+之后K8s就会调用该StorageClass声明的存储插件,进而创建出需要的PV
+
+PV自动化： 利用StorageClass可以根据PVC需求,自动构建相对应的PV持久化存储卷,进一步简化运维管理成本  
+PVC自动化：利用volumeClaimTemplates  
+>volumeClaimTemplates实现了pvc的自动化;StorageClass实现了pv的自动化
+
+
+# StorageClassAPI
+每个StorageClass都包含provisioner存储制备器、parameters、reclaimPolicy回收策略
+- provisioner    &emsp; #Provisioner用来决定使用哪个卷插件制备PV,该字段必须指定
+- parameters     &emsp; #type指定类型(nfs、local...)取决provisioner可以接受不同的参数
+- reclaimPolicy  &emsp; #Delete默认、Retain
+>这些字段会在StorageClass需要动态分配PersistentVolume时会使用到
+
+
+# StorageClassAPI示例
+<details>
+  <summary>StorageClassn-fs-client-provisioner示例</summary>
+  <pre><code>
+```
+# 创建NFS资源的StorageClass
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass # 创建StorageClass
+metadata:
+  name: managed-nfs-storage
+provisioner: nfs-storage   #这里的名称要和provisioner配置文件中的环境变量PROVISIONER_NAME保持一致
+parameters:  
+  server: "10.0.0.27"
+  path: "/nfs/data/k8s"
+  readOnly: "false"
+---
+# 创建NFS provisioner
+apiVersion: apps/v1
+kind: Deployment # 部署nfs-client-provisioner
+metadata:
+  name: nfs-client-provisioner
+  labels:
+    app: nfs-client-provisioner
+  namespace: default #与RBAC文件中的namespace保持一致
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nfs-client-provisioner
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: nfs-client-provisioner
+    spec:
+      serviceAccountName: nfs-client-provisioner # 指定serviceAccount!
+      containers:
+        - name: nfs-client-provisioner
+          image: registry.cn-hangzhou.aliyuncs.com/open-ali/nfs-client-provisioner #镜像地址
+          volumeMounts: # 挂载数据卷到容器指定目录
+            - name: nfs-client-root
+              mountPath: /persistentvolumes
+          env:
+            - name: PROVISIONER_NAME # 配置provisioner的Name
+              value: nfs-storage     # 确保该名称与 StorageClass 资源中的provisioner名称保持一致
+            - name: NFS_SERVER       #绑定的nfs服务器
+              value: 10.0.0.27
+            - name: NFS_PATH   #绑定的nfs服务器目录
+              value: /nfs/data/k8s
+      volumes: # 申明nfs数据卷
+        - name: nfs-client-root
+          nfs:
+            server: 10.0.0.27
+            path: /nfs/data/k8s
+#PS：nfs-client-provisioner这个镜像的作用它通过k8s集群内置的NFS驱动,挂载远端的NFS服务器到本地目录;
+然后将自身作为storageprovisioner,然后关联到storageclass资源
+```
+  </code></pre>
+</details>
+
+
+
+<details>
+  <summary>StorageClassn-pvc-pod示例</summary>
+  <pre><code>
+```
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: test-claim
+spec:
+  storageClassName: managed-nfs-storage
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Mi
+---
+#创建测试pod,查看是否可以正常挂载    
+kind: Pod
+apiVersion: v1
+metadata:
+  name: test-pod
+spec:
+  containers:
+  - name: test-pod
+    image: nginx:1.20.0
+    imagePullPolicy: IfNotPresent
+    volumeMounts:
+      - name: nfs-pvc #挂载数据卷
+        mountPath: "/usr/share/nginx/html"
+  restartPolicy: "Never"
+  volumes:
+    - name: nfs-pvc
+      persistentVolumeClaim: #数据卷挂载的是pvc
+        claimName: test-claim  #与PVC名称保持一致
+清空前面实验的pvc,由于pvc绑定了pv,直接删除pv删除不掉(kubectl delete pvc --all )先删pvc再删pv
+如果有pod绑定,删除pod-->pvc-->pv如果还需要清理后端存储,则最后根据情况删除后端存储数据
+from:https://zhuanlan.zhihu.com/p/434209418
+```
+  </code></pre>
+</details>
 
 
