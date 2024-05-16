@@ -976,8 +976,7 @@ from:https://zhuanlan.zhihu.com/p/434209418
   </code></pre>
 </details>
 
-# PVC申请默认存储示例
-
+**PVC申请默认存储示例**  
 ```bash
 #默认存储创建
 apiVersion: storage.k8s.io/v1
