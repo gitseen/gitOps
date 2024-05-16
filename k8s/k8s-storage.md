@@ -976,7 +976,9 @@ from:https://zhuanlan.zhihu.com/p/434209418
   </code></pre>
 </details>
 
->storageClassName: 不指定StorageClassName时使用默认存储
+>storageClassName: 不指定StorageClassName时使用默认存储  
+
+
 
 # pvc申请默认存储示例
 
