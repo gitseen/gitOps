@@ -936,7 +936,7 @@ spec:
 
 
 <details>
-  <summary>StorageClassn-pvc-pod示例</summary>
+  <summary>StorageClass-pvc-pod示例</summary>
   <pre><code>
 ```
 kind: PersistentVolumeClaim
@@ -975,6 +975,54 @@ from:https://zhuanlan.zhihu.com/p/434209418
 ```
   </code></pre>
 </details>
+
+>storageClassName: 不指定StorageClassName时使用默认存储
+
+# pvc申请默认存储示例
+
+```bash
+#默认存储创建
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: csi-disk-ssd
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"   #指定集群中默认的StorageClass一个集群中只能有一个默认的StorageClass
+parameters:
+  csi.storage.k8s.io/csi-driver-name: disk.csi.everest.io
+  csi.storage.k8s.io/fstype: ext4
+  everest.io/disk-volume-type: SSD
+  everest.io/passthrough: "true"
+provisioner: everest-csi-provisioner
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+allowVolumeExpansion: true
+
+---
+kubectl describe sc xx|grep 'IsDefaultClass'  #查看是否是默认存储
+kubectl get pvc
+NAME       STATUS   VOLUME
+sas-disk   Bound    pvc-6e2f37f9-7346-4419-82f7-b42e79f7964c   10Gi       RWO            csi-disk-sas   16m
+---
+
+#PVC申请默认存储
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name:  ssd-disk
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
+kubectl get pvc
+NAME       STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+sas-disk   Bound    pvc-6e2f37f9-7346-4419-82f7-b42e79f7964c   10Gi       RWO            csi-disk-sas   16m
+ssd-disk   Bound    pvc-4d2b059c-0d6c-44af-9994-f74d01c78731   10Gi       RWO            csi-disk-ssd   10s #PVC默认申请的存储
+
+```
 
 # 总结
 
