@@ -60,7 +60,7 @@ k8s为了不同的用途,支持几种不同类型的临时卷
   - 性能：  由于数据存储在节点的本地存储上,emptyDir卷通常具有较高的性能  
   - 数据持久性：emptyDir卷不提供持久化存储,所有数据在Pod终止时都会丢失  
 
-2. ymal清单
+2. ymal清单  
 **emptyDir卷实现在同一pod中两个容器之间的文件共享**  
 ![pod-two-container](https://ask.qcloudimg.com/http-save/yehe-6211241/r4omerzdy6.png)  
 <details>
