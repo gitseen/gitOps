@@ -1025,7 +1025,7 @@ ssd-disk   Bound    pvc-4d2b059c-0d6c-44af-9994-f74d01c78731   10Gi       RWO   
 >storageClassName:不指定StorageClassName时使用默认存储  
 
 
-# 总结
+# [总结](https://developer.aliyun.com/article/1326853) 
 
 **PV、PVC是K8S用来做存储管理的资源对象,它们让存储资源的使用变得可控,从而保障系统的稳定性、可靠性  
 StorageClass则是为了减少人工的工作量而去自动化创建PV的组件;所有Pod使用存储只有一个原则：先规划-->后申请-->再使用**  
