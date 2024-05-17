@@ -80,17 +80,17 @@ kubectl config set-context prod --namespace=production \
 
 
 # k8s-不受命名空间约束的对象
-  - StorageClass
+  - StorageClass  
     StorageClass用于定义动态存储卷的存储类别;它允许管理员定义不同类型的存储类别,为不同的PV提供动态分配;StorageClass也是全局对象,不与特定的命名空间相关联
-  - PersistentVolumes #PersistentVolumeClaims区分命名空间
+  - PersistentVolumes #PersistentVolumeClaims区分命名空间  
     PersistentVolume是独立于命名空间的存储资源;PV表示集群中的存储卷,它们可以被Pod使用  
     PV通常由集群管理员创建,并且它们不属于特定的命名空间;Pod可以通过PersistentVolumeClaim(PVC)来请求PV,并将其挂载到Pod中  
   - PriorityClass  
     PriorityClass是用于定义Pod优先级的对象;它允许您为Pod分配优先级,以确保重要的Pod在资源有限时获得更多的资源;PriorityClass也是全局对象,不受命名空间约束
-  - ClusterRole和ClusterRoleBinding
+  - ClusterRole和ClusterRoleBinding  
     ClusterRole和ClusterRoleBinding用于定义集群级别的角色和角色绑定;允许定义对整个集群范围内资源的访问权限,而不是针对特定命名空间的资源
-  - CustomResourceDefinition(CRD)
+  - CustomResourceDefinition(CRD)  
     CustomResourceDefinition允许用户定义自定义资源类型;这些自定义资源类型可以是全局性质的,不受命名空间的限制
-  - namespaces
+  - namespaces  
 
 
