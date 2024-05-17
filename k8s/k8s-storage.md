@@ -860,7 +860,7 @@ K8s提供了一套可以自动创建PV的机制(Dynamic Provisioning)而这个�
 
 PV自动化： 利用StorageClass可以根据PVC需求,自动构建相对应的PV持久化存储卷,进一步简化运维管理成本  
 PVC自动化：利用volumeClaimTemplates  
->volumeClaimTemplates实现了pvc的自动化;StorageClass实现了pv的自动化
+>[volumeClaimTemplates实现了pvc的自动化;StorageClass实现了pv的自动化](https://zhuanlan.zhihu.com/p/434209418)  
 
 
 # StorageClassAPI
