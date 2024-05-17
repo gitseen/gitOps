@@ -1,4 +1,4 @@
-# Namesapces概念
+# [k8s-amesapces概念](https://kubernetes.io/docs/tasks/administer-cluster/namespaces-walkthrough/)  
 kubernetes-namespaces有助于不同的项目、团队或客户去共享Kubernetes集群;namespace通过以下方式实现项目和应用的隔离  
 - 设置作用域(命名空间的限制;使用命名空间隔离不同的使用者)  
   + 不同命名空间没有共同的所有权概念  
