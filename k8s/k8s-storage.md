@@ -908,21 +908,21 @@ spec:
       labels:
         app: nfs-client-provisioner
     spec:
-      serviceAccountName: nfs-client-provisioner # 指定serviceAccount!
+      serviceAccountName: nfs-client-provisioner #指定serviceAccount!
       containers:
         - name: nfs-client-provisioner
           image: registry.cn-hangzhou.aliyuncs.com/open-ali/nfs-client-provisioner #镜像地址
-          volumeMounts: # 挂载数据卷到容器指定目录
+          volumeMounts: #挂载数据卷到容器指定目录
             - name: nfs-client-root
               mountPath: /persistentvolumes
           env:
-            - name: PROVISIONER_NAME # 配置provisioner的Name
-              value: nfs-storage     # 确保该名称与 StorageClass 资源中的provisioner名称保持一致
+            - name: PROVISIONER_NAME #配置provisioner的Name
+              value: nfs-storage     #确保该名称与StorageClass资源中的provisioner名称保持一致
             - name: NFS_SERVER       #绑定的nfs服务器
               value: 10.0.0.27
             - name: NFS_PATH   #绑定的nfs服务器目录
               value: /nfs/data/k8s
-      volumes: # 申明nfs数据卷
+      volumes: #申明nfs数据卷
         - name: nfs-client-root
           nfs:
             server: 10.0.0.27
@@ -998,12 +998,12 @@ reclaimPolicy: Delete
 volumeBindingMode: Immediate
 allowVolumeExpansion: true
 
----
+CLI
 kubectl describe sc xx|grep 'IsDefaultClass'  #查看是否是默认存储
 kubectl get pvc
 NAME       STATUS   VOLUME
 sas-disk   Bound    pvc-6e2f37f9-7346-4419-82f7-b42e79f7964c   10Gi       RWO            csi-disk-sas   16m
----
+
 
 #PVC申请默认存储
 apiVersion: v1
@@ -1016,7 +1016,7 @@ spec:
   resources:
     requests:
       storage: 10Gi
----
+CLI
 kubectl get pvc
 NAME       STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
 sas-disk   Bound    pvc-6e2f37f9-7346-4419-82f7-b42e79f7964c   10Gi       RWO            csi-disk-sas   16m
