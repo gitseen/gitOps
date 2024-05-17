@@ -997,14 +997,11 @@ provisioner: everest-csi-provisioner
 reclaimPolicy: Delete
 volumeBindingMode: Immediate
 allowVolumeExpansion: true
-
 #CLI
 kubectl describe sc xx|grep 'IsDefaultClass'  #查看是否是默认存储
 kubectl get pvc
 NAME       STATUS   VOLUME
 sas-disk   Bound    pvc-6e2f37f9-7346-4419-82f7-b42e79f7964c   10Gi       RWO            csi-disk-sas   16m
-
-
 #PVC申请默认存储
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -1021,7 +1018,6 @@ kubectl get pvc
 NAME       STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
 sas-disk   Bound    pvc-6e2f37f9-7346-4419-82f7-b42e79f7964c   10Gi       RWO            csi-disk-sas   16m
 ssd-disk   Bound    pvc-4d2b059c-0d6c-44af-9994-f74d01c78731   10Gi       RWO            csi-disk-ssd   10s #PVC默认申请的存储
-
 ```
   </code></pre>
 </details>
