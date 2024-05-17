@@ -431,6 +431,7 @@ emptyDir和hostPath在功能上的异同分,二者都是node节点的本地存�
 ```
 
 >警告：
+
 HostPath卷存在许多安全风险，最佳做法是尽可能避免使用HostPath。当必须使用HostPath卷时，它的范围应仅限于所需的文件或目录,并以只读方式挂载  
 如果通过AdmissionPolicy限制HostPath对特定目录的访问,则必须要求volumeMounts使用readOnly挂载以使策略生效  
 
