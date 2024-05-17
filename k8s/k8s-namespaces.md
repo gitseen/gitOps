@@ -84,9 +84,10 @@ kubectl config set-context prod --namespace=production \
   - StorageClass  
     用于定义动态存储卷的存储类别;它允许管理员定义不同类型的存储类别,为不同的PV提供动态分配;  
     StorageClass也是全局对象,不与特定的命名空间相关联
-  - PersistentVolumes #PersistentVolumeClaims区分命名空间  
+  - PersistentVolumes   
     PV是独立于命名空间的存储资源;PV表示集群中的存储卷,它们可以被Pod使用  
     PV通常由集群管理员创建,并且它们不属于特定的命名空间;Pod可以通过PersistentVolumeClaim(PVC)来请求PV,并将其挂载到Pod中  
+    >PersistentVolumeClaims区分命名空间
   - PriorityClass  
     用于定义Pod优先级的对象;它允许您为Pod分配优先级,以确保重要的Pod在资源有限时获得更多的资源;  
     PriorityClass也是全局对象,不受命名空间约束
