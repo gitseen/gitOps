@@ -119,21 +119,30 @@ status:
 **Kubernetes(k8s) Service是一个抽象层,它为一组Pod提供了一个稳定的访问地址和DNS名称;在k8s中Service是通过控制器和负载均衡器来实现的;它可以将流量分发给后端Pod实例;并确保它们的可用性和可靠性**    
 
 **Kubernetes Service的总结**  
-- 1、Service有四种类型分别是ClusterIP、NodePort、LoadBalancer和ExternalName不同类型的Service有不同的用途,选择合适的类型非常重要
-     * ClusterIP
-     * NodePort
-     * LoadBalancer 
-     * ExternalName  
+
+Service是基于四层TCP和UDP协议转发的,而Ingress可以基于七层的HTTP和HTTPS协议转发,可以通过域名和路径做到更细粒度  
+
+- 1、Service类型及场景
+     * ExternalName
+     * ClusterIP  用于在集群内部互相访问的场景,通过ClusterIP访问Service
+     * Headless Service 用于Pod间的互相发现,该类型的Service并不会分配单独的ClusterIP, 而且集群也不会为它们进行负载均衡和路由。您可通过指定spec.clusterIP字段的值为"None"来创建HeadlessService,详细介绍请参见HeadlessService
+     * NodePort   用于从集群外部访问的场景,通过节点上的端口访问Service
+     * LoadBalancer 用于从集群外部访问的场景,其实是NodePort的扩展,通过一个特定的LoadBalancer访问Service,这个LoadBalanc
+     * Ingress
+
 - 2、Service Selector是用来选择要将流量转发到哪个Pod的标签  
-     每个Service都会指定一个或多个Selector用于确定应该选择哪些Pod;在创建Service时可以指定标签选择器以选择相关Pod 
+     每个Service都会指定一个或多个Selector用于确定应该选择哪些Pod;在创建Service时可以指定标签选择器以选择相关Pod  
+
 - 3、端口Service的端口指的是该Service的监听端口  
      Service可以监听多个端口,每个端口都可以关联一个或多个后端Pod。端口也可以分为两个类型：端口和目标端口。端口是Service监听的端口,而目标端口是后端Pod的端口  
+
 - 4、负载均衡k8s Service可以通过三种负载均衡算法来将流量分配到后端Pod中
      * Round Robin
        这是最常见的负载均衡算法。它按顺序分配流量到每个Pod,然后循环下去  
      * Session Affinity
        这种算法会将同一客户端的所有请求都发送到同一个后端Pod中。这有助于维护状态,并确保在会话期间一致性 
      * IPVS：这是一种高级的负载均衡算法,它使用Linux内核中的IPVS模块来实现流量分发  
+
 - 5、DNS k8s Service通过DNS来提供一个稳定的访问地址  
      创建Service时,k8s会将其关联的Pod的IP地址注册到k8s集群的DNS中,并使用Service名称和Namespace作为DNS条目。这样客户端可以通过Service名称和命名空间来访问该Service; k8s DNS将解析这个名称并将其映射到Service关联的PodIP地址  
 

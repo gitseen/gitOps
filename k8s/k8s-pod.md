@@ -102,9 +102,12 @@ goweb-demo-b98869456-25sj9   1/1     Running   1 (3m49s ago)   5d10h
 在READY字段中,1/1的意义为在这个pod里,已准备的容器/一共有多少个容器
 ```  
 
-**pod3种类型的容器**  
+**[pod类型](https://mp.weixin.qq.com/s/-TXbvQiR-tpB0RgQ5d-QDw)**  
 - 基础容器(pause container)
 - 初始化容器(init container)
+- Sidecar Container: 边车容器
+- Ephemeral Container: 临时容器
+- Multi Container: 多容器
 - 普通容器(业务容器/应用容器)
 
 ## 2. POD内容器间资源共享实现机制
