@@ -554,5 +554,7 @@ kubeadm reset
 
 ```
 
+# 参考
 [集群管理命令-华为云](https://support.huaweicloud.com/basics-cce/kubernetes_0036.html)  
+
 [from](https://mp.weixin.qq.com/s/rXSoUwcyVRIDtvYf_69jyA) 
