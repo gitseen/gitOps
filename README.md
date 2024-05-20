@@ -7,7 +7,7 @@
 ## 6、   ELK、EFK 
 ## 7、   Kafka、RabbitMQ、Zookeeper 
 ## 8、   [Docker](https://github.com/gitseen/gitOps/tree/main/Docker)、Kvm、[K8s](https://github.com/gitseen/gitOps/tree/main/k8s)
-## 9、  [Prometheus](https://github.com/gitseen/gitOps/tree/main/Prometheus)、grafana、alertmanager、exporter
+## 9、  [Prometheus](https://github.com/gitseen/gitOps/tree/main/Prometheus)、[grafana](https://github.com/gitseen/gitOps/tree/main/grafana)、alertmanager、exporter
 ## 10、  Devops、CICD、
 ## 11、  CDH、FI、EMR、HDP(spark、yarn、hive、hbase、zk、kafka)
 ## 12、  [云原生](https://github.com/rootsongjc/kubernetes-handbook)
