@@ -65,7 +65,7 @@ scheduler主要作用是负责资源的调度Pod,通过APIServer的Watch接口�
 - PodToleratesNodeTaints：检查Pod的容忍度是否能容忍节点的污点  
 - CheckVolumeBinding：评估Pod是否适合它所请求的容量,这适用于约束和非约束PVC  
 
-**如果在predicates(预选)过程中没有合适的节点,那么Pod会一直在pending状态,不断重试调度,直到有节点满足条件;  
+>**如果在predicates(预选)过程中没有合适的节点,那么Pod会一直在pending状态,不断重试调度,直到有节点满足条件;  
 经过这个步骤,如果有多个节点满足条件,就继续priorities过程,最后按照优先级大小对节点排序** 
  
 **优选Priorities**
