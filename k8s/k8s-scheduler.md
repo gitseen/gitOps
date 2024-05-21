@@ -42,14 +42,13 @@ scheduler主要作用是负责资源的调度Pod,通过APIServer的Watch接口�
 - Bind: 用于将 Pod 绑定到节点上。直到所有的 PreBind 插件都完成,Bind 插件才会被调用。
 - PostBind: 这是个信息性的扩展点。 绑定后插件在 Pod 成功绑定后被调用。这是绑定周期的结尾,可用于清理相关的资源  
 
-scheduler调度pod选择包含两个步骤
+**scheduler调度pod选择包含两个步骤**  
 - 预选(过滤)
   >过滤阶段会将所有满足Pod调度需求的Node选出来
   
 - 优选(打分)
   >scheduler会为Pod从所有可调度节点中选取一个最合适的Node根据当前启用的打分规则,scheduler会给每一个可调度节点进行打分  
-
-最后scheduler会将Pod调度到得分最高的Node上;如果存在多个得分最高的Node,scheduler会从中随机选取一个
+  最后scheduler会将Pod调度到得分最高的Node上;如果存在多个得分最高的Node,scheduler会从中随机选取一个  
 
 **预选策略Predicates**
 - PodFitsHostPorts：检查Pod容器所需的HostPort是否已被节点上其它容器或服务占用,如已被占用,则禁止Pod调度到该节点  
