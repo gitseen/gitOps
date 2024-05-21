@@ -83,10 +83,10 @@ scheduler调度pod选择包含两个步骤
 - ServiceSpreadingPriority：对于给定的服务,此策略旨在确保Service的Pods运行在不同的节点上。总的结果是,Service对单个节点故障变得更有弹性。
 - EqualPriority：赋予所有节点相同的权值1。
 - EvenPodsSpreadPriority：实现择优 pod的拓扑扩展约束
->[官网地址](https://kubernetes.io/zh-cn/docs/reference/scheduling/)
+>[官网地址](https://kubernetes.io/zh-cn/docs/reference/scheduling/)  
 [k8s中kube-scheduler的调度过程](https://www.toutiao.com/article/7345759512613421568/)  
-[聊聊kube-scheduler如何完成调度和调整调度权重](https://www.toutiao.com/article/7313829073661739520/)
-[kube-scheduler调度器原理](https://www.toutiao.com/article/7182031810707210807/)
+[聊聊kube-scheduler如何完成调度和调整调度权重](https://www.toutiao.com/article/7313829073661739520/)  
+[kube-scheduler调度器原理](https://www.toutiao.com/article/7182031810707210807/)  
 
 
 # k8s调度Pod的主要方式
