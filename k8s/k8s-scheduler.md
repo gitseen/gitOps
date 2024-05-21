@@ -96,4 +96,40 @@ scheduler主要作用是负责资源的调度Pod,通过APIServer的Watch接口�
 - [Pod拓扑分布约束](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-scheduler.md#Pod拓扑分布约束)  
 - [自定义调度器my-scheduler](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-scheduler.md#自定义调度器my-scheduler)  
 
+# NodeName
+nodeName属于定向调度(通过nodeName匹配规则是强制匹配);nodeName(直接指定node主机名)   
+
+Pod.spec.nodeName用于强制约束将Pod调度到指定的Node上,其实指定了nodeName的Pod会直接跳过Scheduler的调度逻辑,直接写入PodList列表  
+<details>
+  <summary>nodeName调度-指定nodeName调度到指定节点上</summary>
+  <pre><code>
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: springbootweb
+  name: springbootweb-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: springbootweb
+  template:
+    metadata:
+      labels:
+        app: springbootweb
+    spec:
+      nodeName: node23.turing.com   #指定调度到node23.turing.com节点上
+      containers:
+      - image: registry.tuling123.com/springboot:latest
+        imagePullPolicy: IfNotPresent
+        name: springbootweb
+        ports:
+        - containerPort: 9081
+          hostPort: 9981     
+      imagePullSecrets:
+      - name: registry-key-secret
+  </code></pre>
+</details>
+
 
