@@ -1,8 +1,8 @@
 # kube-scheduler调度概述
-K8s中调度是指将Pod调度到合适的节点上,以便对应节点上的Kubelet能够运行这些Pod;
+K8s中调度是指将Pod调度到合适的节点上,以便对应节点上的Kubelet能够运行这些Pod;  
 kube-scheduler将Pod分配(调度)到集群内的各个节点,进而创建容器运行进程;Kube-scheduler是K8s集群默认的调度器
 
-scheduler通过k8s的监测(Watch)机制来发现集群中新创建且尚未被调度到Node上的Pod;
+scheduler通过k8s的监测(Watch)机制来发现集群中新创建且尚未被调度到Node上的Pod;  
 scheduler主要作用是负责资源的调度(Pod),通过APIServer的Watch接口监听新建Pod副本信息, 按照预定的调度策略将Pod调度到相应的Node节点上;
 
 # kube-scheduler工作原理
