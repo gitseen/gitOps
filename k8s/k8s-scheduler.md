@@ -96,6 +96,7 @@ scheduler主要作用是负责资源的调度Pod,通过APIServer的Watch接口�
 - [Pod拓扑分布约束](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-scheduler.md#Pod拓扑分布约束)  
 - [自定义调度器my-scheduler](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-scheduler.md#自定义调度器my-scheduler)  
 
+---
 
 <table><tr><td bgcolor=green>定向调度nodeName、nodeSelector</td></tr></table>  
 
@@ -133,7 +134,13 @@ spec:
       imagePullSecrets:
       - name: registry-key-secret
   </code></pre>
-</details>
+</details>  
+
+>
+如果指定的节点不存在,则容器将不会运行,并且在某些情况下可能会自动删除
+如果指定的节点没有足够的资源来容纳该Pod,则该Pod将会失败,并且其原因将被指出,例如OutOfmemory或OutOfcpu
+云环境中的节点名称并非总是可预测或稳定的 
+
 
 
 # NodeSelector
@@ -169,7 +176,7 @@ spec:
           zone: north
   </code></pre>
 </details>
-
+>
 ---
 
 <table><tr><td bgcolor=green>亲和性调度</td></tr></table>  
