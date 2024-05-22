@@ -433,15 +433,9 @@ spec:
   </code></pre>
 </details>
 
+
 <details>
   <summary>podAffinity-preferred示例</summary>
-  <pre><code>
-
-  </code></pre>
-</details>
-
-<details>
-  <summary>podAffinity示例</summary>
   <pre><code>
 apiVersion: v1
 kind: Pod
