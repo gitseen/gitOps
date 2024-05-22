@@ -139,7 +139,8 @@ nodeSelector(节点选择器,为Node打上标签,然后Pod中通过nodeSelector�
 <details>
   <summary>nodeSelector调度</summary>
   <pre><code>
-#kubectllabel nodes k8s-node-1 zone=north  打标签
+#kubectl label nodes k8s-node-1 zone=north  打标签
+#kubectl label node  k8s-node-1 zone-       删除标签
 #kubectl get node --show-labels
 apiVersion:v1
 kind: Pod
