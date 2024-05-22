@@ -218,8 +218,8 @@ nodeAffinity增加了In、NotIn、Exists、DoesNotexist、Gt、Lt等操作符来
     最终的加和值会添加到该节点的其他优先级函数的评分之上;在调度器为Pod做出调度决定时,总分最高的节点的优先级也最高
     ```
   + IgnoredDuringExecution 
-    如果在Pod运行期间Node的标签发生变化,导致亲和性策略不能满足,则继续运行当前的Pod 
-    如一个Pod所在的节点在Pod运行期间标签发生了变更,不再符合该Pod的节点亲和性需求,则系统将忽略Node上label的变化,该Pod能继续在该节点运行
+    如果在Pod运行期间Node的标签发生变化,导致亲和性策略不能满足,则继续运行当前的Pod   
+    如一个Pod所在的节点在Pod运行期间标签发生了变更,不再符合该Pod的节点亲和性需求,则系统将忽略Node上label的变化,该Pod能继续在该节点运行  
     >IgnoredDuringExecution意味着如果节点标签在K8s调度Pod后发生了变更,Pod仍将继续运行  
 
 - nodeAffinity的语法规则  
@@ -249,7 +249,7 @@ nodeAffinity增加了In、NotIn、Exists、DoesNotexist、Gt、Lt等操作符来
 如nodeAffinity指定了多个nodeSelectorTerms,那么其中一个能够匹配成功即可  
 如在nodeSelectorTerms中有多个matchExpressions,则一个节点必须满足所有matchExpressions才能运行该Pod  
 
-- **nodeAffinity-API示例** 
+- nodeAffinity-API示例   
 <details>
   <summary>requiredDuringSchedulingIgnoredDuringExecution-nodeSelectorTerms硬限制</summary>
   <pre><code>
