@@ -516,8 +516,7 @@ spec:
   </code></pre>
 </details>
 
-
-details>
+<details>
   <summary>podAffinity-PodAntAffinity示例</summary>
   <pre><code>
 apiVersion: apps/v1
@@ -560,6 +559,7 @@ spec:
 #PodAntiAffinity：要求调度的Pod不能与具有相同标签(键app,值anti-nginx)的Pod在相同的节点上
   </code></pre>
 </details>
+
 
 
 
