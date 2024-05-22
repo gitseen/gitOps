@@ -318,7 +318,7 @@ spec:
 
 
 <details>
-  <summary>nodeAffinity-preferredDuringSchedulingIgnoredDuringExecution优先调度(32G-->16G-->8G内存节点)</summary>
+  <summary>preferredDuringSchedulingIgnoredDuringExecution优先调度(32G-->16G-->8G内存节点)</summary>
   <pre><code>
 spec:
   containers:
