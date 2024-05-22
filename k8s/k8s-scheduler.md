@@ -282,6 +282,42 @@ spec:
 </details>
 
 <details>
+  <summary>requiredDuringSchedulingIgnoredDuringExecution-weight-不强制</summary>
+  <pre><code>
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
+                - key: disktype
+                  operator: In
+                  values:
+                    - ssd
+      containers:
+        - name: nginx
+          image: nginx
+#preferredDuringSchedulingIgnoredDuringExecution调度器会尽量但不强制将Pod调度到具有disktype: ssd标签的节点上
+  </code></pre>
+</details>
+
+
+
+<details>
   <summary>nodeAffinity-preferredDuringSchedulingIgnoredDuringExecution优先调度(32G-->16G-->8G内存节点)</summary>
   <pre><code>
 spec:
