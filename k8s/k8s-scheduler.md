@@ -249,6 +249,42 @@ nodeSelector通过Node的Label进行精确匹配;为此NodeAffinity增加了In�
 如在nodeSelectorTerms中有多个matchExpressions,则一个节点必须满足所有matchExpressions才能运行该Pod  
 
 
+<details>
+  <summary>nodeAffinity-preferredDuringSchedulingIgnoredDuringExecution优先调度(32G-->16G-->8G内存节点)</summary>
+  <pre><code>
+spec:
+  containers:
+  - name: xxxxx
+    image: xxxxx
+  affinity:
+    nodeAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 20
+        preference:
+          matchExpressions:
+          - key: mem
+            operator: In
+            values:
+            - memory32
+      - weight: 10
+        preference:
+          matchExpressions:
+          - key: mem
+            operator: In
+            values:
+            - memory16
+      - weight: 1
+        preference:
+          matchExpressions:
+          - key: mem
+            operator: In
+            values:
+            - memory8
+  </code></pre>
+</details>
+
+
+
 ---
 <table><tr><td bgcolor=green>污点(容忍)调度</td></tr></table>  
 
