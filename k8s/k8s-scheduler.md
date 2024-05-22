@@ -232,8 +232,7 @@ nodeSelector通过Node的Label进行精确匹配;为此NodeAffinity增加了In�
   Exists：某个label存在
   DoesNotExist：某个label不存在
   ```
- **关系符使用说明**
- matchExpressions 
+ > 关系符使用说明matchExpressions 
   + key: nodeenv         # 匹配存在标签的key为nodeenv的节点  
     operator: Exists  
   + key: nodeenv         # 匹配标签的key为nodeenv,且value是"k"或"v"的节点  
@@ -242,8 +241,8 @@ nodeSelector通过Node的Label进行精确匹配;为此NodeAffinity增加了In�
   + key: nodeenv         # 匹配标签的key为nodeenv,且value大于"k"的节点  
     operator: Gt  
     values: "k"   
-- nodeAffinity的注意事项  
 
+- nodeAffinity的注意事项  
 >如同时定义了nodeSelector和nodeAffinity那么必须两个条件都得到满足,Pod才能最终运行到指定的Node上  
 如nodeAffinity指定了多个nodeSelectorTerms,那么其中一个能够匹配成功即可  
 如在nodeSelectorTerms中有多个matchExpressions,则一个节点必须满足所有matchExpressions才能运行该Pod  
