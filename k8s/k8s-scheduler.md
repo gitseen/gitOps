@@ -477,6 +477,45 @@ spec:
 </details>
 
 
+# nodeAffinity
+PodAntAffinity是Pod反亲和性,反亲和性能够让带有相同标签的副本,部署到不同的节点上  
+                     
+<details>
+  <summary>podAntAffinity示例</summary>
+  <pre><code>
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-cache
+spec:
+  selector:
+    matchLabels:
+      app: store
+  replicas: 3         #个副本
+  template:
+    metadata:
+      labels:         #定义标签 app=store
+        app: store
+    spec:
+      affinity:
+        podAntiAffinity:    #反亲和性
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:   #反亲和性会使得3个副本不运行在同一个Node上
+              - key: app
+                operator: In
+                values:
+                - store
+            topologyKey: "kubernetes.io/hostname"     #只能是"kubernetes.io/hostname"
+      containers:
+      - name: redis-server
+        image: redis:latest
+        imagePullPolicy: IfNotPresent
+#Pod反亲和性能够让带有相同标签的副本,部署到不同的节点上
+#集群只有两个Node,创建deployment后会发现每个Node上运行一个对应的Pod,还有一个Pod处于Pending状态 #实现不在同一节点上部署
+  </code></pre>
+</details>
+
 ---
 <table><tr><td bgcolor=green>污点(容忍)调度</td></tr></table>  
 
