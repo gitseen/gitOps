@@ -387,6 +387,102 @@ spec:
 </details>
 
 
+# PodAffinity 
+podAffinity是pod亲和性,用于定义Pods之间的亲和性,使得某个Pod被调度到与其他特定标签的Pod相同的节点上  
+Pod间亲和性创建的Pod与哪些已存在的Pod倾向于调度到同一节点,与节点亲和性类似;  
+Pod的亲和性与反亲和性也有两种类型  
+- requiredDuringSchedulingIgnoredDuringExecution：强制  
+
+- preferredDuringSchedulingIgnoredDuringExecution：首选  
+
+<details>
+  <summary>podAffinity-required示例</summary>
+  <pre><code>
+apiVersion: v1
+kind: Pod
+metadata:
+  name: redis
+  labels:          #定义一个Pod,包含标签： dbType= v
+    dbType: kv
+spec:
+  containers:
+  - name: redis
+    image: redis:latest
+    imagePullPolicy: IfNotPresent
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  affinity:
+    podAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:         #通过labelSeletor匹配Pod;Pod调度时需要满足,部署的Node上有能够满足该条件的Pod
+          matchExpressions:    #这里指定的选择器会匹配到Pod:redis,因此该Pod(nginx)与Pod(redis)会运行在同一个Node上
+          - key: dbType
+            operator: In
+            values:
+            - kv
+        topologyKey: topology.kubernetes.io/zone   #拓扑域,不允许为空
+                                                   #这里表示Pod所在节点的标签中包含topology.kubernetes.io/zone这个Key
+  containers:
+  - name: nginx
+    image: nginx:latest
+    imagePullPolicy: IfNotPresent
+  </code></pre>
+</details>
+
+<details>
+  <summary>podAffinity-preferred示例</summary>
+  <pre><code>
+
+  </code></pre>
+</details>
+
+<details>
+  <summary>podAffinity示例</summary>
+  <pre><code>
+apiVersion: v1
+kind: Pod
+metadata:
+  name: redis
+  labels:
+    dbType: kv
+spec:
+  nodeName: k8s-master
+  containers:
+  - name: redis
+    image: redis:latest
+    imagePullPolicy: IfNotPresent
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  affinity:
+    podAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+            - key: dbType
+              operator: In
+              values:
+              - kv
+          topologyKey: topology.kubernetes.io/zone
+  containers:
+  - name: nginx
+    image: nginx:latest
+    imagePullPolicy: IfNotPresent
+#preferredDuringSchedulingIgnoredDuringExecution在pod倾向性亲和性用法与node中用法一致;
+#表示更倾向于和匹配的Pod部署在同一节点上,但不是必须的
+  </code></pre>
+</details>
+
+
 ---
 <table><tr><td bgcolor=green>污点(容忍)调度</td></tr></table>  
 
