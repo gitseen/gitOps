@@ -248,6 +248,38 @@ nodeAffinity增加了In、NotIn、Exists、DoesNotexist、Gt、Lt等操作符来
 如nodeAffinity指定了多个nodeSelectorTerms,那么其中一个能够匹配成功即可  
 如在nodeSelectorTerms中有多个matchExpressions,则一个节点必须满足所有matchExpressions才能运行该Pod  
 
+<details>
+  <summary>requiredDuringSchedulingIgnoredDuringExecution-nodeSelectorTerms硬限制</summary>
+  <pre><code>
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: disktype
+                    operator: In
+                    values:
+                      - ssd
+      containers:
+        - name: nginx
+          image: nginx
+#nodeAffinity调度pod到具有disktype: ssd标签的节点上;硬限制
+  </code></pre>
+</details>
 
 <details>
   <summary>nodeAffinity-preferredDuringSchedulingIgnoredDuringExecution优先调度(32G-->16G-->8G内存节点)</summary>
