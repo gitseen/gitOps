@@ -97,9 +97,7 @@ scheduler主要作用是负责资源的调度Pod,通过APIServer的Watch接口�
 - [自定义调度器my-scheduler](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-scheduler.md#自定义调度器my-scheduler)  
 
 
-<font color=#FF0000 size=6 face="Arial">定向调度nodeName、nodeSelector</font>  
-**定向调度nodeName、nodeSelector**    
-<table><tr><td bgcolor=green>定向调度nodeName、nodeSelector**</td></tr></table>  
+<table><tr><td bgcolor=green>定向调度nodeName、nodeSelector</td></tr></table>  
 
 # NodeName
 nodeName属于定向调度(通过nodeName匹配规则是强制匹配);nodeName(直接指定node主机名)   
@@ -171,6 +169,19 @@ spec:
           zone: north
   </code></pre>
 </details>
+
+---
+
+<table><tr><td bgcolor=green>亲和性调度</td></tr></table>  
+
+
+<table><tr><td bgcolor=green>污点(容忍)调度</td></tr></table>  
+
+
+<table><tr><td bgcolor=green>Pod拓扑分布约束</td></tr></table>  
+
+<table><tr><td bgcolor=green>自定义调度器my-scheduler</td></tr></table>  
+
 
 
 
