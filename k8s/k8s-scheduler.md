@@ -196,7 +196,9 @@ nodeName、nodeSelector属于定向调度
 
 # NodeAffinity
 nodeAffinity节点亲和性功能类似于nodeSelector字段,但它的表达能力更强,并且允许你指定软规则;该调度策略是将来替换nodeSelector调度策略  
+
 nodeSelector通过Node的Label进行精确匹配;为此NodeAffinity增加了In、NotIn、Exists、DoesNotexist、Gt、Lt等操作符来选择Node;调度侧露更加灵活  
+
 - nodeAffinity的亲和性表达  
   + 硬限制：requiredDuringSchedulingIgnoredDuringExecution  
     ```bash
@@ -220,7 +222,31 @@ nodeSelector通过Node的Label进行精确匹配;为此NodeAffinity增加了In�
     >IgnoredDuringExecution意味着如果节点标签在K8s调度Pod后发生了变更,Pod仍将继续运行  
 
 - nodeAffinity的语法规则  
+  nodeAffinity语法支持的操作符包括In,NotIn,Exists,DoesNotExist,Gt,Lt;
+  虽然没有节点排斥功能,但是用NotIn和DoesNotExist就可以实现排斥的功能了
+   ```bash
+  In：label的值在某个列表中
+  NotIn：label的值不在某个列表中
+  Gt：label的值大于某个值
+  Lt：label的值小于某个值
+  Exists：某个label存在
+  DoesNotExist：某个label不存在
+  ```
+**关系符使用说明**
+matchExpressions 
+  - key: nodeenv         # 匹配存在标签的key为nodeenv的节点  
+    operator: Exists  
+  - key: nodeenv         # 匹配标签的key为nodeenv,且value是"k"或"v"的节点  
+    operator: In  
+    values: "k","v"  
+  - key: nodeenv         # 匹配标签的key为nodeenv,且value大于"k"的节点  
+    operator: Gt  
+    values: "k"  
+    
 - nodeAffinity的注意事项  
+>如同时定义了nodeSelector和nodeAffinity,那么必须两个条件都得到满足,Pod才能最终运行到指定的Node上
+如nodeAffinity指定了多个nodeSelectorTerms,那么其中一个能够匹配成功即可
+如在nodeSelectorTerms中有多个matchExpressions,则一个节点必须满足所有matchExpressions才能运行该Pod
 
 
 ---
