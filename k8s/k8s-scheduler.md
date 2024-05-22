@@ -477,8 +477,8 @@ spec:
 </details>
 
 
-# nodeAffinity
-PodAntAffinity是Pod反亲和性,反亲和性能够让带有相同标签的副本,部署到不同的节点上  
+# PodAntAffinity
+podAntAffinity是Pod反亲和性,反亲和性能够让带有相同标签的副本,部署到不同的节点上  
                      
 <details>
   <summary>podAntAffinity示例</summary>
@@ -515,6 +515,53 @@ spec:
 #集群只有两个Node,创建deployment后会发现每个Node上运行一个对应的Pod,还有一个Pod处于Pending状态 #实现不在同一节点上部署
   </code></pre>
 </details>
+
+
+details>
+  <summary>podAffinity-PodAntAffinity示例</summary>
+  <pre><code>
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-anti
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: anti-nginx
+  template:
+    metadata:
+      labels:
+        app: anti-nginx
+    spec:
+      affinity:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+                - key: a
+                  operator: In
+                  values:
+                    - b
+            topologyKey: kubernetes.io/hostname
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                    - anti-nginx
+            topologyKey: kubernetes.io/hostname
+      containers:
+        - name: with-pod-affinity
+          image: nginx
+#PodAffinity：要求调度的Pod必须与具有特定标签(键a,值b)的Pod在相同的节点上 
+#PodAntiAffinity：要求调度的Pod不能与具有相同标签(键app,值anti-nginx)的Pod在相同的节点上
+  </code></pre>
+</details>
+
+
 
 ---
 <table><tr><td bgcolor=green>污点(容忍)调度</td></tr></table>  
