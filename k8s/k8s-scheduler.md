@@ -218,6 +218,7 @@ nodeAffinity增加了In、NotIn、Exists、DoesNotexist、Gt、Lt等操作符来
     最终的加和值会添加到该节点的其他优先级函数的评分之上;在调度器为Pod做出调度决定时,总分最高的节点的优先级也最高
     ```
   + IgnoredDuringExecution 
+    如果在Pod运行期间Node的标签发生变化,导致亲和性策略不能满足,则继续运行当前的Pod 
     如一个Pod所在的节点在Pod运行期间标签发生了变更,不再符合该Pod的节点亲和性需求,则系统将忽略Node上label的变化,该Pod能继续在该节点运行
     >IgnoredDuringExecution意味着如果节点标签在K8s调度Pod后发生了变更,Pod仍将继续运行  
 
@@ -351,6 +352,38 @@ spec:
   </code></pre>
 </details>
 
+<details>
+  <summary>NodeAffinity-->required-->preferred先硬后软</summary>
+  <pre><code>
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/e2e-az-name
+            operator: In
+            values:
+            - e2e-az1
+            - e2e-az2
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 1               //取值范围1-100
+        preference:
+          matchExpressions:
+          - key: another-node-label-key
+            operator: In
+            values:
+            - another-node-label-value
+  containers:
+  - name: nginx
+    image: docker.io/nginx
+#Pod只能被调度到拥有kubernetes.io/e2e-az-name=e2e-az[1-2]标签的节点上;其中在满足之前标签条件的同时更倾向于调度在another-node-label-key=another-node-label-value标签的节点上
+  </code></pre>
+</details>
 
 
 ---
