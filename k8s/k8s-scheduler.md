@@ -181,7 +181,7 @@ nodeName、nodeSelector属于定向调度
 
 ---
 
-<table><tr><td bgcolor=green>亲和性调度</td></tr></table>  
+<table><tr><td bgcolor=green>亲和性调度nodeAffinity、podAffinity、podAntiAffinity</td></tr></table>  
 
 **Affinity亲和性调度分类** 
 - nodeAffinity(node亲和性): 以node为目标,解决pod可以调度到哪些node的问题 
@@ -193,6 +193,35 @@ nodeName、nodeSelector属于定向调度
   如果两个应用频繁交互,那就有必要利用亲和性让两个应用的尽可能的靠近,这样可以减少因网络通信而带来的性能损耗  
 反亲和性  
   当应用的采用多副本部署时,有必要采用反亲和性让各个应用实例打散分布在各个node上,这样可以提高服务的高可用性  
+
+# NodeAffinity
+nodeAffinity节点亲和性功能类似于nodeSelector字段,但它的表达能力更强,并且允许你指定软规则;该调度策略是将来替换nodeSelector调度策略  
+nodeSelector通过Node的Label进行精确匹配;为此NodeAffinity增加了In、NotIn、Exists、DoesNotexist、Gt、Lt等操作符来选择Node;调度侧露更加灵活  
+- nodeAffinity的亲和性表达  
+  + 硬限制：requiredDuringSchedulingIgnoredDuringExecution  
+    ```bash
+    必须满足指定的规则才可以调度Pod到node上,相当于硬限制; 
+    调度器只有在规则被满足的时候才能执行调度。此功能类似于nodeSelector,但其语法表达能力更强
+    ```
+  + 软限制：preferredDuringSchedulingIgnoredDuringExecution  
+    ```bash
+    强调优先满足指定规则,调度器会尝试调度Pod到Node上,但并不强求,相当于软限制
+    调度器会尝试寻找满足对应规则的节点,如果找不到匹配的节点,调度器仍然会调度该Pod
+    多个优先级规则还可以设置权重(weight)值,以此来定义执行的先后顺序
+    ```
+  + 节点亲和性权重  
+    ```bash
+    preferredDuringSchedulingIgnoredDuringExecution亲和性类别的每个实例设置weight字段,取值范围是1 ~ 100;
+    当调度器找到能够满足Pod的其他调度请求的节点时,调度器会遍历节点满足的所有的偏好性规则,并将对应表达式的weight值加和;
+    最终的加和值会添加到该节点的其他优先级函数的评分之上;在调度器为Pod做出调度决定时,总分最高的节点的优先级也最高
+    ```
+  + IgnoredDuringExecution 
+    如一个Pod所在的节点在Pod运行期间标签发生了变更,不再符合该Pod的节点亲和性需求,则系统将忽略Node上label的变化,该Pod能继续在该节点运行
+    >IgnoredDuringExecution意味着如果节点标签在K8s调度Pod后发生了变更,Pod仍将继续运行  
+
+- nodeAffinity的语法规则  
+- nodeAffinity的注意事项  
+
 
 ---
 <table><tr><td bgcolor=green>污点(容忍)调度</td></tr></table>  
