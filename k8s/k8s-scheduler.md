@@ -103,7 +103,7 @@ scheduler主要作用是负责资源的调度Pod,通过APIServer的Watch接口�
 # NodeName
 nodeName属于定向调度(通过nodeName匹配规则是强制匹配);nodeName(直接指定node主机名)   
 
-Pod.spec.nodeName用于强制约束将Pod调度到指定的Node上,其实指定了nodeName的Pod会直接跳过Scheduler的调度逻辑,直接写入PodList列表  
+Pod.spec.nodeName强制约束将Pod调度到指定的Node上,其实指定了nodeName的Pod会直接跳过Scheduler的调度逻辑,直接写入PodList列表  
 <details>
   <summary>nodeName调度-指定nodeName调度到指定节点上</summary>
   <pre><code>
@@ -182,8 +182,17 @@ nodeName、nodeSelector属于定向调度
 ---
 
 <table><tr><td bgcolor=green>亲和性调度</td></tr></table>  
+Affinity亲和性调度主要分为三类：
+- nodeAffinity(node亲和性): 以node为目标,解决pod可以调度到哪些node的问题 
+- podAffinity(pod亲和性): 以pod为目标,解决pod可以和哪些已存在的pod部署在同一个拓扑域中的问题 
+- podAntiAffinity(pod反亲和性): 以pod为目标,解决pod不能和哪些已存在pod部署在同一个拓扑域中的问题 
+>关于亲和性(反亲和性)使用场景的说明： 
+亲和性  
+  如果两个应用频繁交互,那就有必要利用亲和性让两个应用的尽可能的靠近,这样可以减少因网络通信而带来的性能损耗  
+反亲和性  
+  当应用的采用多副本部署时,有必要采用反亲和性让各个应用实例打散分布在各个node上,这样可以提高服务的高可用性  
 
-
+---
 <table><tr><td bgcolor=green>污点(容忍)调度</td></tr></table>  
 
 
