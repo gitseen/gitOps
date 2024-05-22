@@ -133,3 +133,38 @@ spec:
 </details>
 
 
+# NodeSelector
+nodeSelector定向调度(通过标签匹配)  
+nodeSelector(节点选择器,为Node打上标签,然后Pod中通过nodeSelector选择打上标签的Node)  
+<details>
+  <summary>nodeSelector调度</summary>
+  <pre><code>
+#kubectllabel nodes k8s-node-1 zone=north  打标签
+#kubectl get node --show-labels
+apiVersion:v1
+kind: Pod
+metadata:
+  name: redis-master
+  label:
+    name: redis-master
+spec:
+  replicas: 1
+  selector:
+    name: redis-master
+    template:
+      metadata:
+        labels:
+          name: redis-master
+      spec:
+        containers:
+        - name: redis-master
+          images: kubeguide/redis-master
+          ports:
+          - containerPort: 6379
+        nodeSelector:    #匹配zone: north标签的节点K:V  这里指定Node的Label
+          zone: north
+  </code></pre>
+</details>
+
+
+
