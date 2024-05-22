@@ -195,9 +195,9 @@ nodeName、nodeSelector属于定向调度
   当应用的采用多副本部署时,有必要采用反亲和性让各个应用实例打散分布在各个node上,这样可以提高服务的高可用性  
 
 # NodeAffinity
-nodeAffinity节点亲和性功能类似于nodeSelector字段,但它的表达能力更强,并且允许你指定软规则;该调度策略是将来替换nodeSelector调度策略  
-
-nodeSelector通过Node的Label进行精确匹配;为此NodeAffinity增加了In、NotIn、Exists、DoesNotexist、Gt、Lt等操作符来选择Node;调度侧露更加灵活  
+nodeAffinity用于定义Pod与节点之间的亲和性;控制Pod被调度到具有特定标签或属性的节点上  
+nodeAffinity节点亲和性功能类似于nodeSelector(通过Node的Label进行精确匹配)字段,但它的表达能力更强,并且允许你指定软规则; 
+nodeAffinity增加了In、NotIn、Exists、DoesNotexist、Gt、Lt等操作符来选择Node;调度侧露更加灵活  
 
 - nodeAffinity的亲和性表达  
   + 硬限制：requiredDuringSchedulingIgnoredDuringExecution  
