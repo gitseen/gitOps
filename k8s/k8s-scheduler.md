@@ -185,8 +185,8 @@ nodeName、nodeSelector属于定向调度
 
 **Affinity亲和性调度分类** 
 - nodeAffinity(node亲和性): 以node为目标,解决pod可以调度到哪些node的问题 
-- podAffinity(pod亲和性): 以pod为目标,解决pod可以和哪些已存在的pod部署在同一个拓扑域中的问题 
-- podAntiAffinity(pod反亲和性): 以pod为目标,解决pod不能和哪些已存在pod部署在同一个拓扑域中的问题 
+- podAffinity(pod亲和性): 以pod为目标,解决pod可以和哪些已存在的pod部署在同一个拓扑域中的问题   
+- podAntiAffinity(pod反亲和性): 以pod为目标,解决pod不能和哪些已存在pod部署在同一个拓扑域中的问题   
 
 >关于亲和性(反亲和性)使用场景的说明  
 亲和性  
@@ -196,7 +196,7 @@ nodeName、nodeSelector属于定向调度
 
 # NodeAffinity
 nodeAffinity用于定义Pod与节点之间的亲和性;控制Pod被调度到具有特定标签或属性的节点上  
-nodeAffinity节点亲和性功能类似于nodeSelector(通过Node的Label进行精确匹配)字段,但它的表达能力更强,并且允许你指定软规则; 
+nodeAffinity节点亲和性功能类似于nodeSelector(通过Node的Label进行精确匹配)字段,但它的表达能力更强,并且允许你指定软规则;  
 nodeAffinity增加了In、NotIn、Exists、DoesNotexist、Gt、Lt等操作符来选择Node;调度侧露更加灵活  
 
 - nodeAffinity的亲和性表达  
