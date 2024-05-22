@@ -232,7 +232,7 @@ nodeSelector通过Node的Label进行精确匹配;为此NodeAffinity增加了In�
   Exists：某个label存在
   DoesNotExist：某个label不存在
   ```
- > 关系符使用说明matchExpressions 
+ >关系符使用说明matchExpressions 
   + key: nodeenv         # 匹配存在标签的key为nodeenv的节点  
     operator: Exists  
   + key: nodeenv         # 匹配标签的key为nodeenv,且value是"k"或"v"的节点  
