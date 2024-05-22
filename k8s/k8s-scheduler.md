@@ -136,9 +136,9 @@ spec:
   </code></pre>
 </details>  
 
->1 如果指定的节点不存在,则容器将不会运行,并且在某些情况下可能会自动删除
- 2 如果指定的节点没有足够的资源来容纳该Pod,则该Pod将会失败,并且其原因将被指出,例如OutOfmemory或OutOfcpu
- 3 云环境中的节点名称并非总是可预测或稳定的 
+>1 如果指定的节点不存在,则容器将不会运行,并且在某些情况下可能会自动删除  
+ 2 如果指定的节点没有足够的资源来容纳该Pod,则该Pod将会失败,并且其原因将被指出,例如OutOfmemory或OutOfcpu  
+ 3 云环境中的节点名称并非总是可预测或稳定的   
 
 
 
@@ -176,7 +176,7 @@ spec:
   </code></pre>
 </details>
 
->如果nodeSelector匹配的标签不存在,则容器将不会运行,一直处于Pending状态
+>如果nodeSelector匹配的标签不存在,则容器将不会运行,一直处于Pending状态  
 nodeName、nodeSelector属于定向调度  
 
 ---
