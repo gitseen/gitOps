@@ -277,7 +277,16 @@ nodeAffinity增加了In、NotIn、Exists、DoesNotexist、Gt、Lt等操作符来
 如nodeAffinity指定了多个nodeSelectorTerms,那么其中一个能够匹配成功即可  
 如在nodeSelectorTerms中有多个matchExpressions,则一个节点必须满足所有matchExpressions才能运行该Pod  
 
-- nodeAffinity-API示例   
+
+- nodeAffinity-API
+
+**语法** 
+![语法展示](/pic/nodeAffinity.svg)  
+
+```bash
+kubectl explain deployment.spec.template.spec.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.XX
+kubectl explain deployment.spec.template.spec.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution.XX
+```
 <details>
   <summary>requiredDuringSchedulingIgnoredDuringExecution-nodeSelectorTerms硬限制</summary>
   <pre><code>
