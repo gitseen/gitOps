@@ -204,13 +204,14 @@ nodeAffinity增加了In、NotIn、Exists、DoesNotexist、Gt、Lt等操作符来
     ```bash
     必须满足指定的规则才可以调度Pod到node上,相当于硬限制; 
     调度器只有在规则被满足的时候才能执行调度。此功能类似于nodeSelector,但其语法表达能力更强
+    
+    **requiredDuringSchedulingIgnoredDuringExecution拆解**
+    requiredDuringScheduling
+      定义的规则必须强制满足Required才会把Pod调度到节点上
+    IgnoredDuringExecution
+      已经在节点上运行的Pod不需要满足定义的规则,即使去除节点上的某个标签,那些需要节点包含该标签的Pod依旧会在该节点上运行;
+      或者这么理解：如Pod所在的节点在Pod运行期间标签被删除了,不再符合该Pod的节点亲和性规则,那也没关系,该Pod还能继续在该节点上运行
     ```
-    **requiredDuringSchedulingIgnoredDuringExecution拆解**  
-      - requiredDuringScheduling  
-          定义的规则必须强制满足Required才会把Pod调度到节点上
-      - IgnoredDuringExecution
-          已经在节点上运行的Pod不需要满足定义的规则,即使去除节点上的某个标签,那些需要节点包含该标签的Pod依旧会在该节点上运行;  
-          或者这么理解：如Pod所在的节点在Pod运行期间标签被删除了,不再符合该Pod的节点亲和性规则,那也没关系,该Pod还能继续在该节点上运行  
   + 软限制：preferredDuringSchedulingIgnoredDuringExecution  
     ```bash
     强调优先满足指定规则,调度器会尝试调度Pod到Node上,但并不强求,相当于软限制
