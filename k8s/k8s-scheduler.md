@@ -280,10 +280,30 @@ nodeAffinity增加了In、NotIn、Exists、DoesNotexist、Gt、Lt等操作符来
 
 - nodeAffinity-API
 
-**语法** 
+**语法展示架构**   
   
 ![语法展示](pic/nodeAffinity.png)  
+```bash
+preference：节点选择器,与相应的权重相关联
+weight：在1-100范围内,与匹配相应的节点选项相关联的权重
+nodeSelectorTerms：节点选择列表(比nodeSelector高级一点)
+matchExpressions：按照节点label列出节点选择器列表(与matchFields是两种方式,不过结果是一至)
+matchFields：按照节点字段列出节点选择器列表(与matchExpressions是两种方式,不过结果是一至)
+key：指定要选择节点label的key  
+values：指定要选择节点label的value,值必须为数组 [“value”]
+        如果操作符为In或者Notin,value则不能为空
+        如果操作符为Exists或者DoesNotExist ,value则必须为空[]
+        如果操作符为Gt或Lt,则value必须有单个元,该元素将被解释为整数
+operator：操作符,指定key与value的关系
+In：key与value同时存在,一个key多个value的情况下,value之间就成了逻辑或效果
+NotIn：label 的值不在某个列表中
+Exists：只判断是否存在key,不用关心value值是什么
+DoesNotExist：某个label不存在
+Gt：label 的值大于某个值
+Lt：label 的值小于某个值
+```
 
+**语法**  
 ```bash
 kubectl explain deployment.spec.template.spec.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.XX
 kubectl explain deployment.spec.template.spec.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution.XX
