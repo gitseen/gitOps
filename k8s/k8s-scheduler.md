@@ -560,6 +560,45 @@ spec:
   </code></pre>
 </details>
 
+<details>
+  <summary>podAffinity-podAntAffinity-topologyKey示例</summary>
+  <pre><code>
+apiVersion: v1
+kind: Pod
+metadata:
+  name: with-pod-affinity
+spec:
+  affinity:
+    podAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: security
+            operator: In
+            values:
+            - S1
+        topologyKey: failure-domain.beta.kubernetes.io/zone
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+            - key: security
+              operator: In
+              values:
+              - S2
+          topologyKey: kubernetes.io/hostname
+  containers:
+  - name: with-pod-affinity
+    image: k8s.gcr.io/pause:2.0
+#pod必须调度在至少运行一个security=S1标签的pod的节点上;如果该节点有标签key为failure-domain.beta.kubernetes.io/zone而且运行着标签为security=S1的实例
+#反亲和规则表明最好不要调度到运行有security=S2标签的pod的节点上;如这个节点拥有标签key为failure-domain.beta.kubernetes.io/zone但运行有security=S2标签的pod那么这个节点就不会被优先选择调度  
+  </code></pre>
+</details>
+>pod亲和性和反亲和性需要大量的计算,会显著降低集群的调度速度,不建议在大于几百个节点的集群中使用;
+pod反亲和性要求集群中的所有节点必须具有topologyKey匹配的标签,否则可能会导致意外情况发生  
+
 
 
 
