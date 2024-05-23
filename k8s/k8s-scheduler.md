@@ -457,6 +457,8 @@ Pod的亲和性与反亲和性也有两种类型
 
 ![语法展示](pic/podAffinity.png)
 ```bash
+podAffinityTerm：Pod亲和性选择器
+weight：在1-100范围内,与匹配相应的节点选项相关联的权重 
 labelSelector：标签选择器
 topologyKey：指定要将当前创建Pod运行在具备什么样的Node标签上,通常指定Node标签的Key
 namespaces：指定labelSelector应用于哪个名称空间,null或空列表表示此pod的名称空间
