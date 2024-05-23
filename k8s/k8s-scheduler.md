@@ -282,7 +282,7 @@ nodeAffinity增加了In、NotIn、Exists、DoesNotexist、Gt、Lt等操作符来
 
 **语法** 
   
-![语法展示](pic/nodeAffinity.svg)  
+![语法展示](pic/nodeAffinity.png)  
 
 ```bash
 kubectl explain deployment.spec.template.spec.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.XX
