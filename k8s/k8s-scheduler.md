@@ -96,6 +96,26 @@ scheduler主要作用是负责资源的调度Pod,通过APIServer的Watch接口�
 - [Pod拓扑分布约束](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-scheduler.md#Pod拓扑分布约束)  
 - [自定义调度器my-scheduler](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-scheduler.md#自定义调度器my-scheduler)  
 
+# k8s-api-yaml语法示例
+```bash
+kubectl api-resources
+kubectl api-resources -o name --verbs-list --namespaced
+kubectl api-resources -o name --verbs-list --namespaced |grep "XX"
+kubectl api-resources -o name --verbs-list --namespaced | xargs -n 1 kubectl get --show-kind --ignore-not-found -A
+kubectl api-resources -o name --verbs-list --namespaced | xargs -n 1 kubectl get --show-kind --ignore-not-found -n namespaces
+
+---
+
+kubectl explain pod.spec.XXX
+kubectl explain deployment.spec.template.spec.XXX
+kubectl explain statefulset.spec.template.spec.XXX
+kubectl explain daemonset.spec.template.spec.XXX
+kubectl explain job.spec.template.spec.XXX
+kubectl explain cronjob.spec.XXX
+......
+```
+
+
 ---
 
 <table><tr><td bgcolor=green>定向调度nodeName、nodeSelector</td></tr></table>  
