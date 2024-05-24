@@ -1046,7 +1046,7 @@ spec:
   tolerations:
   - key: "data"
     operator: "Exists"      #Exists参数,只判断key等于data是否存在,不需要关心value是什么
-    effect: "PreferNoSchedule
+    effect: "PreferNoSchedule"
 #kubectl get pods -o wide | grep pod-prefer
 ---
 #调度到k8s-node03上
