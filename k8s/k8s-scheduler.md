@@ -862,17 +862,18 @@ AntiAffinity反亲和性调度: 就好像2个Pod是赌气的2个孩子,互相对
 
 ---
 <table><tr><td bgcolor=green>污点(容忍)调度</td></tr></table>  
-在K8S中,如果Pod能容忍某个节点上的污点,那么Pod就可以调度到该节点。如果不能容忍,那就无法调度到该节点  
+
+在K8S中,如果Pod能容忍某个节点上的污点,那么Pod就可以调度到该节点。如果不能容忍,那就无法调度到该节点    
+
 
 NodeAffinity节点亲和性,是在Pod上添加属性,使得Pod能够被调度到指定Node上运行(优先选择或强制要求)  
 Taint则正好相反,它让Node拒绝Pod的运行(从Node的角度上,通过在Node上添加污点属性,来决定是否允许Pod调度)这种调度策略即污点  
 
-Taints的规则是属于排斥性的机制,用来"排斥"不满足特定条件的Pod
-Taint需要和Toleration配合使用,让Pod避开那些不合适的Node;在Node上设置一个或多个Taint之后,除非Pod明确声明能够容忍这些污点,否则无法在这些Node上运行
+Taints的规则是属于排斥性的机制,用来"排斥"不满足特定条件的Pod   
+Taint需要和Toleration配合使用,让Pod避开那些不合适的Node;在Node上设置一个或多个Taint之后,除非Pod明确声明能够容忍这些污点,否则无法在这些Node上运行  
 
-Toleration是Pod的属性,让Pod能够(注意,只是能够,而非必须)运行在标注了Taint的Node上
-Taints和Tolerations是K8s中用于控制Pod调度到特定节点的一种机制,相比Affinity亲和性相似性的机制
-
+Toleration是Pod的属性,让Pod能够(注意,只是能够,而非必须)运行在标注了Taint的Node上  
+Taints和Tolerations是K8s中用于控制Pod调度到特定节点的一种机制,相比Affinity亲和性相似性的机制  
 
 # Taints
 Taints污点：定义在节点上,用于拒绝Pod调度到此节点,除非该Pod具有该节点上的污点容忍度;被标记有Taints的节点并不是故障节点  
