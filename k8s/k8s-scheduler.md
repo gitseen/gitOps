@@ -891,10 +891,10 @@ Taints污点：定义在节点上,用于拒绝Pod调度到此节点,除非该Pod
   + 用于多租户K8s计算资源隔离
   + K8s本身使用Taints机制驱除不可用的Node(pod驱除)  
 
-- 内置污点
+- 内置污点  
 node如果定义的排斥等级是NoExecute,那么没有配置该污点容忍度的Pod会被驱逐  
 K8S也会使用污点自动标识有问题的节点,比如节点在内存不足,节点控制器会自动为该节点打上污点信息,并且使用NoExecute作为排斥等级,此时没有设置此类污点容忍度的Pod会被驱逐  
-DaemonSet控制器会无视此类污点,以便能在节点上部署重要的Pod  
+>DaemonSet控制器会无视此类污点,以便能在节点上部署重要的Pod  
 目前,内置的污点也比较多
 ```bash
 kubectl describe pods kube-flannel-ds-xxx -n kube-system
