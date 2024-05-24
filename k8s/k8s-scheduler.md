@@ -1002,6 +1002,88 @@ spec:
 </details>
 
 
+                     
+<details>
+  <summary>Taints三排斥+notolerations</summary>
+  <pre><code>
+#为Node打上不同的等级污点
+kubectl taint nodes k8s-node01 nodes=gpu:NoSchedule
+kubectl taint nodes k8s-node02 data=ssd:PreferNoSchedule
+kubectl taint nodes k8s-node03 traffic=proxy:NoExecute
+#查看三个Node被打上的污点
+kubectl describe nodes k8s-node01 k8s-node02 k8s-node03 | grep Taint
+Taints:             nodes=gpu:NoSchedule
+Taints:             data=ssd:PreferNoSchedule
+Taints:             traffic=proxy:NoExecute
+---
+#调度到k8s-node01上
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-noschedule
+spec:
+  containers:
+  - name: gpu-container
+    image: busybox:latest
+    command: [ "/bin/sh", "-c", "tail -f /etc/passwd" ]
+  tolerations:
+  - key: "nodes"                #指定污点的key
+    operator: "Equal"           #Equal值表示我们指定的key必须要等于value
+    value: "gpu"                #指定value
+    effect: "NoSchedule"        #指定污点级别
+#kubectl get pods -o wide | grep pod-noschedule
+---
+#调度到k8s-node02上
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-prefernoschedule
+spec:
+  containers:
+  - name: ssd-container
+    image: busybox:latest
+    command: [ "/bin/sh", "-c", "tail -f /etc/passwd" ]
+  tolerations:
+  - key: "data"
+    operator: "Exists"      #Exists参数,只判断key等于data是否存在,不需要关心value是什么
+    effect: "PreferNoSchedule
+#kubectl get pods -o wide | grep pod-prefer
+---
+#调度到k8s-node03上
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-noexecute
+spec:
+  containers:
+  - name: proxy-container
+    image: busybox:latest
+    command: [ "/bin/sh", "-c", "tail -f /etc/passwd" ]
+  tolerations:
+  - key: "traffic"
+    operator: "Equal"
+    value: "proxy"
+    effect: "NoExecute"                        #指定污点级别
+    tolerationSeconds: 300                     #指定驱赶当前Node上Pod的延迟时间
+#kubectl get pods -o wide | grep pod-noexecute
+---
+#创建没有容忍度的Pod并查看调度结果
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-notolerations
+spec:
+  containers:
+  - name: notolerations-container
+    image: busybox:latest
+    command: [ "/bin/sh", "-c", "tail -f /etc/passwd" ]
+#kubectl get pods -o wide | grep pod-notolerations 
+#调度到k8s-node2节点上了
+
+  </code></pre>
+</details>
+
+
 
 ---
 <table><tr><td bgcolor=green>Pod拓扑分布约束</td></tr></table>  
