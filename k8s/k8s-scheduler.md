@@ -937,15 +937,65 @@ key：指定Node上污点的键key
 value：指定Node上污点的值value
 tolerationSeconds：用于定于延迟驱赶当前Pod对象的时长,如果设置为0或者负值系统将立即驱赶当前Pod(单位为秒)
 ```
-**语法** 
+**Tolerations语法** 
 ```bash
-Pod对象的容忍度可以通过其spec.tolerations字段进行添加,根据使用的操作符不同,主要有两种可用的形式
 kubectl explain deployment.spec.template.spec.tolerations.XX
 ```
 **Tolerations容忍度操作符(Pod定义容忍度时,它支持两种操作符)**  
 - Equal： 容忍度与污点必须在key、value、effect三者完全匹配 (容忍度与污点信息完全匹配的等值关系)  
 - Exists：容忍度与污点必须在key和effect二者完全匹配,容忍度中的value字段要使用空值 (判断污点是否存在的匹配)  
 
+
+<details>
+  <summary>tolerations-NoSchedule</summary>
+  <pre><code>
+#kubectl taint nodes docker-desktop for-special-user=cadmin:NoSchedule   #打污点
+#kubectl taint nodes docker-desktop for-special-user=cadmin:NoSchedule-  #删除污点
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
+#将它应用到集群,查看Pod状态会一直处于Pending;因为有污点所以不能调度
+#日志信息nodes are available: 1 node(s) had untolerated taint {for-special-user: cadmin}. preemption: 0/1 nodes are available: 1 Preemption is not helpful for scheduling..
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
+      tolerations:
+        - key: "for-special-user"
+          operator: "Equal"
+          value: "docker-desktop"
+          effect: "NoSchedule"
+#容忍度Tolerations规则：允许Pod被调度到标记为for-special-user=docker-desktop并且具有NoSchedule效果的节点上
+  </code></pre>
+</details>
 
 
 
