@@ -859,8 +859,97 @@ AntiAffinity反亲和性调度: 就好像2个Pod是赌气的2个孩子,互相对
 
 ---
 <table><tr><td bgcolor=green>污点(容忍)调度</td></tr></table>  
+在K8S中,如果Pod能容忍某个节点上的污点,那么Pod就可以调度到该节点。如果不能容忍,那就无法调度到该节点  
+
+NodeAffinity节点亲和性,是在Pod上添加属性,使得Pod能够被调度到指定Node上运行(优先选择或强制要求)  
+Taint则正好相反,它让Node拒绝Pod的运行(从Node的角度上,通过在Node上添加污点属性,来决定是否允许Pod调度)这种调度策略即污点  
+
+Taints的规则是属于排斥性的机制,用来"排斥"不满足特定条件的Pod
+Taint需要和Toleration配合使用,让Pod避开那些不合适的Node;在Node上设置一个或多个Taint之后,除非Pod明确声明能够容忍这些污点,否则无法在这些Node上运行
+
+Toleration是Pod的属性,让Pod能够(注意,只是能够,而非必须)运行在标注了Taint的Node上
+Taints和Tolerations是K8s中用于控制Pod调度到特定节点的一种机制,相比Affinity亲和性相似性的机制
 
 
+# Taints
+Taints污点：定义在节点上,用于拒绝Pod调度到此节点,除非该Pod具有该节点上的污点容忍度;被标记有Taints的节点并不是故障节点  
+
+- Taints排斥等级(有三种效果) 
+  + NoSchedule(不会调度新Pod)  
+    没有配置此污点容忍度的新Pod不能调度到此节点,节点上现存的Pod不受影响
+  + PreferNoSchedule(尽量避免调度新Pod)  
+    没有配置此污点容忍度的新Pod尽量不要调度到此节点,如果找不到合适的节点,依然会调度到此节点  
+  + NoExecute(新Pod不会调度且已存在Pod可能会被迁移)  
+    没有配置此污点容忍度的新Pod对象不能调度到此节点,节点上现存的Pod会被驱逐  
+
+- Taints常见的应用场景
+  + 集群不想共享Node,可以加上Taints标签表示独享
+  + 用于多租户K8s计算资源隔离
+  + K8s本身使用Taints机制驱除不可用的Node(pod驱除)  
+
+- 内置污点
+node如果定义的排斥等级是NoExecute,那么没有配置该污点容忍度的Pod会被驱逐  
+K8S也会使用污点自动标识有问题的节点,比如节点在内存不足,节点控制器会自动为该节点打上污点信息,并且使用NoExecute作为排斥等级,此时没有设置此类污点容忍度的Pod会被驱逐  
+DaemonSet控制器会无视此类污点,以便能在节点上部署重要的Pod  
+目前,内置的污点也比较多
+```bash
+kubectl describe pods kube-flannel-ds-xxx -n kube-system
+node.kubernetes.io/disk-pressure:NoSchedule节点磁盘空间已满
+node.kubernetes.io/memory-pressure:NoSchedule节点内存空间已满
+node.kubernetes.io/network-unavailable:NoSchedule节点网络不可用
+node.kubernetes.io/not-ready:NoExecute节点未就绪
+node.kubernetes.io/pid-pressure:NoSchedule
+node.kubernetes.io/unreachable:NoExecute节点不可触达
+node.kubernetes.io/unschedulable:NoSchedule
+kubectl describe pods kube-flannel-ds-xx -n kube-system | grep 'Tolerations' #查看系统级别Pod的容忍度
+```
+- Taints语法格式
+```bash
+kubectl taint nodes node-name key[:effect]-             #删除污点
+kubectl taint nodes <node-name> <key>=<value>:<effect>  #打污点
+node-name: 指定需要打污点的node主机名;
+key=value: 指定污点的键值型数据;
+effect:    指定污点的等级
+#key名称长度上线为253个字符,可以字母或者数字开头,支持字母、数字、连接符、点号、下划线作为key或者value.value最长是63个字符
+#污点通常用于描述具体的部署规划,它们的键名形式如node-type、node-role、node-project、node-geo等
+eg:
+kubectl taint node k8s-node02 type=calculate:NoSchedule #添加污点为k8s-node02添加污点,污点等级为NoSchedule,type=calculate为标签
+kubectl describe nodes k8s-node02 | grep Taints         #Pod不会被调度到我们打上污点的k8s-node02的节点上
+kubectl taint node k8s-node02 type:NoSchedule-          #删除污点
+kubectl taint nodes node-name1 key1=value1:NoSchedule
+kubectl taint nodes node-name2 key1=value1:PreferNoSchedule
+kubectl taint nodes node-name3 key1=value1:NoExecute 
+```
+
+# Tolerations
+Tolerations容忍度：定义在Pod上,用于配置Pod可容忍的节点污点,K8S调度器只能将Pod调度到该Pod能够容忍的污点的节点上  
+**语法架构** 
+![tolerations语法架构](pic/tolerations.png)
+```bash
+operator此值被称为运算符,值可以为[Equal|Exists]
+  Equal表示污点的key是否等于value(默认参数)
+  Exists只判断污点的key是否存在,使用该参数时,不需要定义value。
+effect：指定匹配的污点程度,为空表示匹配所有等级的污点,值可以为
+  NoSchedule
+  PreferNoSchedule
+  NoExecut
+key：指定Node上污点的键key
+value：指定Node上污点的值value
+tolerationSeconds：用于定于延迟驱赶当前Pod对象的时长,如果设置为0或者负值系统将立即驱赶当前Pod(单位为秒)
+```
+**语法** 
+```bash
+Pod对象的容忍度可以通过其spec.tolerations字段进行添加,根据使用的操作符不同,主要有两种可用的形式
+kubectl explain deployment.spec.template.spec.tolerations.XX
+```
+**Tolerations容忍度操作符(Pod定义容忍度时,它支持两种操作符)**  
+- Equal： 容忍度与污点必须在key、value、effect三者完全匹配 (容忍度与污点信息完全匹配的等值关系)  
+- Exists：容忍度与污点必须在key和effect二者完全匹配,容忍度中的value字段要使用空值 (判断污点是否存在的匹配)  
+
+
+
+
+---
 <table><tr><td bgcolor=green>Pod拓扑分布约束</td></tr></table>  
 
 <table><tr><td bgcolor=green>自定义调度器my-scheduler</td></tr></table>  
