@@ -562,7 +562,7 @@ spec:
 #preferredDuringSchedulingIgnoredDuringExecution在pod倾向性亲和性用法与node中用法一致;
 #表示更倾向于和匹配的Pod部署在同一节点上,但不是必须的
 
-
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -650,6 +650,7 @@ spec:
 #Pod反亲和性能够让带有相同标签的副本,部署到不同的节点上
 #集群只有两个Node,创建deployment后会发现每个Node上运行一个对应的Pod,还有一个Pod处于Pending状态 #实现不在同一节点上部署
 
+---
 
 apiVersion: apps/v1
 kind: Deployment
