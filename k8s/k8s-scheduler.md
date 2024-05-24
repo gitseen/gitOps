@@ -443,6 +443,39 @@ spec:
   - name: nginx
     image: docker.io/nginx
 #Pod只能被调度到拥有kubernetes.io/e2e-az-name=e2e-az[1-2]标签的节点上;其中在满足之前标签条件的同时更倾向于调度在another-node-label-key=another-node-label-value标签的节点上
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: with-node-affinity
+  labels:
+    app: node-affinity-pod
+spec:
+  containers:
+  - name: with-node-affinity
+    image: nginx
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: NotIn
+            values:
+            - 192.168.1.140
+            - 192.168.1.161
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 1
+        preference:
+          matchExpressions:
+          - key: source
+            operator: In
+            values:
+            - qikqiak
+#POD首先是要求POD不能运行在140和161两个节点上;
+#如有节点满足source=qikqiak的话就优先调度到这个节点上;
+#同样的我们可以使用descirbe命令查看具体的调度情况是否满足我们的要求 
+
   </code></pre>
 </details>
 
