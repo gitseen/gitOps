@@ -561,6 +561,44 @@ spec:
     imagePullPolicy: IfNotPresent
 #preferredDuringSchedulingIgnoredDuringExecution在pod倾向性亲和性用法与node中用法一致;
 #表示更倾向于和匹配的Pod部署在同一节点上,但不是必须的
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: podaffinity-perferred-pod
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      name: myapp
+      labels:
+        app: myapp
+    spec:
+      affinity:
+        podAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 80
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - { key: app, operator: In, values: ["cache"] }
+              topologyKey: zone
+          - weight: 20
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - { key: app, operator: In, values: ["db"] }
+              topologyKey: zone
+      containers:
+      - name: myapp
+        image: busybox:latest
+        command: ["/bin/sh", "-c", "tail -f /etc/passwd" ]
+#以下三个Node都具备标签键为zone,但是这三个Node上没有Pod标签为app=cache及app=db
+#所以上面的调度策略在选择Pod标签的时候进行退步才得以将Pod调度到Node01和Node03
   </code></pre>
 </details>
 
@@ -579,7 +617,7 @@ kubectl explain deployment.spec.template.spec.affinity.podAntiAffinity.preferred
 
                      
 <details>
-  <summary>podAntAffinity示例</summary>
+  <summary>podAntiAffinity示例</summary>
   <pre><code>
 apiVersion: apps/v1
 kind: Deployment
@@ -611,6 +649,38 @@ spec:
         imagePullPolicy: IfNotPresent
 #Pod反亲和性能够让带有相同标签的副本,部署到不同的节点上
 #集群只有两个Node,创建deployment后会发现每个Node上运行一个对应的Pod,还有一个Pod处于Pending状态 #实现不在同一节点上部署
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: podantiaffinity-perferred-pod
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      name: myapp
+      labels:
+        app: myapp
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - { key: app, operator: In, values: ["myapp"] }
+            topologyKey: zone
+      containers:
+      - name: myapp
+        image: busybox:latest
+        command: ["/bin/sh", "-c", "tail -f /etc/passwd" ]
+#4个Pod,自身标签为app=myapp
+#使用Pod反亲和的硬亲和性,需要运行在具备标签key为zone的Node上,然后不运行在具备标签为app=myapp的Pod同台Node上
+#启动了4个Pod,一共有三个node,前三个Pod都会被分别调度到不同的三台node上
+#(因为采用的是反亲和性,还是硬性,所以相同标签的Pod不会调度到同一台Node),最后一个Pod将无家可归,最后无法调度 
   </code></pre>
 </details>
 
