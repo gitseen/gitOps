@@ -204,15 +204,15 @@ nodeName、nodeSelector属于定向调度
 <table><tr><td bgcolor=green>亲和性调度nodeAffinity、podAffinity、podAntiAffinity</td></tr></table>  
 
 **Affinity亲和性调度分类** 
-- nodeAffinity(node亲和性): 以node为目标,解决pod可以调度到哪些node的问题 
-- podAffinity(pod亲和性): 以pod为目标,解决pod可以和哪些已存在的pod部署在同一个拓扑域中的问题   
-- podAntiAffinity(pod反亲和性): 以pod为目标,解决pod不能和哪些已存在pod部署在同一个拓扑域中的问题   
+- nodeAffinity(node亲和性)  
+    以node为目标,解决pod可以调度到哪些node的问题 
+- podAffinity(pod亲和性)  
+    以pod为目标,解决pod可以和哪些已存在的pod部署在同一个拓扑域中的问题   
+- podAntiAffinity(pod反亲和性)  
+   以pod为目标,解决pod不能和哪些已存在pod部署在同一个拓扑域中的问题   
 
->关于亲和性(反亲和性)使用场景的说明  
-亲和性  
-  如果两个应用频繁交互,那就有必要利用亲和性让两个应用的尽可能的靠近,这样可以减少因网络通信而带来的性能损耗  
-反亲和性  
-  当应用的采用多副本部署时,有必要采用反亲和性让各个应用实例打散分布在各个node上,这样可以提高服务的高可用性  
+**新和性视图**  
+![Affinity](pic/Affinity.png)
 
 # NodeAffinity
 nodeAffinity用于定义Pod与节点之间的亲和性;控制Pod被调度到具有特定标签或属性的节点上  
