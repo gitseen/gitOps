@@ -847,7 +847,7 @@ spec:
 >pod亲和性和反亲和性需要大量的计算,会显著降低集群的调度速度,不建议在大于几百个节点的集群中使用;  
 pod反亲和性要求集群中的所有节点必须具有topologyKey匹配的标签,否则可能会导致意外情况发生  
 
-**亲和性调度nodeAffinity、podAffinity、podAntiAffinity总结**
+**亲和性调度nodeAffinity、podAffinity、podAntiAffinity总结**  
 - podAffinity PodAntAffinity关注的是pod间的关系 
 - nodeAffinity 更关注Pod与节点特性之间的关系  
 - requiredDuringScheduling硬亲和:  强制型调度规则,必须满足亲和性设置,否则不能调度  
@@ -855,7 +855,10 @@ pod反亲和性要求集群中的所有节点必须具有topologyKey匹配的标
 
 Affinity和AntiAffinity的调度: 筛选的条件使用的是Node(Pod)的label字段  
 Affinity亲和性调度: 就好像Node(Pod)和Pod是关系很好的闺蜜,Pod说"只要符合这种label的Node(Pod)都是我的好闺蜜,闺蜜在哪儿我就去哪儿"  
-AntiAffinity反亲和性调度: 就好像2个Pod是赌气的2个孩子,互相对着干,一个往东,另一个随便去哪个方向就是不往东,不会被调度到同一node**  
+AntiAffinity反亲和性调度: 就好像2个Pod是赌气的2个孩子,互相对着干,一个往东,另一个随便去哪个方向就是不往东,不会被调度到同一node  
+
+总之,通过设置亲和性和反亲和性规则,可以让调度器将Pod分配到最合适的节点上,可以使用标签或拓扑域来设置Pod的亲和性和反亲和性规则
+>注意,正确的设置亲和性和反亲和性规则需要了解集群的拓扑结构和资源使用情况,否则可能会导致Pod无法正确调度   
 
 ---
 <table><tr><td bgcolor=green>污点(容忍)调度</td></tr></table>  
