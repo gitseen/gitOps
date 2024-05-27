@@ -1106,10 +1106,248 @@ spec:
 
   </code></pre>
 </details>
-
 ---
 <table><tr><td bgcolor=green>Pod拓扑分布约束</td></tr></table>  
 
+# Pod拓扑分布约束
+[官方文档1](https://kubernetes.io/blog/2020/05/introducing-podtopologyspread/)  [官方文档2](https://kubernetes.io/zh-cn/docs/concepts/scheduling-eviction/topology-spread-constraints/)   
+![Pod拓扑分布约束-视图](https://kubernetes.io/images/blog/2020-05-05-introducing-podtopologyspread/advanced-usage-2.png)  
+
+拓扑分布约束(TopologySpreadConstraints)来控制Pod在集群内的分布   
+例如区域(Region)、可用区(Zone)、节点和其他用户自定义拓扑域,能够让应用的多个实例趋于均匀的分布在不同的域内  
+这样做有助于实现高可用并提升资源利用率;拓扑分布约束适用于比较大的集群  
+
+# opologySpreadConstraints指定拓扑分布约束
+- 语法架构及说明
+![topologySpreadConstraints语法架构](pic/topologySpreadConstraints.png)  
+```bash
+maxSkew #不均匀分布的程度
+描述这些Pod可能被不均匀分布的程度;通过labelSelector匹配到的Pod的数量,在不同拓扑域中,假定最小的数量为N,则skew表示当前域Pod的数量M-N的值,maxSkew表示所有域中,M-N的最大值 
+如果配置 whenUnsatisfiable: DoNotSchedule,当新添加的的Pod无论放在哪个拓扑域,都会导致skew操作配置的maxSkew时,该pod不会被调度
+如果配置 whenUnsatisfiable: ScheduleAnyway,则该调度器会更为偏向将Pod调度到能够降低偏差值的拓扑域
+
+minDomains  #域的最小数量
+如果域的最小数量小于minDomains,则在计算skew时,会将Pod数量全局最小值当做0;必须和whenUnsatisfiable: DoNotSchedule一起使用 
+
+topologyKey #拓扑域的key
+Node标签的key。如果节点使用key标记,并且具有相同的value, 则将这些节点视为处于同一拓扑域中,我们将拓扑域中(即键值对)的每个实例称为一个域,调度器将尝试在每个拓扑域中放置数量均衡的Pod
+
+whenUnsatisfiable #不满足分布约束时处理方式
+表示示如果Pod不满足分布约束时如何处理：
+DoNotSchedule(默认)：不要调度
+ScheduleAnyway：继续调度,只是根据如何能将偏差最小化来对节点进行排序
+
+labelSelector #匹配Pod的标签
+用于查找匹配的Pod,匹配此标签的Pod将被统计,以确定相应拓扑域中Pod的数量
+
+matchLabelKeys #Pod标签键的列表
+Pod标签键的列表,用于选择需要计算分布方式的Pod集合。 
+这些键用于从Pod标签中查找值,这些键值标签与labelSelector进行逻辑与运算,以选择一组已有的Pod, 通过这些Pod计算新来Pod的分布方式
+matchLabelKeys和labelSelector中禁止存在相同的键。 未设置labelSelector时无法设置matchLabelKeys。Pod标签中不存在的键将被忽略
+null或空列表意味着仅与labelSelector匹配借助matchLabelKeys,你无需在变更Pod修订版本时更新pod.spec。
+控制器或Operator只需要将不同修订版的标签键设为不同的值。 调度器将根据matchLabelKeys自动确定取值
+例如,如果你正在配置一个Deployment, 则你可以使用由Deployment控制器自动添加的、以pod-template-hash为键的标签来区分同一个Deployment的不同修订版
+
+nodeAffinityPolicy #计算Pod拓扑分布偏差时将如何处理Pod的nodeAffinity/nodeSelector
+Honor：只有与 nodeAffinity/nodeSelector 匹配的节点才会包括到计算中
+Ignore：nodeAffinity/nodeSelector 被忽略。所有节点均包括到计算中
+
+nodeTaintsPolicy #计算Pod拓扑分布偏差时将如何处理Taint节点
+Honor：包括不带污点的节点以及污点被新Pod所容忍的节点
+Ignore：节点污点被忽略,包括所有节点
+
+当Pod定义了不止一个topologySpreadConstraint,这些约束之间是逻辑AND的关系,kube-scheduler会为新的Pod寻找一个能够满足所有约束的节点
+---
+说明：
+apiVersion: v1
+kind: Pod
+metadata:
+  name: example-pod
+spec:
+  # 配置一个拓扑分布约束
+  topologySpreadConstraints:
+    - maxSkew: <integer>  ##描述这些Pod可能被不均匀分布的程度。取值>0
+      minDomains: <integer> ##可选;符合条件的域的最小数量
+      topologyKey: <string>  ##拓扑域的key,匹配Node的标签Key
+      whenUnsatisfiable: <string>  ##指示如果Pod不满足分布约束时如何处理
+      labelSelector: <object>  ##pod标签
+      matchLabelKeys: <list> #可选;是一个Pod标签键的列表,用于选择需要计算分布方式的Pod集合
+      nodeAffinityPolicy: [Honor|Ignore] #可选;表示计算Pod拓扑分布偏差时将如何处理Pod的nodeAffinity/nodeSelector
+      nodeTaintsPolicy: [Honor|Ignore] #可选;表示在计算Pod拓扑分布偏差时将如何处理节点污点
+  ###其他Pod字段
+```
+- API语法
+  ```bash
+  kubectl explain Pod.spec.topologySpreadConstraints.XX
+  kubectl explain deployment.spec.template.spec.topologySpreadConstraints.XX
+  ```
+
+- topologySpreadConstraints示例
+
+```mermaid
+graph TD
+subgraph "zoneB"
+n3(Node3)
+n4(Node4)
+end
+subgraph "zoneA"
+n1(Node1)
+n2(Node2)
+end
+classDef plain fill:#ddd,stroke:#fff,stroke-width:4px,color:#000;
+classDef k8s fill:#326ce5,stroke:#fff,stroke-width:4px,color:#fff;
+classDef cluster fill:#fff,stroke:#bbb,stroke-width:2px,color:#326ce5;
+class n1,n2,n3,n4 k8s;
+class zoneA,zoneB cluster;
+```
+
+```mermaid
+graph TD
+subgraph "zoneB"
+p3(Pod) --> n3(Node3)
+n4(Node4)
+end
+subgraph "zoneA"
+p1(Pod) --> n1(Node1)
+p2(Pod) --> n2(Node2)
+end
+classDef plain fill:#ddd,stroke:#fff,stroke-width:4px,color:#000;
+classDef k8s fill:#326ce5,stroke:#fff,stroke-width:4px,color:#fff;
+classDef cluster fill:#fff,stroke:#bbb,stroke-width:2px,color:#326ce5;
+class n1,n2,n3,n4,p1,p2,p3 k8s;
+class zoneA,zoneB cluster;
+```
+
+<details>
+  <summary>一个拓扑分布约束</summary>
+  <pre><code>
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: topo-eg
+  name: topo-eg
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: topo-eg
+  template:
+    metadata:
+      labels:
+        app: topo-eg
+        foo: bar
+    spec:
+      topologySpreadConstraints:
+      - maxSkew: 1
+        topologyKey: zone
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            foo: bar
+      containers:
+      - image: nginx:latest
+        name: nginx
+        imagePullPolicy: IfNotPresent
+#包含3个副本的deployment希望Pod较为均匀的分布在不同的zone
+  </code></pre>
+</details>
+
+                     
+<details>
+  <summary>多个拓扑分布约束</summary>
+  <pre><code>
+kind: Pod
+apiVersion: v1
+metadata:
+  name: mypod
+  labels:
+    foo: bar
+spec:
+  topologySpreadConstraints:
+  - maxSkew: 1
+    topologyKey: zone
+    whenUnsatisfiable: DoNotSchedule
+    labelSelector:
+      matchLabels:
+        foo: bar
+  - maxSkew: 1
+    topologyKey: node
+    whenUnsatisfiable: DoNotSchedule
+    labelSelector:
+      matchLabels:
+        foo: bar
+  containers:
+  - name: pause
+    image: registry.k8s.io/pause:3.1
+#可以组合使用2个拓扑分布约束来控制Pod在节点和可用区两个维度上的分布
+  </code></pre>
+</details>
+
+```mermaid
+graph BT
+subgraph "zoneB"
+p3(Pod) --> n3(Node3)
+n4(Node4)
+end
+subgraph "zoneA"
+p1(Pod) --> n1(Node1)
+p2(Pod) --> n2(Node2)
+end
+classDef plain fill:#ddd,stroke:#fff,stroke-width:4px,color:#000;
+classDef k8s fill:#326ce5,stroke:#fff,stroke-width:4px,color:#fff;
+classDef cluster fill:#fff,stroke:#bbb,stroke-width:2px,color:#326ce5;
+class n1,n2,n3,n4,p1,p2,p3 k8s;
+class p4 plain;
+class zoneA,zoneB cluster;
+```
+
+```mermaid
+graph BT
+subgraph "zoneC"
+n5(Node5)
+end
+classDef plain fill:#ddd,stroke:#fff,stroke-width:4px,color:#000;
+classDef k8s fill:#326ce5,stroke:#fff,stroke-width:4px,color:#fff;
+classDef cluster fill:#fff,stroke:#bbb,stroke-width:2px,color:#326ce5;
+class n5 k8s;
+class zoneC cluster;
+```
+
+<details>
+  <summary>带节点亲和性的拓扑分布约束</summary>
+  <pre><code>
+kind: Pod
+apiVersion: v1
+metadata:
+  name: mypod
+  labels:
+    foo: bar
+spec:
+  topologySpreadConstraints:
+  - maxSkew: 1
+    topologyKey: zone
+    whenUnsatisfiable: DoNotSchedule
+    labelSelector:
+      matchLabels:
+        foo: bar
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: zone
+            operator: NotIn
+            values:
+            - zoneC
+  containers:
+  - name: pause
+    image: registry.k8s.io/pause:3.1
+#假设你有一个跨可用区A到C的5节点集群;而且你知道可用区C必须被排除在外
+#在这种情况下,可以按如下方式编写清单,以便将Pod mypod放置在可用区B上,而不是可用区C上;同样K8s也会一样处理spec.nodeSelector
+  </code></pre>
+</details>
+---
 <table><tr><td bgcolor=green>自定义调度器my-scheduler</td></tr></table>  
 
 
