@@ -797,6 +797,30 @@ spec:
     image: k8s.gcr.io/pause:2.0
 #pod必须调度在至少运行一个security=S1标签的pod的节点上;如果该节点有标签key为failure-domain.beta.kubernetes.io/zone而且运行着标签为security=S1的实例
 #反亲和规则表明最好不要调度到运行有security=S2标签的pod的节点上;如这个节点拥有标签key为failure-domain.beta.kubernetes.io/zone但运行有security=S2标签的pod那么这个节点就不会被优先选择调度  
+---
+topologyKey很多地方解释为拓扑建,很是费解。实际上就是个作用域的概念。
+topologyKey配置了一个label的key,那么存在这个key对应的label的所有Node就在同一个作用域里。
+可以使用Topology来指定Pod的亲和性和反亲和性规则。
+Topology是指节点的拓扑结构,如拓扑域、区域、机架等。使用Topology可以确保Pod被调度到拓扑结构相似的节点上。
+例如,以下是一个使用Topology和亲和性规则的Pod定义：
+```bash
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+spec:
+  containers:
+  - name: my-container
+    image: my-image
+  affinity:
+    podAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchLabels:
+            app: my-app
+        topologyKey: rack
+#Pod选择器使用matchLabels指定了一个标签选择器,该选择器选择app=my-app的Pod
+#然后,使用topologyKey指定了一个亲和性规则,该规则要求Pod被调度到与已经调度了app=my-app的Pod在同一个rack中的节点上
   </code></pre>
 </details>
 
@@ -1082,8 +1106,6 @@ spec:
 
   </code></pre>
 </details>
-
-
 
 ---
 <table><tr><td bgcolor=green>Pod拓扑分布约束</td></tr></table>  
