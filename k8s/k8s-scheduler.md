@@ -8,7 +8,9 @@ scheduler主要作用是负责资源的调度Pod,通过APIServer的Watch接口�
 # kube-scheduler工作原理
 ## kube-scheduler调度流程
 ![kube-scheduler调度流程](https://developer.qcloudimg.com/http-save/yehe-4831778/3d73d0046339c223113ce327037866b4.png) 
-
+<details>
+  <summary>kube-scheduler调度流程解释</summary>
+  <pre><code>
 1. scheduler维护待调度的podQueue并监听APIServer;
    >用户提交pod资源请求;可以通过APIServer的RESTAPI,也可用Kubectl命令行工具支持Json和Yaml两种格式  
 2. 创建Pod时首先通过APIServer将Pod元数据写入etcd(APIServer处理用户请求,存储Pod数据到Etcd)  
@@ -22,9 +24,12 @@ scheduler主要作用是负责资源的调度Pod,通过APIServer的Watch接口�
    - 选择主机(节点选定)  
      选择打分最高的主机,进行binding操作,结果存储到Etcd中;  
 4. node的kubelet也侦听ApiServer如果发现有新的Pod已调度到该节点,则将通过CRI调用高级容器运行时来运行容器;kubelet创建pod
-   >kubelet根据schedule调度结果执行Pod创建操作: 
+   kubelet根据schedule调度结果执行Pod创建操作: 
    调度成功后,会启动container, docker run, scheduler会调用APIServer的API在etcd中创建一个boundpod对象,描述在一个工作节点上绑定运行的所有pod信息;  
-     运行在每个工作节点上的kubelet也会定期与etcd同步boundpod信息,一旦发现应该在该工作节点上运行的boundpod对象没有更新,则调用DockerAPI创建并启动pod内的容器
+   运行在每个工作节点上的kubelet也会定期与etcd同步boundpod信息,一旦发现应该在该工作节点上运行的boundpod对象没有更新,则调用DockerAPI创建并启动pod内的容器
+  </code></pre>
+</details>
+
  ## [工作原理](https://zhuanlan.zhihu.com/p/339762721)
  ![原理](https://pic1.zhimg.com/80/v2-5e83986aa2469097db5b418d8eac0c50_720w.webp)  
  ![扩展点](https://pic3.zhimg.com/80/v2-a6c4f85223ed8af451710182c62e7a4a_720w.webp)  
