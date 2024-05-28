@@ -1396,6 +1396,9 @@ spec:
 #一旦这个自定义调度器成功启动,前面的Pod就会被正确调度到某个Node上
 ```
 
+3、[PriorityClass调度优先级](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-namespaces.md#priorityclass)  
+
+
 
 
 
