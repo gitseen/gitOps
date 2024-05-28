@@ -33,7 +33,10 @@ scheduler主要作用是负责资源的调度Pod,通过APIServer的Watch接口�
  ## [工作原理](https://zhuanlan.zhihu.com/p/339762721)
  ![原理](https://pic1.zhimg.com/80/v2-5e83986aa2469097db5b418d8eac0c50_720w.webp)  
  ![扩展点](https://pic3.zhimg.com/80/v2-a6c4f85223ed8af451710182c62e7a4a_720w.webp)  
-如上图所示,我们简单介绍一下支持的扩展点：  
+
+<details>
+  <summary>如上图所示,简单介绍一下支持的扩展点：</summary>
+  <pre><code>
 - QueueSort: 对队列中的 Pod 进行排序
 - PreFilter: 预处理 Pod 的相关信息,或者检查集群或 Pod 必须满足的某些条件。 如果 PreFilter 插件返回错误,则调度周期将终止。
 - Filter: 过滤出不能运行该 Pod 的节点。对于每个节点, 调度器将按照其配置顺序调用这些过滤插件。如果任何过滤插件将节点标记为不可行, 则不会为该节点调用剩下的过滤插件。节点可- 以被同时进行评估。
@@ -46,6 +49,8 @@ scheduler主要作用是负责资源的调度Pod,通过APIServer的Watch接口�
 - PreBind: 用于执行 Pod 绑定前所需的任何工作。例如,一个预绑定插件可能需要提供网络卷并且在允许 Pod 运行在该节点之前 将其挂载到目标节点上。
 - Bind: 用于将 Pod 绑定到节点上。直到所有的 PreBind 插件都完成,Bind 插件才会被调用。
 - PostBind: 这是个信息性的扩展点。 绑定后插件在 Pod 成功绑定后被调用。这是绑定周期的结尾,可用于清理相关的资源  
+  </code></pre>
+</details>
 
 **scheduler调度pod选择包含两个步骤**  
 - 预选(过滤)
