@@ -1416,7 +1416,7 @@ spec:
 # 总结
 **K8s的调度组件是K8s集群中的一个核心组件,可以实现负载均衡和资源利用率最大化的目的  
 在实际使用中,需要根据实际情况和需求来选择合适的调度器实现和调度策略,以确保K8s集群的资源利用率最大化**  
->文档参考:
+>文档参考:  
  https://kubernetes.io/zh-cn/docs/reference/scheduling/config/  
  https://kubernetes.io/zh-cn/docs/concepts/scheduling-eviction/assign-pod-node/  
  https://cloud.tencent.com/developer/article/2365406?areaId=106001  
