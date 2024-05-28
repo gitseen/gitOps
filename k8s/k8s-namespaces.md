@@ -88,7 +88,7 @@ kubectl config set-context prod --namespace=production \
     PV是独立于命名空间的存储资源;PV表示集群中的存储卷,它们可以被Pod使用  
     PV通常由集群管理员创建,并且它们不属于特定的命名空间;Pod可以通过PVC来请求PV,并将其挂载到Pod中  
     >PersistentVolumeClaims区分命名空间
-  - PriorityClass  
+  - [PriorityClass](https://cloud.tencent.com/developer/article/2365406?areaId=106001)  
     用于定义Pod优先级的对象;它允许您为Pod分配优先级,以确保重要的Pod在资源有限时获得更多的资源;  
     PriorityClass也是全局对象,不受命名空间约束
   - ClusterRole和ClusterRoleBinding  
@@ -97,6 +97,44 @@ kubectl config set-context prod --namespace=production \
     允许用户定义自定义资源类型;这些自定义资源类型可以是全局性质的,不受命名空间的限制
   - namespaces  
     命名空间本身是一个全局对象,但它用于组织和隔离其他对象,使得其他对象可以被归类到特定的命名空间中  
+
+# PriorityClass
+**PriorityClass用于定义Pod的调度优先级。常见的场景包括**    
+- 确保关键服务优先调度
+      对于关键组件,如数据库、核心应用服务,可以设置更高的优先级  
+- 管理资源争用
+      在资源有限的环境中,通过设置不同的优先级,管理不同Pod的调度顺序  
+
+**使用PriorityClass的步骤**  
+
+1. 创建PriorityClass：apiVersion: scheduling.k8s.io/v1
+```bash
+kind: PriorityClass
+metadata:
+ name: high-priority
+value: 1000000
+globalDefault: false
+description: "This priority class should be used for XYZ service pods only."
+说明：
+value：这是一个整数,表示该PriorityClass的优先级。较高的数值表示更高的优先级
+globalDefault：表示为集群中所有没有指定优先级的Pod的默认优先级
+```
+
+2. 在Pod中指定PriorityClass：
+```bash
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mypod
+spec:
+  priorityClassName: high-priority
+  containers:
+  - name: mycontainer
+    image: myimage
+通过priorityClassName应用刚才创建的PriorityClass,从而确保该Pod具有更高的调度优先级
+```
+
+
 
 **以上对象都具有全局范围的特性,使得它们在整个k8s集群中可见和可用,不受命名空间的限制  
 这种设计使得管理员能够更灵活地管理集群级别的资源和权限,而不受命名空间的约束**  
