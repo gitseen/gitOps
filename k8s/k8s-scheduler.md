@@ -952,7 +952,7 @@ kubectl taint nodes node-name3 key1=value1:NoExecute
 # Tolerations
 Tolerations容忍度：定义在Pod上,用于配置Pod可容忍的节点污点,K8S调度器只能将Pod调度到该Pod能够容忍的污点的节点上  
 **语法架构** 
-![tolerations语法架构](pic/tolerations.png)
+![法架构](pic/tolerations.png)
 ```bash
 operator此值被称为运算符,值可以为[Equal|Exists]
   Equal表示污点的key是否等于value(默认参数)
@@ -1352,7 +1352,7 @@ spec:
 
 ---
 
-<table><tr><td bgcolor=green>自定义调度器my-scheduler</td></tr></table>  
+<table><tr><td bgcolor=green>自定义调度器CustomScheduler、PriorityClass调度优先级、扩展调度器ExtendedScheduler</td></tr></table>  
 
 # 自定义调度器CustomScheduler
 如果K8s调度器的众多特性还无法满足我们的独特调度需求,则还可以用自己开发的调度器进行调度  
@@ -1396,10 +1396,14 @@ spec:
 #一旦这个自定义调度器成功启动,前面的Pod就会被正确调度到某个Node上
 ```
 
-3、[PriorityClass调度优先级](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-namespaces.md#priorityclass)  
+# [PriorityClass调度优先级](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-namespaces.md#priorityclass)  
+
+#  扩展调度器(Extended Scheduler) 
+是一种支持调度器扩展器的调度器实现,可以通过调度器扩展器来添加自定义的调度规则和策略,以实现更灵活和多样化的调度功能
 
 
-
+总之,K8s的调度组件是K8s集群中的一个核心组件,可以实现负载均衡和资源利用率最大化的目的
+在实际使用中,需要根据实际情况和需求来选择合适的调度器实现和调度策略,以确保K8s集群的资源利用率最大化
 
 
 
