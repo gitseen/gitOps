@@ -106,7 +106,7 @@ scheduler主要作用是负责资源的调度Pod,通过APIServer的Watch接口�
 - 亲和性调度： [NodeAffinity](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-scheduler.md#NodeAffinity)、[PodAffinity](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-scheduler.md#PodAffinity)、[PodAntiAffinity](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-scheduler.md#PodAntiAffinity)  
 - 污点(容忍)调度： [Taints](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-scheduler.md#Taints)、[Tolerations](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-scheduler.md#Tolerations) 
 - [Pod拓扑分布约束](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-scheduler.md#Pod拓扑分布约束)  
-- [自定义调度器my-scheduler](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-scheduler.md#自定义调度器my-scheduler)  
+- [自定义调度器CustomScheduler](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-scheduler.md#自定义调度器CustomScheduler)、PriorityClass调度优先级、扩展调度器ExtendedScheduler  
 
 # k8s-api-yaml语法示例
 ```bash
