@@ -1113,7 +1113,9 @@ spec:
 [官方文档1](https://kubernetes.io/blog/2020/05/introducing-podtopologyspread/)  [官方文档2](https://kubernetes.io/zh-cn/docs/concepts/scheduling-eviction/topology-spread-constraints/)   
 ![Pod拓扑分布约束-视图](https://kubernetes.io/images/blog/2020-05-05-introducing-podtopologyspread/advanced-usage-2.png)  
 
+Pod拓扑分布约束。在区域(Region)、可用区(Zone)、节点和其他用户自定义拓扑域中较为均匀的分布Pod  
 拓扑分布约束(TopologySpreadConstraints)来控制Pod在集群内的分布   
+
 例如区域(Region)、可用区(Zone)、节点和其他用户自定义拓扑域,能够让应用的多个实例趋于均匀的分布在不同的域内  
 这样做有助于实现高可用并提升资源利用率;拓扑分布约束适用于比较大的集群  
 
