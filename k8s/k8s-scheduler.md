@@ -1347,7 +1347,9 @@ spec:
 #在这种情况下,可以按如下方式编写清单,以便将Pod mypod放置在可用区B上,而不是可用区C上;同样K8s也会一样处理spec.nodeSelector
   </code></pre>
 </details>
+
 ---
+
 <table><tr><td bgcolor=green>自定义调度器my-scheduler</td></tr></table>  
 
 
