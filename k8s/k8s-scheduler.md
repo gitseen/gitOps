@@ -62,7 +62,7 @@ scheduler主要作用是负责资源的调度Pod,通过APIServer的Watch接口�
    最后scheduler会将Pod调度到得分最高的Node上;  
    如果存在多个得分最高的Node,scheduler会从中随机选取一个  
 
-**预选策略Predicates**
+# 预选策略Predicates
 - PodFitsHostPorts：检查Pod容器所需的HostPort是否已被节点上其它容器或服务占用,如已被占用,则禁止Pod调度到该节点  
 - PodFitsHost：检查Pod指定的NodeName是否匹配当前节点  
 - PodFitsResources：检查节点是否有足够空闲资源(例如CPU和内存)来满足Pod的要求  
@@ -80,7 +80,7 @@ scheduler主要作用是负责资源的调度Pod,通过APIServer的Watch接口�
 >**如果在predicates(预选)过程中没有合适的节点,那么Pod会一直在pending状态,不断重试调度,直到有节点满足条件;  
 经过这个步骤,如果有多个节点满足条件,就继续priorities过程,最后按照优先级大小对节点排序** 
  
-**优选Priorities**
+# 优选Priorities
 - SelectorSpreadPriority：对于属于同一服务、有状态集或副本集（Service,StatefulSet or ReplicaSet）的Pods,会将Pods尽量分散到不同主机上。
 - InterPodAffinityPriority：策略有podAffinity和podAntiAffinity两种配置方式。简单来说,就说根据Node上运行的Pod的Label来进行调度匹配的规则,匹配的表达式有：In, NotIn, - Exists, DoesNotExist,通过该策略,可以更灵活地对Pod进行调度。
 - LeastRequestedPriority：偏向使用较少请求资源的节点。换句话说,放置在节点上的Pod越多,这些Pod使用的资源越多,此策略给出的排名就越低。
