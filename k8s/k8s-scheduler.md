@@ -982,7 +982,7 @@ kubectl explain deployment.spec.template.spec.tolerations.XX
 **Tolerations容忍度操作符(Pod定义容忍度时,它支持两种操作符)**  
 - Equal： 容忍度与污点必须在key、value、effect三者完全匹配 (容忍度与污点信息完全匹配的等值关系)  
 - Exists：容忍度与污点必须在key和effect二者完全匹配,容忍度中的value字段要使用空值 (判断污点是否存在的匹配)  
-
+>[Taints污点与Tolerations容忍详解-example](https://www.cnblogs.com/zhanglianghhh/p/14022018.html)  
 
 <details>
   <summary>tolerations-NoSchedule</summary>
