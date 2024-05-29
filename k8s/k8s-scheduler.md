@@ -529,6 +529,48 @@ goweb-demo   1/1     Running   0          17s   10.244.240.58   test-b-k8s-node0
    preferredDuringSchedulingIgnoredDuringExecution亲和性类型可以设置weight字段,其取值范围是1到100。 
    当调度器找到能够满足Pod的其他调度请求的节点时,调度器会遍历节点满足的所有的偏好性规则, 并将对应表达式的weight值加和 
    最终的加和值会添加到该节点的其他优先级函数的评分之上;在调度器为Pod作出调度决定时,总分最高的节点的优先级也最高
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: goweb-demo
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: team
+            operator: In
+            values:
+            - team-a
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 1
+        preference:
+          matchExpressions:
+          - key: disktype
+            operator: In
+            values:
+            - ssd
+      - weight: 50
+        preference:
+          matchExpressions:
+          - key: disktype
+            operator: In
+            values:
+            - sas
+  containers:
+  - name: container-goweb-demo
+    image: 192.168.11.247/web-demo/goweb-demo:20221229v3
+kubectl create -f xx.yaml
+kubectl get pods -o wide
+NAME         READY   STATUS    RESTARTS   AGE   IP              NODE                NOMINATED NODE   READINESS GATES
+goweb-demo   1/1     Running   0          35s   10.244.240.18   test-b-k8s-node01   <none>           <none>
+上面的例子,存在两个候选节点,都满足  
+preferredDuringSchedulingIgnoredDuringExecution规则  
+其中一个节点具有标签disktype:ssd   
+另一个节点具有标签disktype:sas,调度器会考察各个节点的weight取值,并将该权重值添加到节点的其他得分值之上  
+
 
   </code></pre>
 </details>
