@@ -205,6 +205,71 @@ spec:
           - containerPort: 6379
         nodeSelector:    #匹配zone: north标签的节点K:V  这里指定Node的Label
           zone: north
+---
+设置节点的标签
+#给节点打标签,key和value：gpu=true
+kubectl label node test-b-k8s-node02 gpu=true
+node/test-b-k8s-node02 labeled
+kubectl get node test-b-k8s-node02 --show-labels #查看指定节点标签
+kubectl get node --show-labels #不指定节点时,查看所有节点标签
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: test-a
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goweb-demo
+  namespace: test-a
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: goweb-demo
+  template:
+    metadata:
+      labels:
+        app: goweb-demo
+    spec:
+      nodeSelector:
+        gpu: true
+      containers:
+      - name: goweb-demo
+        image: 192.168.11.247/web-demo/goweb-demo:20221229v3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: goweb-demo
+  namespace: test-a
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8090
+  selector:
+    app: goweb-demo
+  type: NodePort
+提示：刚测了一下,非要取这种标签的话gpu=true,在yaml定义时gpu: true,true就要加双引号,它是字符串,不加的话,他认为是bool。所以,设置node的标签,value以后尽量不要是true/false,非要的话,指定时加上双引号即可  
+kubectl get pods -n test-a -o wide
+NAME                          READY   STATUS    RESTARTS   AGE   IP              NODE                NOMINATED NODE   READINESS GATES
+goweb-demo-69d79997f7-24862   1/1     Running   0          16m   10.244.222.7    test-b-k8s-node02   <none>           <none>
+goweb-demo-69d79997f7-48c62   1/1     Running   0          16m   10.244.222.32   test-b-k8s-node02   <none>           <none>
+goweb-demo-69d79997f7-76jd9   1/1     Running   0          16m   10.244.222.51   test-b-k8s-node02   <none>           <none>
+goweb-demo-69d79997f7-dt7sf   1/1     Running   0          16m   10.244.222.21   test-b-k8s-node02   <none>           <none>
+goweb-demo-69d79997f7-fddpd   1/1     Running   0          16m   10.244.222.60   test-b-k8s-node02   <none>           <none>
+goweb-demo-69d79997f7-lw2t8   1/1     Running   0          16m   10.244.222.47   test-b-k8s-node02   <none>           <none>
+goweb-demo-69d79997f7-nwwkg   1/1     Running   0          16m   10.244.222.10   test-b-k8s-node02   <none>           <none>
+goweb-demo-69d79997f7-v768k   1/1     Running   0          16m   10.244.222.38   test-b-k8s-node02   <none>           <none>
+goweb-demo-69d79997f7-vgt5w   1/1     Running   0          16m   10.244.222.56   test-b-k8s-node02   <none>           <none>
+goweb-demo-69d79997f7-xqhxp   1/1     Running   0          16m   10.244.222.41   test-b-k8s-node02   <none>           <none>
+如果创建pod,指派的标签是不存在任何1台节点时,pod会一直处于pending状态,直至进入Terminating状态,pod的重启策略是always（默认策略：当容器退出时,总是重启容器）;
+则一直在pending和Terminating中徘徊,直到有符合条件的标签,就会立马分配节点,从而创建pod
+kubectl label node test-b-k8s-node02 gpu- #删除标签(提示：key和小横杠之间不能有空格,否则删除失败)
+node/test-b-k8s-node02 unlabeled
+
   </code></pre>
 </details>
 
