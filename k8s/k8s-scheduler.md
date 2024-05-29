@@ -275,6 +275,7 @@ node/test-b-k8s-node02 unlabeled
 
 >如果nodeSelector匹配的标签不存在,则容器将不会运行,一直处于Pending状态  
 nodeName、nodeSelector属于定向调度  
+[nodeSelector-不背锅运维](https://www.toutiao.com/article/7205499274883727927/?log_from=b4eecc0a67019_1679536467971)  
 
 ---
 
