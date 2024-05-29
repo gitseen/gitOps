@@ -1423,6 +1423,9 @@ spec:
  https://cloud.tencent.com/developer/article/2377522  
  https://cloud.tencent.com/developer/article/1644857  
  https://zhuanlan.zhihu.com/p/676990337  
+ [亲和性](https://www.toutiao.com/article/7213515634276139554/)、[源码](https://github.com/zq2599/blog_demos)  
+
+
 
 
 
