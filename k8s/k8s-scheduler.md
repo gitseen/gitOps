@@ -485,6 +485,51 @@ spec:
 #POD首先是要求POD不能运行在140和161两个节点上;
 #如有节点满足source=qikqiak的话就优先调度到这个节点上;
 #同样的我们可以使用descirbe命令查看具体的调度情况是否满足我们的要求 
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: goweb-demo
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution: # 调度器只有在规则被满足的时候才执行调度
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: team
+            operator: In
+            values:
+            - team-a
+            - team-b
+      preferredDuringSchedulingIgnoredDuringExecution: # 调度器会尝试寻找满足对应规则的节点（如果找不到匹配的节点,调度器仍然会调度该Pod）
+      - weight: 1
+        preference:
+          matchExpressions:
+          - key: hostbrand
+            operator: In
+            values:
+            - ibm
+  containers:
+  - name: container-goweb-demo
+    image: 192.168.11.247/web-demo/goweb-demo:20221229v3
+```
+配置node的标签
+#设置标签
+kubectl label node test-b-k8s-node01 team=team-a
+kubectl label node test-b-k8s-node02 team=team-b
+kubectl label node test-b-k8s-node01 hostbrand=ibm
+kubectl get node --show-labels
+kubectl create -f xx.yaml 
+kubectl get pod -o wide
+NAME         READY   STATUS    RESTARTS   AGE   IP              NODE                NOMINATED NODE   READINESS GATES
+goweb-demo   1/1     Running   0          17s   10.244.240.58   test-b-k8s-node01   <none>           <none>
+在上面的案例中,所应用的规则如下:    
+   节点必须包含一个键名为team的标签, 并且该标签的取值必须为team-a或team-b
+   节点最好具有一个键名为hostbrand且取值为ibm的标签   
+关于节点亲和性权重的weight字段：  
+   preferredDuringSchedulingIgnoredDuringExecution亲和性类型可以设置weight字段,其取值范围是1到100。 
+   当调度器找到能够满足Pod的其他调度请求的节点时,调度器会遍历节点满足的所有的偏好性规则, 并将对应表达式的weight值加和 
+   最终的加和值会添加到该节点的其他优先级函数的评分之上;在调度器为Pod作出调度决定时,总分最高的节点的优先级也最高
 
   </code></pre>
 </details>
