@@ -512,7 +512,6 @@ spec:
   containers:
   - name: container-goweb-demo
     image: 192.168.11.247/web-demo/goweb-demo:20221229v3
-```
 配置node的标签
 #设置标签
 kubectl label node test-b-k8s-node01 team=team-a
