@@ -416,6 +416,55 @@ spec:
         - name: nginx
           image: nginx
 #nodeAffinity调度pod到具有disktype: ssd标签的节点上;硬限制
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: with-required-nodeaffinity
+spec:
+  affinity:
+    nodeAffinity: 
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - {key: zone, operator: In, values: ["foo"]}
+  containers:
+  - name: nginx
+    image: nginx
+功能与nodeSelector类似,用的是匹配表达式,可以被理解为新一代节点选择器
+不满足硬亲和性条件时,pod为Pending状态
+在预选阶段,节点硬亲和性被用于预选策略MatchNodeSelector
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp-deploy-with-node-affinity
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      name: nginx
+      labels:
+        app: nginx
+    spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 60
+            preference:
+              matchExpressions:
+              - {key: zone, operator: In, values: ["foo"]}
+          - weight: 30
+            preference:
+              matchExpressions:
+              - {key: ssd, operator: Exists, values: []}
+      containers:
+      - name: nginx
+        image: nginx
+
   </code></pre>
 </details>
 
