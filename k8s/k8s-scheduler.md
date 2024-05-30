@@ -1,3 +1,19 @@
+# k8s-scheduler-listings
+# [kube-scheduler工作原理](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-scheduler.md#kube-scheduler工作原理)  
+  - [工作原理](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-scheduler.md#工作原理)  
+  - [预选策略predicates](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-scheduler.md#预选策略predicates)  
+  - [优选Priorities](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-scheduler.md#优选Priorities)  
+  
+# [k8s调度Pod的主要方式](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-scheduler.md#k8s调度Pod的主要方式) 
+  - [k8s-api-yaml语法示例](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-scheduler.md#k8s-api-yaml语法示例)  
+  - [NodeName](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-scheduler.md#NodeName)、[NodeSelector](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-scheduler.md#NodeSelector)
+  - [NodeAffinity](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-scheduler.md#NodeAffinity)、[PodAffinity](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-scheduler.md#PodAffinity)、[PodAntiAffinity](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-scheduler.md#PodAntiAffinity)  
+  - [Taints](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-scheduler.md#Taints)、[Tolerations](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-scheduler.md#Tolerations)
+  - [Pod拓扑分布约束](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-scheduler.md#Pod拓扑分布约束)  
+  - [自定义调度器CustomScheduler](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-scheduler.md#自定义调度器CustomScheduler)  
+
+# [总结](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-scheduler.md#总结)  
+
 # kube-scheduler调度概述
 K8s中调度是指将Pod调度到合适的节点上,以便对应节点上的Kubelet能够运行这些Pod;  
 kube-scheduler将Pod分配(调度)到集群内的各个节点,进而创建容器运行进程;Kube-scheduler是K8s集群默认的调度器
