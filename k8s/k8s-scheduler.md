@@ -780,33 +780,6 @@ spec:
   containers:
   - name: nginx
     image: nginx
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: myapp-with-pod-anti-affinity
-spec:
-  replicas: 4
-  selector:
-    matchLabels:
-      app: myapp
-  template:
-    metadata:
-      name: myapp
-      labels:
-        app: myapp
-    spec:
-      affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchExpressions:
-              - {key: app, operator: In, values: ["myapp"]}
-            topologyKey: kubernetes.io/hostname
-      containers:
-      - name: nginx
-        image: nginx
-#如果集群中只有三个节点,那么执行上述yaml的结果就是最多创建三个pod,另一个始终处于pending状态
 
   </code></pre>
 </details>
@@ -970,7 +943,49 @@ spec:
 #使用Pod反亲和的硬亲和性,需要运行在具备标签key为zone的Node上,然后不运行在具备标签为app=myapp的Pod同台Node上
 #启动了4个Pod,一共有三个node,前三个Pod都会被分别调度到不同的三台node上
 #(因为采用的是反亲和性,还是硬性,所以相同标签的Pod不会调度到同一台Node),最后一个Pod将无家可归,最后无法调度 
-
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: with-pod-affinity-1
+spec:
+  affinity:
+    podAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - {key: app, operator: In, values: ["tomcat"]}
+        topologyKey: kubernetes.io/hostname
+  containers:
+  - name: nginx
+    image: nginx
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp-with-pod-anti-affinity
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      name: myapp
+      labels:
+        app: myapp
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - {key: app, operator: In, values: ["myapp"]}
+            topologyKey: kubernetes.io/hostname
+      containers:
+      - name: nginx
+        image: nginx
+#如果集群中只有三个节点,那么执行上述yaml的结果就是最多创建三个pod,另一个始终处于pending状态
   </code></pre>
 </details>
 
