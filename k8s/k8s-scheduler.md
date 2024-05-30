@@ -12,7 +12,7 @@
   - [Pod拓扑分布约束](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-scheduler.md#Pod拓扑分布约束)  
   - [自定义调度器CustomScheduler](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-scheduler.md#自定义调度器CustomScheduler)  
 
-# [总结](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-scheduler.md#总结)  
+# [总结](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-scheduler.md#总结-1)  
 
 # kube-scheduler调度概述
 K8s中调度是指将Pod调度到合适的节点上,以便对应节点上的Kubelet能够运行这些Pod;  
