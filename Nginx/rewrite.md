@@ -123,9 +123,10 @@ server {
 经过测试 只有访问www.testfront.com/数字.html 的时候 才能获取到 my.gif 文件
 ```
 # 使用场景模拟
-## 基于域名跳转
+## 基于域名跳转  
 >网站域名是www.testfront.com现在需要使用新的域名www.newtestfront.com替代;
  但是旧的域名不能作废, 需要让旧的域名跳转到新的域名上, 并且保持后面参数不变  
+
 **示例** 
 ```bash
 #模拟原本配置
@@ -211,7 +212,7 @@ server {
 curl localhost
 curl www.testfront.com
 ```
->注意echo-nginx-module模块需要单独下载加载]
+>注意echo-nginx-module模块需要单独下载加载
  git clone https://gitee.com/yaowenqiang/echo-nginx-module.git  
 
 
