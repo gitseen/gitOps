@@ -75,7 +75,6 @@ server {
 ## rewrite到内部站  
 
 >rewrite到内部站点 是指replacement不带http/https而是内部的另外一个路径,相当于访问隐藏起来的这个内部路径;  
-
 >>只有这种内部站点跳转的时候,浏览器才有可能不变地址,要看rewite flag参数了last和break都不会变的, 只有redirect和permanent 
  
 **示例**  
@@ -103,6 +102,7 @@ flag = redirect和permanent 浏览器变化了URL 变更状态码302和301
 # location中使用rewrite
 >location中也可以使用rewrite,意思是只有匹配到这个location后才经过rewrite的正则通过后再跳转
  >>和上面一样,也分为rewirte的replacement是否包含http和https外部站点  
+ 
 **示例**  
 ```bash
 #希望是如果 访问的后缀 是 数字.html 则返回 my.gif 图 ,其他的都代理到 http://www.testbackend.com
