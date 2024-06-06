@@ -212,7 +212,7 @@ server {
 curl localhost
 curl www.testfront.com
 ```
->注意echo-nginx-module模块需要单独下载加载
+>注意echo-nginx-module模块需要单独下载加载  
  git clone https://gitee.com/yaowenqiang/echo-nginx-module.git  
 
 
