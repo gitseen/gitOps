@@ -20,12 +20,12 @@ rewrite 	<regex> 	<replacement> 	[flag];
 
 # server中使用rewrite
 >直接在server中使用rewrite,它会被先执行,优先于location中的rewrite 
-## rewrite外部站点
->rewrite到外部站点-->是指replacement部分;
-是一个完整的带http/https的外部路径,它的特点是浏览器会再次请求这个新的站点;
+## rewrite外部站点  
+>rewrite到外部站点-->是指replacement部分;  
+是一个完整的带http/https的外部路径,它的特点是浏览器会再次请求这个新的站点;  
 所以浏览器上的地址一定会发生变化,不受flag参数影响   
 
-**示例**  
+**示例**   
 <details>
   <summary>rewrite全部拦截^/(.*)$</summary>
   <pre><code>
