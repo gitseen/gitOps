@@ -75,6 +75,7 @@ server {
 ## rewrite到内部站
 >rewrite到内部站点 是指replacement不带http/https而是内部的另外一个路径,相当于访问隐藏起来的这个内部路径;
 >>只有这种内部站点跳转的时候,浏览器才有可能不变地址,要看rewite flag参数了last和break都不会变的, 只有redirect和permanent  
+ 
 **示例**  
 ```bash
 server {
