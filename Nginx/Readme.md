@@ -260,7 +260,7 @@ nginx -s reload
 
 ```
 
-# Nginx-rewrite
+# [Nginx-rewrit](https://github.com/gitseen/gitOps/tree/main/Nginx/rewrite.md)
 Nginx是一种高性能的Web服务器和反向代理服务,它可以通过rewrite模块来实现URL重写和重定向等功能  
 常用的rewrite方法和技巧,以及它们的优缺点   
 ## 1、使用正则表达式匹配URL
@@ -313,7 +313,7 @@ location /old/ {
 
 **Rewrite模块可以实现URL重写和重定向等功能,可以根据需要选择不同的rewrite方法和技巧。需要注意的是,rewrite规则的性能和正确性都非常重要,必须进行适当的测试和验证**  
 
-5、nginx维护页面处理
+## 5、nginx维护页面处理
 nginx维护页面处理-全部URL指向同一个页面  
 
 一般来说nginx的维护页面需要把所有访问本站的链接全部重定向到某个指定页面  
