@@ -14,11 +14,33 @@ Oracle发布新版本的MySQL时，直接从5.7.x 跳到了8.0可谓是一个大
 ## 1、druid数据源的driver-class-name配置
 MySQL5： driver-class-name: com.mysql.jdbc.Driver
 
-MySQL8： driver-class-name: com.mysql.jdbc.Driver
+MySQL8： driver-class-name: com.mysql.cj.jdbc.Driver
 
 ## 2、url配置
 MySQL5：url: jdbc:mysql://localhost:3306/数据库名
 
 MySQL8：url: jdbc:mysql://localhost:3306/数据库名**?&serverTimezone=UTC**
+```bash
+DriverClasses = com.mysql.cj.jdbc.Driver
+ecology.url = jdbc:mysql://172.16.216.171:13306/ecology?characterEncoding=utf8&useSSL=false&autoReconnect=true&failOverReadOnly=false&serverTimezone=Asia/Shanghai
+ecology.user = ecology
+ecology.password = ecology123
+ecology.charset = ISO
+ecology.maxconn = 300
+ecology.minconn = 50
+ecology.maxusecount = 6000
+ecology.maxidletime = 600
+ecology.maxalivetime = 10
+ecology.checktime = 3600
+ecology.isgoveproj = 0
+LOG_FORMAT = yyyy.MM.dd'-'hh:mm:ss
+DEBUG_MODE = false
+
+MainControlIP = 172.16.216.183
+ip = 172.16.216.184
+broadcast=231.12.21.132
+syncType=http
+initial_hosts= 172.16.216.184:88,172.16.216.183:88
+```
 
 ## 3、连接驱动jar包使用mysql-connector-java-5.1.49.jar or 官网
