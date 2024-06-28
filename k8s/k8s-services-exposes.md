@@ -1,10 +1,11 @@
 # K8S的Service
 ## 1. Service存在的意义
-Kubernetes中的Service是一种网络抽象,用于将一组Pod暴露给其他组件,例如其他Pod或外部用户。Service可以作为一个负载均衡器,为一组Pod提供单一的IP地址和DNS名称,并通过选择器来将流量路由到这些Pod  
+Kubernetes中的Service是一种网络抽象,用于将一组Pod暴露给其他组件,例如其他Pod或外部用户。  
+Service可以作为一个负载均衡器,为一组Pod提供单一的IP地址和DNS名称,并通过选择器来将流量路由到这些Pod  
 
 **Services的存在有以下几个意义** 
 - 1、透明的服务发现  
-     Kubernetes使用Service作为一种透明的服务发现机制;使用Service可以将Pod隐藏在后面,这样其他组件可以使用Service的DNS名称来访问它们,而不需要知道Pod的实际IP地址和端口号
+     k8s使用Service作为一种透明的服务发现机制;使用Service可以将Pod隐藏在后面,这样其他组件可以使用Service的DNS名称来访问它们,而不需要知道Pod的实际IP地址和端口号
 - 2、负载均衡
      Service可以将流量路由到一组Pod上,并使用标签选择器将流量均匀地分配给这些Pod。这使得可以轻松地进行水平扩展,以满足不断增长的负载  
 - 3、稳定的IP地址
@@ -200,7 +201,7 @@ Ingress-controller通过和Kubernetes APIServer交互,动态感知集群中Ingre
   - 相比上面两种方式,只需要一个NodePort或者一个LoadBlancer就可以满足所有service对集群外暴露服务的需求,简单灵活
 
 >notice:
-1  https://segmentfault.com/a/1190000023125587
+1  https://segmentfault.com/a/1190000023125587  
 2  https://zhuanlan.zhihu.com/p/587531612 
 
 
