@@ -200,8 +200,10 @@ Ingress-controller通过和Kubernetes APIServer交互,动态感知集群中Ingre
   - 相比上面两种方式,只需要一个NodePort或者一个LoadBlancer就可以满足所有service对集群外暴露服务的需求,简单灵活
 
 >notice:
-1  ss
-2  ss  
+1  https://segmentfault.com/a/1190000023125587
+2  https://zhuanlan.zhihu.com/p/587531612 
+
+
 
 
 
