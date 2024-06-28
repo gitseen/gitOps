@@ -128,13 +128,18 @@ Service是基于四层TCP和UDP协议转发的,而Ingress可以基于七层的HT
      * ExternalName 通过返回CNAME和对应值,可以将服务映射到externalName字段的内容(例如foo.bar.example.com)无需创建任何类型代理
      * ClusterIP  用于在集群内部互相访问的场景,通过ClusterIP访问Service  
        通过集群的内部IP暴露服务选择该值时服务只能够在集群内部访问。 这也是默认的ServiceType  
-     * Headless Service 用于Pod间的互相发现,该类型的Service并不会分配单独的ClusterIP, 而且集群也不会为它们进行负载均衡和路由。您可通过指定spec.clusterIP字段的值为"None"来创建HeadlessService,详细介绍请参见HeadlessService
      * NodePort   用于从集群外部访问的场景,通过节点上的端口访问Service  
        通过每个节点上的IP和静态端口(NodePort)暴露服务。NodePort服务会路由到自动创建的ClusterIP服务;通过请求<节点 IP>:<节点端口>,你可以从集群的外部访问一个NodePort  
      * LoadBalancer 用于从集群外部访问的场景,其实是NodePort的扩展,通过一个特定的LoadBalancer访问Service,这个LoadBalanc
        使用云提供商的负载均衡器向外部暴露服务。 外部负载均衡器可以将流量路由到自动创建的NodePort服务和ClusterIP服务上  
      * Ingress
 
+     * Headless Service 用于Pod间的互相发现,该类型的Service并不会分配单独的ClusterIP, 而且集群也不会为它们进行负载均衡和路由  
+                        可通过指定spec.clusterIP字段的值为"None"来创建HeadlessService,详细介绍请参见HeadlessService  
+                        是一种特殊类型的Service,它并不分配ClusterIP,而是直接返回与Service对应的Pod的IP地址列表,这种方式适合于需要直接访问PodIP的场景,而不需要经过k8s的负载均衡  
+     * Service Mesh  
+       虽然不是一种Service暴露方式，但是Service Mesh(Istio、Linkerd等)可以提供更复杂的流量管理、安全策略和监控功能,可以在集群内部和集群外部控制服务之间的通信 
+ 
 - 2、Service Selector是用来选择要将流量转发到哪个Pod的标签  
      每个Service都会指定一个或多个Selector用于确定应该选择哪些Pod;在创建Service时可以指定标签选择器以选择相关Pod  
 
