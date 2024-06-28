@@ -123,11 +123,14 @@ status:
 Service是基于四层TCP和UDP协议转发的,而Ingress可以基于七层的HTTP和HTTPS协议转发,可以通过域名和路径做到更细粒度  
 
 - 1、Service类型及场景
-     * ExternalName
-     * ClusterIP  用于在集群内部互相访问的场景,通过ClusterIP访问Service
+     * ExternalName 通过返回CNAME和对应值,可以将服务映射到externalName字段的内容(例如foo.bar.example.com)无需创建任何类型代理
+     * ClusterIP  用于在集群内部互相访问的场景,通过ClusterIP访问Service  
+       通过集群的内部IP暴露服务选择该值时服务只能够在集群内部访问。 这也是默认的ServiceType  
      * Headless Service 用于Pod间的互相发现,该类型的Service并不会分配单独的ClusterIP, 而且集群也不会为它们进行负载均衡和路由。您可通过指定spec.clusterIP字段的值为"None"来创建HeadlessService,详细介绍请参见HeadlessService
-     * NodePort   用于从集群外部访问的场景,通过节点上的端口访问Service
+     * NodePort   用于从集群外部访问的场景,通过节点上的端口访问Service  
+       通过每个节点上的IP和静态端口(NodePort)暴露服务。NodePort服务会路由到自动创建的ClusterIP服务;通过请求<节点 IP>:<节点端口>,你可以从集群的外部访问一个NodePort  
      * LoadBalancer 用于从集群外部访问的场景,其实是NodePort的扩展,通过一个特定的LoadBalancer访问Service,这个LoadBalanc
+       使用云提供商的负载均衡器向外部暴露服务。 外部负载均衡器可以将流量路由到自动创建的NodePort服务和ClusterIP服务上  
      * Ingress
 
 - 2、Service Selector是用来选择要将流量转发到哪个Pod的标签  
