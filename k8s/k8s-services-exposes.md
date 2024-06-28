@@ -12,7 +12,8 @@ Service可以作为一个负载均衡器,为一组Pod提供单一的IP地址和D
      Kubernetes为每个Service分配一个稳定的IP地址,这个IP地址与Pod的生命周期无关。这意味着可以在Pod启动和停止时保持稳定的服务地址,并且无需手动更改任何配置  
 - 4、外部访问
      通过将Service类型设置为NodePort或LoadBalancer可以将Service暴露给外部用户或外部负载均衡器;这使得可以轻松地将Kubernetes集群与外部服务和用户集成  
-总之,Service是Kubernetes中非常重要的一部分,可以提供透明的服务发现、负载均衡、稳定的IP地址和外部访问。在实际生产环境中,使用Service是构建可靠和可扩展应用程序的关键  
+
+总之,Service是k8s中非常重要的一部分,可以提供透明的服务发现、负载均衡、稳定的IP地址和外部访问。在实际生产环境中,使用Service是构建可靠和可扩展应用程序的关键  
 
 ## 2. Pod、Service、Label的关系
 Pod是Kubernetes中最小的可部署单元,它是由一个或多个容器组成的;Pod提供了一个运行环境,其中包含应用程序所需的资源,如存储、网络和命名空间  
