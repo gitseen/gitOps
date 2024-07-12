@@ -14,7 +14,7 @@ PrivateTmp=true
 
 [Install]
 WantedBy=multi-user.target
-
+#from: https://www.opcai.top/post/2020/2020-05/systemd_redis/
 
 ====config====
 bind 0.0.0.0
@@ -88,6 +88,7 @@ rdb-save-incremental-fsync yes
 maxmemory 6gb
 maxmemory-policy allkeys-lru
 maxmemory-samples 5
+
 
 
 
