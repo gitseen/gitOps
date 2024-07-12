@@ -504,4 +504,8 @@ Redis集群没有使用一致性hash,而是引入了哈希槽的概念,Redis集�
 41、为什么 Redis 的吞吐量能这么高？  
     https://juejin.cn/post/6844904082176475144  
     
+
+>Notice:Redis持久化rdb和aof都开启  
+
+
 ```
