@@ -1,0 +1,22 @@
+K8S部署Redis Cluster集群（三主三从模式） - 部署笔记
+https://cloud.tencent.com/developer/article/1796311
+使用IP：
+get pods -l app=redis-cluster -n wiseco -o jsonpath='{range.items[*]}{.status.podIP}:6379 '
+172.30.217.83:6379 172.30.85.217:6379 172.30.135.181:6379 172.30.58.251:6379 172.30.85.216:6379 172.30.217.82:6379 
+
+
+
+
+Kubernetes 通过statefulset部署redis cluster集群
+
+https://cloud.tencent.com/developer/article/1392872
+
+使用dns:
+redis-trib create --replicas 1 \
+`dig +short redis-app-0.redis-service.default.svc.cluster.local`:6379 \
+`dig +short redis-app-1.redis-service.default.svc.cluster.local`:6379 \
+`dig +short redis-app-2.redis-service.default.svc.cluster.local`:6379 \
+`dig +short redis-app-3.redis-service.default.svc.cluster.local`:6379 \
+`dig +short redis-app-4.redis-service.default.svc.cluster.local`:6379 \
+`dig +short redis-app-5.redis-service.default.svc.cluster.local`:6379
+
