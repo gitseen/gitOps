@@ -602,3 +602,10 @@ spawn    xx
                              \"*yes/no*\" {send \"yes\r\"; exp_continue}
                              \"*y/n*\" {send \"y\r\"; exp_continue}
                     } "
+
+
+###
+使用sed和awk命令删除第一列
+awk '{$1="";print $0}'  file
+
+sed -e 's/[^ ]* //'  file
