@@ -111,6 +111,23 @@ sar -b 1 10 #10表示x显示次数
     bread: 每秒从磁盘读的bytes数量
     bwrtn: 每秒向磁盘写的bytes数量
 
+sysstat工具: 用于收集和报告系统的性能数据.包括 CPU 使用率、内存使用、磁盘IO等
+yum -y install sysstat
+sysstat(sar、iostat、mpstat、pidstat、nfsiostat、cifsiostat)
+1 sar：    用于系统性能数据的收集和报告，包括 CPU 使用率、内存使用、磁盘IO等。
+2 iostat： 用于监控系统的磁盘IO性能，显示每个磁盘的IO情况。
+3 mpstat： 用于监控系统的CPU性能，显示每个CPU的使用情况。
+4 pidstat：用于监控系统中进程的性能数据，包括CPU、内存、I/O等。
+5 nfsiostat： 用于监控NFS文件系统的IO性能。
+6 cifsiostat：用于监控CIFS（Common Internet File System）文件系统的IO性能
+sar -P ALL 2 5 
+sar -f /var/log/sa/X #查之前CPU使用情况 
+mpstat  -P ALL 2 5
+iostat -d 5 5
+pidstat 2 5 
+pidstat -r -p 1643 2 5
+nfsiostat  5 5
+
 
 #disk
 ##将U盘当前状态保存下来成为一个文件。dd if=/dev/sdb of=/backup/ISO/Upan/save.iso
