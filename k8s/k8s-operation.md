@@ -389,6 +389,11 @@ kubectl -n kube-system describe $(kubectl -n kube-system get secret -n kube-syst
 #查找非running状态的Pod
 kubectl get pods -A --field-selector=status.phase!=Running | grep -v Complete
 
+
+#查资源使用情况
+kubectl get pod -n kube-system  -o=custom-columns=NAME:.metadata.name,NAMESPACE:.metadata.namespace,PHASE:.status.phase,Request-cpu:.spec.containers\[0\].resources.requests.cpu,Request-memory:.spec.containers\[0\].resources.requests.memory,Limit-cpu:.spec.containers\[0\].resources.limits.cpu,Limit-memory:.spec.containers\[0\].resources.limits.memory
+
+
 #清理K8s异常pod
 kubectl get pods --all-namespaces -o wide | grep Evicted   | awk '{print $1,$2}' | xargs -L1 kubectl delete pod -n  #clean Evicted
 kubectl get pods --all-namespaces -o wide | grep Error     | awk '{print $1,$2}' | xargs -L1 kubectl delete pod -n  #clean error 

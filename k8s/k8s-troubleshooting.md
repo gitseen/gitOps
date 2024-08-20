@@ -23,7 +23,7 @@ kubectl get componentstatuses=cs
 
 
 
-
+# [k8s-pod问题排查](https://cloud.tencent.com/document/product/457/42946)
 
 
 
