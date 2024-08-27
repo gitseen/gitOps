@@ -54,7 +54,6 @@ Pod 中的所有容器都已终止了，并且至少有一个容器是因为失�
 # Unkonwn
 ```bash
 API Server无法正常获取到Pod对象的状态信息，通常是由于其无法与所在工作节点的kubelet通信所致。
-原文链接：https://blog.csdn.net/qq_33591903/article/details/103850967
 ```
 
 
