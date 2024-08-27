@@ -5,7 +5,7 @@ See  https://www.toutiao.com/article/7166413177209487902/  for details.
   See https://www.toutiao.com/article/7160882121542877737/  for details.
 # 记录Linux系统状态信息
   See https://www.toutiao.com/article/7168759268479418895/  for details.
-  ```bash
+```bash
  #!/bin/bash
 [ -d /opt/logs ] || mkdir -p /opt/logs
 while :
@@ -20,7 +20,12 @@ do
     sleep 20
     find  /opt/logs \( -name "top*" -o -name "vmstat*" -o -name "ss*" \) -mtime +30 |xargs rm  -f
 done
-  ```
+```
 
 
 # [Cloud Atlas-安全](https://github.com/huataihuang/cloud-atlas-draft/blob/master/os/linux/security/audit/find_inode_consume.md)
+
+# [top](https://www.cnblogs.com/liuyupen/p/13905967.html)
+```bash
+https://cloud.tencent.com/developer/article/2155451
+```
