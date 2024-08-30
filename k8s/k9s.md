@@ -16,6 +16,7 @@ kubectl api-versions
 ```
 # 安装k9s管理工具
 [下载k9s工具](https://github.com/derailed/k9s/releases)
+curl -sS https://webinstall.dev/k9s | bash
 ```
 wget -c k9s_Linux_amd64.tar.gz
 tar -zxvf k9s_Linux_amd64.tar.gz -C /usr/local/bin
