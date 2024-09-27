@@ -77,6 +77,13 @@ https://mp.weixin.qq.com/s?__biz=MzAwNTM5Njk3Mw==&mid=2247495880&idx=1&sn=c36700
 find -type f -size 0 -exec rm -rf {} \;
 find /  -type f -name mysql-connector-java-* |xargs -i mv {} /root/test/
 find /  -type f -name  CentOS-7-x86_64-DVD-1810.iso |xargs -i mv {} /root/
+find ./ -name 1.txt  -exec wc -l {} +
+find ./ -name 1.txt  -exec wc -l {} \;
+find  ./*.log -mtime +10  -exec rm -rf {} \;
+find . -type f | xargs md5sum | sort
+find  /opt/imagesbak -mtime +10 -exec rm -rf {} \;
+find ./ -name "*.sh" | awk -F "." '{print $2}' | xargs -i -t mv ./{}.sh  ./{}.txt #批量修改文件名后缀
+
 #记一次 Linux服务器被入侵后的排查思路https://www.jianshu.com/p/afc845cf9cc9  #https://www.cnblogs.com/sparkdev/p/7694202.html
 #https://bypass007.github.io/Emergency-Response-Notes/Summary/%E7%AC%AC2%E7%AF%87%EF%BC%9ALinux%E5%85%A5%E4%BE%B5%E6%8E%92%E6%9F%A5.html
 #https://www.cnblogs.com/operationhome/p/10907591.html  docker日志
