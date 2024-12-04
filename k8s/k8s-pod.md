@@ -212,8 +212,8 @@ kubectl logs test-pod1 -c nginx1
 kubectl get pods test-pod1 -o yaml #找到restartPolicy字段,就是重启策略restartPolicy: Always
 ```
 ### pod健康检测-探针(健康检查是检查容器里面的服务是否正常)
-Kubernetes中探测容器的三种探针  
-Kubernetes探针(Probe)是用于检测容器内部状态的机制有以下三种探针分别是Liveness、Readiness、Startup前两种使用的比较多  
+k8s中探测容器的三种探针(Probe)是用于检测容器内部状态是否正常运行。三种探针分别是Liveness、Readiness、Startup。
+
 - livenessProbe(存活探测)：  如果检查失败,将杀死容器,根据pod的restartPolicy来操作   
   ```
   #用于确定容器是否仍在运行;如果容器不响应LivenessProbe则Kubernetes将在重启容器之前将其标记为失败  
@@ -238,7 +238,7 @@ Kubernetes探针(Probe)是用于检测容器内部状态的机制有以下三种
 
 **Pod探针是确保Kubernetes应用程序正常运行的重要机制;通过使用不同类型的探针,可以检测应用程序的各种状态,从而帮助自动化地管理容器集群,并提高应用程序的可靠性和可用性**  
 
-**支持检测试方法**    
+### 探针检测试方法
 * httpGet：   发起HTTP请求,返回200-400范围状态码为成功。
 * exec：      执行Shell命令返回状态码是0为成功。
 * tcpSocket： 发起TCP Socket建立成功
