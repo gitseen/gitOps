@@ -202,8 +202,8 @@ kubectl exec -it test-pod1 -c bs1 -- sh
 #查看pod里指定容器的log
 kubectl logs test-pod1 -c nginx1 
 ```
-## 4. Pod的重启策略+应用健康检查(应用自修复)
-**pod重启策略** 
+## 4. Pod的重启策略+Pod健康检查(三种探针)
+### pod重启策略
 + Always：当容器终止退出,总是重启容器,默认策略
 + OnFailure：当容器异常退出（退出状态码非0）时,才重启容器
 + Never：当容器终止退出,从不重启容器  
@@ -211,7 +211,7 @@ kubectl logs test-pod1 -c nginx1
 #查看pod的重启策略
 kubectl get pods test-pod1 -o yaml #找到restartPolicy字段,就是重启策略restartPolicy: Always
 ```
-**pod健康检测(健康检查是检查容器里面的服务是否正常)**   
+### pod健康检测-探针(健康检查是检查容器里面的服务是否正常)
 Kubernetes中探测容器的三种探针  
 Kubernetes探针(Probe)是用于检测容器内部状态的机制有以下三种探针分别是Liveness、Readiness、Startup前两种使用的比较多  
 - livenessProbe(存活探测)：  如果检查失败,将杀死容器,根据pod的restartPolicy来操作   
