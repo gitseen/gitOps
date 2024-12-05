@@ -1,5 +1,5 @@
 # K8S-Pod知识点
-## 1、pod资源yaml清单
+## 1pod资源yaml清单
 <details>
   <summary>k8s-pod-yaml</summary>
   <pre><code>
@@ -82,7 +82,7 @@ spec: #specification of the resource content 指定该资源的内容
 
 
 
-## 2、Pod概念热身
+## 2Pod概念热身
 Pod是一个逻辑抽象概念,K8s创建和管理的最小单元,一个Pod由一个容器或多个容器组成。   
 **特点**  
 + 一个Pod可以理解为是一个应用实例
@@ -108,7 +108,7 @@ goweb-demo-b98869456-25sj9   1/1     Running   1 (3m49s ago)   5d10h
 - Multi Container: 多容器
 - 普通容器(业务容器/应用容器)
 
-## 3、POD内容器间资源共享实现机制
+## 3POD内容器间资源共享实现机制
 ### 3.1 共享数据的机制
 + emptyDir  
   会在Pod被删除的同时也会被删除,当Pod分派到某个节点上时,emptyDir卷会被创建,并且在Pod在该节点上运行期间,卷一直存在。 就像其名称表示的那样,卷最初是空的。 尽管Pod中的容器挂载emptyDir卷的路径可能相同也可能不同,这些容器都可以读写emptyDir卷中相同的文件。 当Pod因为某些原因被从节点上删除时emptyDir卷中的数据也会被永久删除  
@@ -188,7 +188,7 @@ a5331fba7f11   registry.aliyuncs.com/google_containers/pause:latest   "/pause"  
   ```
   registry.aliyuncs.com/google_containers/pause        latest       350b164e7ae1   8 years ago     240kB
   ```
-## 4、Pod常用管理命令
+## Pod常用管理命令
 ```
 #查看pod里所有容器的名称
 kubectl get pods test-pod1 -o jsonpath={.spec.containers[*].name}
@@ -200,7 +200,7 @@ kubectl exec -it test-pod1 -c bs1 -- sh
 #查看pod里指定容器的log
 kubectl logs test-pod1 -c nginx1 
 ```
-## 5、Pod的重启策略+Pod健康检查(三种探针)
+## Pod的重启策略+Pod健康检查(三种探针)
 ### 5.1 pod重启策略
 + Always：当容器终止退出,总是重启容器,默认策略
 + OnFailure：当容器异常退出（退出状态码非0）时,才重启容器
@@ -542,7 +542,7 @@ spec:
 [kubernetes官方文档](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)   
 
 
-## 6、环境变量
+## 6环境变量
 创建Pod时,可以为其下的容器设置环境变量。通过配置文件的env或者envFrom字段来设置环境变量  
 **应用场景**  
 + 容器内应用程序获取pod信息
@@ -681,7 +681,7 @@ HOME=/root
   </code></pre>
 </details>
 
-## 7、init container(初始化容器)
+## 7init container(初始化容器)
 **初始化容器的特点**  
 - Init容器是一种特殊容器,在Pod内,会在应用容器启动之前运行
 - 如果Pod的Init容器失败,kubelet会不断地重启该Init容器,直到该容器成功为止
@@ -754,7 +754,7 @@ goweb-demo-859cc77bd5-sns67   1/1     Running   0          30m
   </code></pre>
 </details>
 
-## 8、静态pod
+## 8静态pod
 在实际工作中,静态Pod的应用场景是毕竟少的,几乎没有。不过也还是得对它做一个简单的了解。静态Pod在指定的节点上由kubelet守护进程直接管理,不需要API服务器监管。与由控制面管理的Pod(如Deployment) 不同；  
 kubelet监视每个静态Pod(在它失败之后重新启动)静态Pod始终都会绑定到特定节点的Kubelet上  
 
@@ -784,9 +784,9 @@ test-static-pod-test-b-k8s-node01   1/1     Running   0          11s
 
 
 [参考](https://mp.weixin.qq.com/s/5Kv7DU34_Ae5y17MAQVO-Q)  
-## 9、[声明式pod实例](https://github.com/gitseen/gitOps/blob/main/k8s/pod.yaml) 
+## 9[声明式pod实例](https://github.com/gitseen/gitOps/blob/main/k8s/pod.yaml) 
 
-## 10、[Kubernetes中钩子函数详解实例](https://www.toutiao.com/article/7214297018754204219/)  
+## 10[Kubernetes中钩子函数详解实例](https://www.toutiao.com/article/7214297018754204219/)  
 **钩子函数能够感知自身生命周期中的事件,并在相应的时刻到来时运行用户指定的程序代码**  
 
 kubernetes在主容器的启动之后和停止之前提供了两个钩子函数  
@@ -854,8 +854,8 @@ spec:
 - 如果PreStop或者PostStart失败的话, 容器会被杀死   
 
 
-## 11、pod-status
+## 11pod-status
 
-## 12、pod-xx
+## 12pod-xx
 
 
