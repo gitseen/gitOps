@@ -1,5 +1,5 @@
 # K8S-Pod知识点
-## Pod概念
+## 1Pod概念
 Pod是k8s的最小单位,里面包含一组容器,其中一个为Pause容器,也称为"根容器"  
 Pod是一个逻辑抽象概念,K8s创建和管理的最小单元,一个Pod由一个容器或多个容器组成    
 Pod里面的多个业务容器共享Pause容器的网络和Volume卷  
@@ -23,7 +23,7 @@ goweb-demo-b98869456-25sj9   1/1     Running   1 (3m49s ago)   5d10h
 STATUS字段指pod当前运行状态,RESTARTS指pod是重启次数,AGE表pod运行时长
 ```  
 
-## pod资源yaml清单
+## 2pod资源yaml清单
 <details>
   <summary>k8s-pod-yaml</summary>
   <pre><code>
@@ -104,13 +104,13 @@ spec: #specification of the resource content 指定该资源的内容
   </code></pre>
 </details>
 
-## pod类型
+## 3pod类型
 在K8S中,Pod可以根据其创建和管理的方式分为三类：静态Pod、自主式Pod和动态Pod  
 - 静态Pod
 - 自主式Pod
 - 动态Pod  
 
-### 静态Pod(Static Pods)
+### 3.1静态Pod(Static Pods)
 **定义**   
 静态Pod在指定的节点上由kubelet守护进程直接管理,不需要通过k8sAPI服务创建,而是直接在Node节点上创建并通过kubelet进行管理  
 kubelet监视每个静态Pod(在它失败之后重新启动)静态Pod始终都会绑定到特定节点的Kubelet上  
@@ -147,7 +147,7 @@ test-static-pod-test-b-k8s-node01   1/1     Running   0          11s
   </code></pre>
 </details>
 
-### 自主式Pod(Standalone Pods)
+### 3.2自主式Pod(Standalone Pods)
 **定义**   
 自主式Pod是指通过Kubernetes API服务直接创建的Pod,而不是通过任何控制器(如Deployment、sts、ds、Job等)创建  
 这些Pod通常作为一次性任务或测试目的使用  
@@ -163,7 +163,7 @@ test-static-pod-test-b-k8s-node01   1/1     Running   0          11s
 kubectl run my-standalone-pod --image=192.168.11.247/web-demo/goweb-demo:20221229v3 
 ```
 
-### 动态Pod(Dynamic Pods)
+### 3.3动态Pod(Dynamic Pods)
 **定义**  
 动态Pod是通过控制器(Deployment、StatefulSet、ds、Job、CronJob等）创建和管理的Pod  
 这些Pod由控制器自动管理,包括创建、更新和删除  
@@ -183,8 +183,8 @@ kubectl run my-standalone-pod --image=192.168.11.247/web-demo/goweb-demo:2022122
 - Multi Container: 多容器  
 - 普通容器(业务容器/应用容器)  
 - 
-## POD内容器间资源共享实现机制
-### Pod共享数据的机制
+## 4POD内容器间资源共享实现机制
+### 4.1Pod共享数据的机制
 + emptyDir  
   会在Pod被删除的同时也会被删除,当Pod分派到某个节点上时,emptyDir卷会被创建,并且在Pod在该节点上运行期间,卷一直存在。 就像其名称表示的那样,卷最初是空的。 尽管Pod中的容器挂载emptyDir卷的路径可能相同也可能不同,这些容器都可以读写emptyDir卷中相同的文件。 当Pod因为某些原因被从节点上删除时emptyDir卷中的数据也会被永久删除  
 ```
@@ -213,7 +213,7 @@ volumes:
 + cephfs  
   cephfs 卷允许你将现存的CephFS卷挂载到Pod中,cephfs卷的内容在Pod被删除时会被保留,只是卷被卸载了。 这意味着cephfs卷可以被预先填充数据,且这些数据可以在Pod之间共享。同一cephfs卷可同时被多个写者挂载   
 
-### Pod共享网络的机制
+### 4.2Pod共享网络的机制
 共享网络的机制是由Pause容器实现,下面慢慢分析一下,啥是pause,了解一下它的作用等等。  
 1、先准备一个yaml文件（pod1.yaml ）,创建一个pod,pod里包含两个容器,一个是名为nginx1的容器,还有一个是名为bs1的容器  
 ```bash
@@ -264,7 +264,7 @@ a5331fba7f11   registry.aliyuncs.com/google_containers/pause:latest   "/pause"  
 ```bash
   registry.aliyuncs.com/google_containers/pause        latest       350b164e7ae1   8 years ago     240kB
 ```
-## 4Pod常用管理命令
+## 5Pod常用管理命令
 ```
 #查看pod里所有容器的名称
 kubectl get pods test-pod1 -o jsonpath={.spec.containers[*].name}
@@ -276,8 +276,8 @@ kubectl exec -it test-pod1 -c bs1 -- sh
 #查看pod里指定容器的log
 kubectl logs test-pod1 -c nginx1 
 ```
-## 5Pod的重启策略+Pod健康检查(三种探针)
-### 5.1 pod重启策略
+## 6Pod的重启策略+Pod健康检查(三种探针)
+### 6.1 pod重启策略
 + Always：当容器终止退出,总是重启容器,默认策略
 + OnFailure：当容器异常退出（退出状态码非0）时,才重启容器
 + Never：当容器终止退出,从不重启容器  
@@ -285,7 +285,7 @@ kubectl logs test-pod1 -c nginx1
 #查看pod的重启策略
 kubectl get pods test-pod1 -o yaml #找到restartPolicy字段,就是重启策略restartPolicy: Always
 ```
-### 5.2 pod健康检测-探针(健康检查是检查容器里面的服务是否正常)
+### 6.2 pod健康检测-探针(健康检查是检查容器里面的服务是否正常)
 k8s中探测容器的三种探针(Probe)是用于检测容器内部状态是否正常运行。三种探针分别是Liveness、Readiness、Startup。
 
 - livenessProbe(存活探测)：  如果检查失败,将杀死容器,根据pod的restartPolicy来操作   
@@ -312,16 +312,13 @@ k8s中探测容器的三种探针(Probe)是用于检测容器内部状态是否�
 
 **Pod探针是确保Kubernetes应用程序正常运行的重要机制;通过使用不同类型的探针,可以检测应用程序的各种状态,从而帮助自动化地管理容器集群,并提高应用程序的可靠性和可用性**  
 
-### 探针检测试方法
+### 6.3 探针检测试方法与示例
 * httpGet：   发起HTTP请求,返回200-400范围状态码为成功。
 * exec：      执行Shell命令返回状态码是0为成功。
 * tcpSocket： 发起TCP Socket建立成功
 * grpc：      通过容器的IP地址和端口,发起一个grpc请求（前提是服务实现了grpc健康检查协议）,返回服务健康的结果正常则认为服务是健康的 
 
-
-
 **案例实战**  
-
 1、 livenessProbe（存活探针）：使用exec的方式（执行Shell命令返回状态码是0则为成功）  
 <details>
   <summary>livenessProbe-exec</summary>
@@ -614,11 +611,10 @@ spec:
 </details>
 
 [探针-路多辛](https://www.toutiao.com/article/7206670428587164192/)  
- 
 [kubernetes官方文档](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)   
 
 
-## 6环境变量
+## 7环境变量
 创建Pod时,可以为其下的容器设置环境变量。通过配置文件的env或者envFrom字段来设置环境变量  
 **应用场景**  
 + 容器内应用程序获取pod信息
@@ -757,7 +753,7 @@ HOME=/root
   </code></pre>
 </details>
 
-## 7init container(初始化容器)
+## 8init container(初始化容器)
 **初始化容器的特点**  
 - Init容器是一种特殊容器,在Pod内,会在应用容器启动之前运行
 - 如果Pod的Init容器失败,kubelet会不断地重启该Init容器,直到该容器成功为止
@@ -832,7 +828,7 @@ goweb-demo-859cc77bd5-sns67   1/1     Running   0          30m
 
 
 
-## 10[Kubernetes中钩子函数详解实例](https://www.toutiao.com/article/7214297018754204219/)  
+## 9[Kubernetes中钩子函数详解实例](https://www.toutiao.com/article/7214297018754204219/)  
 **钩子函数能够感知自身生命周期中的事件,并在相应的时刻到来时运行用户指定的程序代码**  
 
 kubernetes在主容器的启动之后和停止之前提供了两个钩子函数  
@@ -900,8 +896,8 @@ spec:
 - 如果PreStop或者PostStart失败的话, 容器会被杀死   
 
 
-## 11pod-status
+## 10pod-status
 
-## 12pod-xx
+## 11pod-xx
 
 
