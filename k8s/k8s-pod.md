@@ -10,6 +10,8 @@
   - [k8s-9](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#1Pod概念)
   - [k8s-10](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#2pod资源yaml清单)
 
+---
+
 ## 1Pod概念
 Pod是k8s的最小单位,里面包含一组容器,其中一个为Pause容器,也称为"根容器"  
 Pod是一个逻辑抽象概念,K8s创建和管理的最小单元,一个Pod由一个容器或多个容器组成    
@@ -33,6 +35,7 @@ goweb-demo-b98869456-25sj9   1/1     Running   1 (3m49s ago)   5d10h
 在READY字段中,1/1的意义为在这个pod里,已准备的容器/一共有多少个容器
 STATUS字段指pod当前运行状态,RESTARTS指pod是重启次数,AGE表pod运行时长
 ```  
+---
 
 ## 2pod资源yaml清单
 <details>
@@ -115,6 +118,8 @@ spec: #specification of the resource content 指定该资源的内容
   </code></pre>
 </details>
 
+---
+
 ## 3pod类型
 在K8S中,Pod可以根据其创建和管理的方式分为三类：静态Pod、自主式Pod和动态Pod  
 - 静态Pod
@@ -185,6 +190,11 @@ kubectl run my-standalone-pod --image=192.168.11.247/web-demo/goweb-demo:2022122
 适用于大多数生产环境中的工作负载  
 
 **[声明式pod示例参考](https://github.com/gitseen/gitOps/blob/main/k8s/yaml.md)**   
+
+**Pod类型总结**  
+- 静态Pod用于运行需要在所有节点上运行的服务,不受k8sAPI服务管理  
+- 自主式Pod通常用于一次性任务或测试目的,直接通过k8ssAPI服务创建  
+- 动态Pod通过控制器创建和管理,适用于大多数生产环境中的工作负载 
 
 ## [容器类型](https://mp.weixin.qq.com/s/-TXbvQiR-tpB0RgQ5d-QDw)
 - 基础容器(pause container)  
@@ -277,6 +287,8 @@ a5331fba7f11   registry.aliyuncs.com/google_containers/pause:latest   "/pause"  
 ```bash
   registry.aliyuncs.com/google_containers/pause        latest       350b164e7ae1   8 years ago     240kB
 ```
+---
+
 ## 5Pod常用管理命令
 **pod重启策略**  
 + Always：当容器终止退出,总是重启容器,默认策略
@@ -297,6 +309,8 @@ kubectl exec -it test-pod1 -c bs1 -- sh
 #查看pod里指定容器的log
 kubectl logs test-pod1 -c nginx1 
 ```
+
+---
 
 ## 6pod环境变量
 创建Pod时,可以为其下的容器设置环境变量。通过配置文件的env或者envFrom字段来设置环境变量  
@@ -437,9 +451,8 @@ HOME=/root
   </code></pre>
 </details>
 
-
-
 ---
+
 ## 6Pod的重启策略+Pod健康检查(三种探针)
 ### 6.2 pod健康检测-探针(健康检查是检查容器里面的服务是否正常)
 k8s中探测容器的三种探针(Probe)是用于检测容器内部状态是否正常运行。三种探针分别是Liveness、Readiness、Startup。
