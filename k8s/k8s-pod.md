@@ -278,7 +278,15 @@ a5331fba7f11   registry.aliyuncs.com/google_containers/pause:latest   "/pause"  
   registry.aliyuncs.com/google_containers/pause        latest       350b164e7ae1   8 years ago     240kB
 ```
 ## 5Pod常用管理命令
-```
+**pod重启策略**  
++ Always：当容器终止退出,总是重启容器,默认策略
++ OnFailure：当容器异常退出（退出状态码非0）时,才重启容器
++ Never：当容器终止退出,从不重启容器
+
+```bash
+#查看pod的重启策略
+kubectl get pods test-pod1 -o yaml #找到restartPolicy字段,就是重启策略restartPolicy: Always
+
 #查看pod里所有容器的名称
 kubectl get pods test-pod1 -o jsonpath={.spec.containers[*].name}
 
@@ -433,14 +441,6 @@ HOME=/root
 
 ---
 ## 6Pod的重启策略+Pod健康检查(三种探针)
-### 6.1 pod重启策略
-+ Always：当容器终止退出,总是重启容器,默认策略
-+ OnFailure：当容器异常退出（退出状态码非0）时,才重启容器
-+ Never：当容器终止退出,从不重启容器  
-```
-#查看pod的重启策略
-kubectl get pods test-pod1 -o yaml #找到restartPolicy字段,就是重启策略restartPolicy: Always
-```
 ### 6.2 pod健康检测-探针(健康检查是检查容器里面的服务是否正常)
 k8s中探测容器的三种探针(Probe)是用于检测容器内部状态是否正常运行。三种探针分别是Liveness、Readiness、Startup。
 
