@@ -4,7 +4,7 @@
   - [k8s-3pod类型](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#3pod类型)
   - [k8s-4POD内容器间资源共享实现机制](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#4POD内容器间资源共享实现机制)
   - [k8s-5Pod常用管理命令](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#5Pod常用管理命令)
-  - [k8s-6环境变量](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#环境变量)
+  - [k8s-6pod环境变量](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#6pod环境变量)
   - [k8s-7](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#1Pod概念)
   - [k8s-8](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#2pod资源yaml清单)
   - [k8s-9](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#1Pod概念)
@@ -290,7 +290,7 @@ kubectl exec -it test-pod1 -c bs1 -- sh
 kubectl logs test-pod1 -c nginx1 
 ```
 
-## 6环境变量
+## 6pod环境变量
 创建Pod时,可以为其下的容器设置环境变量。通过配置文件的env或者envFrom字段来设置环境变量  
 **应用场景**  
 + 容器内应用程序获取pod信息
