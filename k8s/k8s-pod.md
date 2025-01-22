@@ -196,13 +196,19 @@ kubectl run my-standalone-pod --image=192.168.11.247/web-demo/goweb-demo:2022122
 - 自主式Pod通常用于一次性任务或测试目的,直接通过k8ssAPI服务创建  
 - 动态Pod通过控制器创建和管理,适用于大多数生产环境中的工作负载 
 
-## [容器类型](https://mp.weixin.qq.com/s/-TXbvQiR-tpB0RgQ5d-QDw)
+**[容器类型](https://mp.weixin.qq.com/s/-TXbvQiR-tpB0RgQ5d-QDw)**  
 - 基础容器(pause container)  
 - 初始化容器(init container)  
 - Sidecar Container: 边车容器  
 - Ephemeral Container: 临时容器  
 - Multi Container: 多容器  
 - 普通容器(业务容器/应用容器)  
+
+**创建pod的容器分类**  
+* 1、基础容器: pause
+* 2、init(初始化状态):init c 1和2过程中,pod的状态init 1/3
+* 3、业务容器
+
 
 ----
  
