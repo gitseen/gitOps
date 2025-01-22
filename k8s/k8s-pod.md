@@ -1,4 +1,15 @@
 # K8S-Pod知识点
+  - [k8s-1Pod概念](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#1Pod概念)
+  - [k8s-2pod资源yaml清单](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#2pod资源yaml清单)
+  - [k8s-3pod类型](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#3pod类型)
+  - [k8s-4POD内容器间资源共享实现机制](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#4POD内容器间资源共享实现机制)
+  - [k8s-5Pod常用管理命令](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#5Pod常用管理命令)
+  - [k8s-6环境变量](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#环境变量)
+  - [k8s-7](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#1Pod概念)
+  - [k8s-8](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#2pod资源yaml清单)
+  - [k8s-9](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#1Pod概念)
+  - [k8s-10](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#2pod资源yaml清单)
+
 ## 1Pod概念
 Pod是k8s的最小单位,里面包含一组容器,其中一个为Pause容器,也称为"根容器"  
 Pod是一个逻辑抽象概念,K8s创建和管理的最小单元,一个Pod由一个容器或多个容器组成    
@@ -182,7 +193,9 @@ kubectl run my-standalone-pod --image=192.168.11.247/web-demo/goweb-demo:2022122
 - Ephemeral Container: 临时容器  
 - Multi Container: 多容器  
 - 普通容器(业务容器/应用容器)  
-- 
+
+----
+ 
 ## 4POD内容器间资源共享实现机制
 ### 4.1Pod共享数据的机制
 + emptyDir  
@@ -276,6 +289,149 @@ kubectl exec -it test-pod1 -c bs1 -- sh
 #查看pod里指定容器的log
 kubectl logs test-pod1 -c nginx1 
 ```
+
+## 6环境变量
+创建Pod时,可以为其下的容器设置环境变量。通过配置文件的env或者envFrom字段来设置环境变量  
+**应用场景**  
++ 容器内应用程序获取pod信息
++ 容器内应用程序通过用户定义的变量改变默认行为
++ 变量值定义的方式  
+
+**自定义变量值**  
+- 变量值从Pod属性获取
+- 变量值从Secret、ConfigMap获取  
+<details>
+  <summary>POD-ENV示例</summary>
+  <pre><code> 
+设置自定义变量,使用env给pod里的容器设置环境变量,本例子中,设置了环境变量有SAVE_TIME、MAX_CONN、DNS_ADDR  
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-env-demo
+spec:
+  containers:
+  - name: test-env-demo-container
+    image: 192.168.11.247/web-demo/goweb-demo:20221229v3
+    env:
+    - name: SAVE_TIME
+      value: "60"
+    - name: MAX_CONN
+      value: "1024"
+    - name: DNS_ADDR
+      value: "8.8.8.8"
+
+#开始创建POD kubectl create -f test-env.yaml
+#创建后,验证环境变量是否能获取到(使用printenv打印环境变量) kubectl exec test-env-demo -- printenv
+PATH=/go/bin:/usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+HOSTNAME=test-env-demo
+SAVE_TIME=60 # 这个是
+MAX_CONN=1024 # 这个是
+DNS_ADDR=8.8.8.8 # 这个是
+KUBERNETES_SERVICE_HOST=10.96.0.1
+KUBERNETES_SERVICE_PORT=443
+KUBERNETES_SERVICE_PORT_HTTPS=443
+KUBERNETES_PORT=tcp://10.96.0.1:443
+KUBERNETES_PORT_443_TCP=tcp://10.96.0.1:443
+KUBERNETES_PORT_443_TCP_PROTO=tcp
+KUBERNETES_PORT_443_TCP_PORT=443
+KUBERNETES_PORT_443_TCP_ADDR=10.96.0.1
+GOLANG_VERSION=1.19.4
+GOPATH=/go
+HOME=/root
+
+#进入容器打印环境变量 kubectl exec -it test-env-demo -c test-env-demo-container -- bash
+echo $SAVE_TIME # 单独打印一个
+60
+env  执行env命令查看
+KUBERNETES_SERVICE_PORT_HTTPS=443
+KUBERNETES_SERVICE_PORT=443
+HOSTNAME=test-env-demo
+PWD=/opt/goweb-demo
+DNS_ADDR=8.8.8.8
+HOME=/root
+KUBERNETES_PORT_443_TCP=tcp://10.96.0.1:443
+MAX_CONN=1024
+GOLANG_VERSION=1.19.4
+TERM=xterm
+SHLVL=1
+KUBERNETES_PORT_443_TCP_PROTO=tcp
+KUBERNETES_PORT_443_TCP_ADDR=10.96.0.1
+SAVE_TIME=60
+KUBERNETES_SERVICE_HOST=10.96.0.1
+KUBERNETES_PORT=tcp://10.96.0.1:443
+KUBERNETES_PORT_443_TCP_PORT=443
+PATH=/go/bin:/usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+GOPATH=/go
+_=/usr/bin/env
+
+  </code></pre>
+</details>
+
+
+<details>
+  <summary>POD_ENV(使用容器字段作为环境变量的值)</summary>
+  <pre><code> 
+例子设置了资源限制的字段requests和limits,在设置环境变量中,使用资源限制的值作为了变量的值
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-env-demo
+spec:
+  containers:
+  - name: test-env-demo-container
+    image: 192.168.11.247/web-demo/goweb-demo:20221229v3
+    resources:
+      requests:
+        memory: "32Mi"
+        cpu: "125m"
+      limits:
+        memory: "64Mi"
+        cpu: "250m"
+    env:
+      - name: CPU_REQUEST
+        valueFrom:
+          resourceFieldRef:
+            containerName: test-env-demo-container
+            resource: requests.cpu
+      - name: CPU_LIMIT
+        valueFrom:
+          resourceFieldRef:
+            containerName: test-env-demo-container
+            resource: limits.cpu
+      - name: MEM_REQUEST
+        valueFrom:
+          resourceFieldRef:
+            containerName: test-env-demo-container
+            resource: requests.memory
+      - name: MEM_LIMIT
+        valueFrom:
+          resourceFieldRef:
+            containerName: test-env-demo-container
+            resource: limits.memory
+#打印变量 kubectl exec test-env-demo -- printenv
+PATH=/go/bin:/usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+HOSTNAME=test-env-demo
+MEM_REQUEST=33554432
+MEM_LIMIT=67108864
+CPU_REQUEST=1
+CPU_LIMIT=1
+KUBERNETES_SERVICE_PORT_HTTPS=443
+KUBERNETES_PORT=tcp://10.96.0.1:443
+KUBERNETES_PORT_443_TCP=tcp://10.96.0.1:443
+KUBERNETES_PORT_443_TCP_PROTO=tcp
+KUBERNETES_PORT_443_TCP_PORT=443
+KUBERNETES_PORT_443_TCP_ADDR=10.96.0.1
+KUBERNETES_SERVICE_HOST=10.96.0.1
+KUBERNETES_SERVICE_PORT=443
+GOLANG_VERSION=1.19.4
+GOPATH=/go
+HOME=/root
+  </code></pre>
+</details>
+
+
+
+---
 ## 6Pod的重启策略+Pod健康检查(三种探针)
 ### 6.1 pod重启策略
 + Always：当容器终止退出,总是重启容器,默认策略
@@ -614,144 +770,6 @@ spec:
 [kubernetes官方文档](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)   
 
 
-## 7环境变量
-创建Pod时,可以为其下的容器设置环境变量。通过配置文件的env或者envFrom字段来设置环境变量  
-**应用场景**  
-+ 容器内应用程序获取pod信息
-+ 容器内应用程序通过用户定义的变量改变默认行为
-+ 变量值定义的方式  
-
-**自定义变量值**  
-- 变量值从Pod属性获取
-- 变量值从Secret、ConfigMap获取  
-<details>
-  <summary>POD-ENV示例</summary>
-  <pre><code> 
-设置自定义变量,使用env给pod里的容器设置环境变量,本例子中,设置了环境变量有SAVE_TIME、MAX_CONN、DNS_ADDR  
-apiVersion: v1
-kind: Pod
-metadata:
-  name: test-env-demo
-spec:
-  containers:
-  - name: test-env-demo-container
-    image: 192.168.11.247/web-demo/goweb-demo:20221229v3
-    env:
-    - name: SAVE_TIME
-      value: "60"
-    - name: MAX_CONN
-      value: "1024"
-    - name: DNS_ADDR
-      value: "8.8.8.8"
-
-#开始创建POD kubectl create -f test-env.yaml
-#创建后,验证环境变量是否能获取到(使用printenv打印环境变量) kubectl exec test-env-demo -- printenv
-PATH=/go/bin:/usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-HOSTNAME=test-env-demo
-SAVE_TIME=60 # 这个是
-MAX_CONN=1024 # 这个是
-DNS_ADDR=8.8.8.8 # 这个是
-KUBERNETES_SERVICE_HOST=10.96.0.1
-KUBERNETES_SERVICE_PORT=443
-KUBERNETES_SERVICE_PORT_HTTPS=443
-KUBERNETES_PORT=tcp://10.96.0.1:443
-KUBERNETES_PORT_443_TCP=tcp://10.96.0.1:443
-KUBERNETES_PORT_443_TCP_PROTO=tcp
-KUBERNETES_PORT_443_TCP_PORT=443
-KUBERNETES_PORT_443_TCP_ADDR=10.96.0.1
-GOLANG_VERSION=1.19.4
-GOPATH=/go
-HOME=/root
-
-#进入容器打印环境变量 kubectl exec -it test-env-demo -c test-env-demo-container -- bash
-echo $SAVE_TIME # 单独打印一个
-60
-env  执行env命令查看
-KUBERNETES_SERVICE_PORT_HTTPS=443
-KUBERNETES_SERVICE_PORT=443
-HOSTNAME=test-env-demo
-PWD=/opt/goweb-demo
-DNS_ADDR=8.8.8.8
-HOME=/root
-KUBERNETES_PORT_443_TCP=tcp://10.96.0.1:443
-MAX_CONN=1024
-GOLANG_VERSION=1.19.4
-TERM=xterm
-SHLVL=1
-KUBERNETES_PORT_443_TCP_PROTO=tcp
-KUBERNETES_PORT_443_TCP_ADDR=10.96.0.1
-SAVE_TIME=60
-KUBERNETES_SERVICE_HOST=10.96.0.1
-KUBERNETES_PORT=tcp://10.96.0.1:443
-KUBERNETES_PORT_443_TCP_PORT=443
-PATH=/go/bin:/usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-GOPATH=/go
-_=/usr/bin/env
-
-  </code></pre>
-</details>
-
-
-<details>
-  <summary>POD_ENV(使用容器字段作为环境变量的值)</summary>
-  <pre><code> 
-例子设置了资源限制的字段requests和limits,在设置环境变量中,使用资源限制的值作为了变量的值
-apiVersion: v1
-kind: Pod
-metadata:
-  name: test-env-demo
-spec:
-  containers:
-  - name: test-env-demo-container
-    image: 192.168.11.247/web-demo/goweb-demo:20221229v3
-    resources:
-      requests:
-        memory: "32Mi"
-        cpu: "125m"
-      limits:
-        memory: "64Mi"
-        cpu: "250m"
-    env:
-      - name: CPU_REQUEST
-        valueFrom:
-          resourceFieldRef:
-            containerName: test-env-demo-container
-            resource: requests.cpu
-      - name: CPU_LIMIT
-        valueFrom:
-          resourceFieldRef:
-            containerName: test-env-demo-container
-            resource: limits.cpu
-      - name: MEM_REQUEST
-        valueFrom:
-          resourceFieldRef:
-            containerName: test-env-demo-container
-            resource: requests.memory
-      - name: MEM_LIMIT
-        valueFrom:
-          resourceFieldRef:
-            containerName: test-env-demo-container
-            resource: limits.memory
-#打印变量 kubectl exec test-env-demo -- printenv
-PATH=/go/bin:/usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-HOSTNAME=test-env-demo
-MEM_REQUEST=33554432
-MEM_LIMIT=67108864
-CPU_REQUEST=1
-CPU_LIMIT=1
-KUBERNETES_SERVICE_PORT_HTTPS=443
-KUBERNETES_PORT=tcp://10.96.0.1:443
-KUBERNETES_PORT_443_TCP=tcp://10.96.0.1:443
-KUBERNETES_PORT_443_TCP_PROTO=tcp
-KUBERNETES_PORT_443_TCP_PORT=443
-KUBERNETES_PORT_443_TCP_ADDR=10.96.0.1
-KUBERNETES_SERVICE_HOST=10.96.0.1
-KUBERNETES_SERVICE_PORT=443
-GOLANG_VERSION=1.19.4
-GOPATH=/go
-HOME=/root
-  </code></pre>
-</details>
 
 ## 8init container(初始化容器)
 **初始化容器的特点**  
