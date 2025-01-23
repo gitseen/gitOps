@@ -5,10 +5,11 @@
   - [k8s-4POD内容器间资源共享实现机制](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#4POD内容器间资源共享实现机制)
   - [k8s-5Pod常用管理命令](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#5Pod常用管理命令)
   - [k8s-6pod环境变量](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#6pod环境变量)
-  - [k8s-7](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#1Pod概念)
-  - [k8s-8](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#2pod资源yaml清单)
-  - [k8s-9](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#1Pod概念)
-  - [k8s-10](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#2pod资源yaml清单)
+  - [k8s-7pod生命周期](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#7pod生命周期)
+    * [pod生命周期-pod创建过程](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#创建过程)
+    * [pod生命周期-Init-container](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)
+    * [pod生命周期-Main-container](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)
+    * [pod生命周期-pod终止过程](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)
 
 ---
 
