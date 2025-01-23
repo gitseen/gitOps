@@ -26,7 +26,7 @@ Pod是短暂的,每个Pod都有一个唯一的IP地址,称之为PodIP,k8s管理�
 **Pod主要用法**  
 * 运行单个容器：最常见的用法,在这种情况下,可以将Pod看作是单个容器的抽象封装
 * 运行多个容器：边车模式(Sidecar)在Pod中定义专门容器,来执行主业务容器需要的辅助工作,将辅助功能同业务容器解耦,实现独立发布和能力重用  
-* 
+
 **Pod信息状态**  
 ```bash
 tantianran@test-b-k8s-master:~$ kubectl get pods -n test-a
