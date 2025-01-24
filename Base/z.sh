@@ -32,6 +32,19 @@ iptables -nL -v
 #Linux服务器总是被猜测密码怎么办？这个脚本帮你简单加固 https://www.toutiao.com/i7016309943036953121/
 #Linux服务器磁盘坏道的修复过程 https://www.toutiao.com/i7015403643402994206/
 
+#history
+1、检查是linux服务器否开启历史记录功能
+set -o | grep history
+
+2、关闭历史记录功能
+set +o history
+
+3、开启历史记录功能
+set -o history
+set -o |grep history
+history         on
+
+
 
 ulimit -n  # 查看当前用户可用最大句柄
 sysctl -a | grep fs.file-max  # 查看内核级的文件句柄最大限制值
