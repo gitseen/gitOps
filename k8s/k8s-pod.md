@@ -12,6 +12,7 @@
       **主容器生命周期事件的处理函数**  
       - postStart事件
       - preStop事件  
+
       **主容器生命周期健康检查(三种探针)**  
       - startupProbe启动探针
       - LivenessProbe存活探针
