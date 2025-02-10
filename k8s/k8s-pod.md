@@ -8,11 +8,11 @@
   - [k8s-7pod生命周期](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#7pod生命周期)
     * [pod生命周期-pod基础容器Pause](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#基础容器Pause)
     * [pod生命周期-Init-container](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)
-    * [pod生命周期-Main-container](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)
+    * [pod生命周期-Main-container](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)  
       **主容器生命周期事件的处理函数**  
       - postStart事件
-      - preStop事件 
-      **主容器生命周期健康检查(三种探针)**
+      - preStop事件  
+      **主容器生命周期健康检查(三种探针)**  
       - startupProbe启动探针
       - LivenessProbe存活探针
       - ReadinessProbe就绪探针
