@@ -15,7 +15,6 @@
       - [startupProbe启动探针](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#startupProbe)
       - [livenessProbe存活探针](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#livenessProbe)
       - [readinessProbe就绪探针](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#readinessProbe)
-    * [pod生命周期-pod阶段](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#pod阶段)
     * [pod生命周期-pod创建过程](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#创建过程)
     * [pod生命周期-pod终止过程](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)
 
