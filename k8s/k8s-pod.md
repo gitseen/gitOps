@@ -10,22 +10,19 @@
     * [pod生命周期-pod阶段](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#pod阶段)
     * [pod生命周期-Init-container](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)
     * [pod生命周期-Main-container](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)  
-      **主容器生命周期事件的处理函数**  
       - [postStart](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#postStart)  
       - [preStop](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#postStop)  
-
-      **主容器生命周期健康检查(三种探针)**  
       - [startupProbe启动探针](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#startupProbe)
-      - [LivenessProbe存活探针](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#LivenessProbe)
-      - [ReadinessProbe就绪探针](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#ReadinessProbe)
+      - [livenessProbe存活探针](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#livenessProbe)
+      - [readinessProbe就绪探针](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#readinessProbe)
     * [pod生命周期-pod阶段](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#pod阶段)
     * [pod生命周期-pod创建过程](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#创建过程)
     * [pod生命周期-pod终止过程](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)
 
+  ~~#* [pod生命周期-pod创建过程](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#创建过程)
     #* [pod生命周期-pod创建过程](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#创建过程)
     #* [pod生命周期-pod创建过程](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#创建过程)
-    #* [pod生命周期-pod创建过程](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#创建过程)
-    #* [pod生命周期-pod创建过程](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#创建过程)
+    #* [pod生命周期-pod创建过程](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#创建过程)~~
 
 ---
 
