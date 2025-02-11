@@ -473,3 +473,72 @@ HOME=/root
 ---
 
 ## 7pod生命周期
+**Pod的生命周期是指从Pod被创建开始直到它被删除或终止的时间范围称为其生命周期**    
+在这段时间中,Pod会处于多种不同的状态,并执行一系统操作,操作如下：
+**创建pause容器 → 创建 → 调度 → 初始化init容器启动→ 主容器启动mainContainer → 主容器postStart启动后钩子 → 主容器preStop终止前钩子 → 主容器探针检测 → 主容器运行Running → 终止Termination → 清理**  
+
+pod对象从创建至终的这段时间范围称为pod的生命周期,它主要包含下面的过程：  
+- [pause容器](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)
+- [pod创建过程](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)
+- [运行初始化容器(initContainer)过程](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)
+- [主运行主容器(mainContainer)](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)
+- [主容器钩子函数](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)
+  * postStart启动后钩子
+  * preStop终止前钩子
+- [主容器健康检查(三种探针)](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)
+  * startupProbe启动探针
+  * livenessProbe存活性探测
+  * readinessProbe就绪性探测
+- [pod终止过程](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)
+
+
+## 7、1 pause容器
+pause是一个"暂停"的容器, 它的作用是: 解决pod的网络和存储的问题。  
+pause容器称为Infra Container,其他的容器称为业务容器。Infra container是一个非常小的镜像,大概700KB 左右,是一个C语言写的、永远处于"暂停"状态的容器。  
+Pod里运行着一个特殊的被称之为Pause的容器,其他容器则为业务容器,这些业务容器共享Pause容器的网络栈和Volume挂载卷,因此他们之间通信和数据交换更为高效。  
+
+pause共享两种资源(存储、网络)
+网络： 每个pod都会被分配一个集群内部的唯一ip地址,pod内的容器共享网络,pod在集群内部的ip地址和端口。pod内部的容器可以使用localhost互相通信。
+      pod中的容器与外部通信时,从共享的资源当中进行分配,宿主机的端口映射。
+存储： pod可以指定共享的volume,pod内的容器共享这些volume,volume可以实现持久化。防止pod重新构建之后文件消失。
+
+Pause容器也称为"Infra容器"或"Sandbox容器"是Pod生命周期中一个非常关键的底层组件。它虽然看似"透明",但对Pod的稳定性和功能实现起着核心作用,以下是Pod生命周期与Pause容器的关系及其具体作用  
+### 7.1.1、Pause容器的核心作用
+kubernetes中的pause容器主要为每个业务容器提供以下功能
+- PID命名空间：Pod中的不同应用程序可以看到其他应用程序的进程ID,pid命名空间开启init进程;所有容器共享同一个进程树(通过kubectl exec看进程)
+- 网络命名空间：Pod中的多个容器能够共享同一个IP和端口范围;所有Pod内容器共享同一个IP和端口空间  
+- IPC命名空间：Pod中的多个容器能够使用SystemV IPC或POSIX消息队列进行通信;允许容器间通过进程间通信(如共享内存)  
+- UTS命名空间：Pod中的多个容器共享一个主机名;Volumes(共享存储卷)  
+
+### 7.1.2、Pause容器与Pod生命周期的关系
+- Pod启动阶段  
+  * 初始化Pause容器：当Pod被调度到节点后,kubelet首先启动Pause容器。它的唯一任务是挂起自身(执行pause命令),占用极少的资源  
+  * 创建共享命名空间：Pause容器为Pod建立网络、IPC等命名空间,后续所有用户容器(如业务容器)会加入这些命名空间  
+  * Pod网络配置：CNI插件(如Calico、Flannel)会基于Pause容器的网络命名空间配置Pod的IP、路由规则等
+  
+- Pod运行阶段  
+  * 维持命名空间稳定性：Pause容器在整个Pod生命周期中持续运行,确保即使业务容器崩溃重启,Pod的网络命名空间(如IP地址)也不会改变  
+  * 处理PID1进程：在Linux中,PID1进程负责孤儿进程回收。Pause容器作为PID1进程,确保业务容器的孤儿进程能被正确回收,避免僵尸进程  
+  
+- Pod终止阶段  
+  * 优雅终止：当Pod被删除时,kubelet首先向Pause容器发送SIGTERM信号,触发Pod内所有容器的终止流程  
+  * 清理资源：Pause容器退出后,其占用的网络命名空间等资源会被释放,确保Pod彻底终止  
+
+### 7.1.3、Pause容器常见问题
+- 为什么需要Pause容器?  
+  * 稳定性：避免因业务容器重启导致Pod网络配置丢失  
+  * 资源隔离：将Pod级别的资源(如IP)与容器解耦,实现多容器共享;共享(存储、网络)资源  
+  * 标准化：统一Pod的初始化流程,简化CNI插件的实现  
+
+- Pause容器崩溃会怎样?  
+  * 如果Pause容器崩溃,整个Pod会被kubelet标记为失败,并触发重建。因为Pause容器是Pod的基础设施,它的崩溃意味着Pod的共享命名空间已不可用。
+
+- 如何查看Pause容器?
+  * docker ps |grep pause 或crictl ps  
+
+***pause总结***
+- Pause容器是Pod的"基础设施":它不运行业务代码,但为Pod提供共享的命名空间和稳定的运行环境  
+- 生命周期绑定：Pause容器的启动、运行和终止与Pod的生命周期完全同步  
+- 设计意义：通过解耦Pod基础设施与业务容器,k8s实现了更灵活的容器编排能力  
+- 理解Pause容器的作用,有助于深入掌握k8s的网络模型、资源隔离机制以及多容器协作原理  
+
