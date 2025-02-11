@@ -17,7 +17,7 @@
       - [livenessProbe存活探针](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#livenessProbe)
       - [readinessProbe就绪探针](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#readinessProbe)
     * [pod生命周期-pod终止过程](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)
-    * [pod生命周期-pod状态](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)
+    ~~* [pod生命周期-pod状态](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)~~  
 
 ---
 
@@ -496,7 +496,7 @@ pod对象从创建至终的这段时间范围称为pod的生命周期,它主要�
   * livenessProbe存活性探测
   * readinessProbe就绪性探测
 - [pod生命周期-pod终止过程](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)
-- [pod生命周期-pod状态](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)
+~~- [pod生命周期-pod状态](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)~~
 
 ## 7、1 pause容器
 pause是一个"暂停"的容器, 它的作用是: 解决pod的网络和存储的问题  
