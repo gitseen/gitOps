@@ -478,7 +478,7 @@ HOME=/root
 **创建pause容器 → 创建 → 调度 → 初始化init容器启动→ 主容器启动mainContainer → 主容器postStart启动后钩子 → 主容器preStop终止前钩子 → 主容器探针检测 → 主容器运行Running → 终止Termination → 清理**  
 
 pod对象从创建至终的这段时间范围称为pod的生命周期,它主要包含下面的过程：  
-- [pause容器](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)
+- [pause容器](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#71-pause容器)
 - [pod创建过程](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)
 - [运行初始化容器(initContainer)过程](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)
 - [主运行主容器(mainContainer)](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)
