@@ -484,8 +484,8 @@ HOME=/root
 
 pod对象从创建至终的这段时间范围称为pod的生命周期,它主要包含下面的过程：  
 - [pod生命周期-pod基础容器Pause](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#71-pause容器)
-- [pod生命周期-pod阶段](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#pod阶段)
-- [pod生命周期-pod创建](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)
+- [pod生命周期-pod阶段](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#72-pod阶段)
+- [pod生命周期-pod创建](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#73-pod创建)
 - [pod生命周期-初始化容器运行(initContainer)](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)
 - [pod生命周期=主容器运行(mainContainer)](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)
 - [pod生命周期-主容器钩子函数](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)
@@ -555,6 +555,7 @@ Pod阶段phase是Pod在其生命周期中的简单宏观概述,该阶段并不�
 Pod的"status"字段是一个PodStatus对象,其中包含"phase"字段 (Pod.status.phase)  
 ```bash
 kubectl get pod podName -o yaml | grep phase
+kubectl get pod podName -o jsonpath="{.status.phase}"
 ```
 
 ## 7.2.1 pod生命周期的几个阶段
@@ -584,7 +585,7 @@ k8ss首先会通过创建一个新的Pod来实现更新。然后k8s将停止旧P
 ***Pod的生命周期示意图,从图中可以看到Pod状态的变化***  
 ![Pod状态的变化1](pic/podphase1.png)
 ![pod状态的变化2](pic/podphase2.png)
-![Pod状态的变化3](pic/podphase3.pjpeg)
+![Pod状态的变化3](pic/podphase3.jpeg)
 ![pod状态的变化4](pic/podphase4.png)
 
 
