@@ -550,21 +550,27 @@ kubernetes中的pause容器主要为每个业务容器提供以下功能
 - 设计意义：通过解耦Pod基础设施与业务容器,k8s实现了更灵活的容器编排能力  
 - 理解Pause容器的作用,有助于深入掌握k8s的网络模型、资源隔离机制以及多容器协作原理  
 
+## 7.2 pod阶段
+Pod阶段phase是Pod在其生命周期中的简单宏观概述,该阶段并不是对容器或Pod的综合汇总,也不是为了做为综合状态机   
+Pod的"status"字段是一个PodStatus对象,其中包含"phase"字段 (Pod.status.phase)  
+```bash
+kubectl get pod podName -o yaml | grep phase
+```
 
 ## 7.2.1 pod生命周期的几个阶段
 - 1.创建阶段在创建新Pod时  
 k8s首先会检查使用的容器镜像是否存在,并检查Pod配置是否正确。如果一切正常,k8ss将创建一个名为"Pending"的初始状态  
 
-- 2. 运行阶段一旦Pod处于Pending状态  
+- 2.运行阶段一旦Pod处于Pending状态  
 k8s将开始为它分配资源并启动容器。当所有容器都成功启动后,Pod将进入"Running"状态  
 
-- 3. 容器故障恢复阶段在运行期间  
+- 3.容器故障恢复阶段在运行期间  
 如果某个容器意外终止,则k8s将自动重启该容器。如果该容器无法自动重启,则Pod将进入"Failed"状态  
 
-- 4. 更新阶段在进行更新操作时  
+- 4.更新阶段在进行更新操作时  
 k8ss首先会通过创建一个新的Pod来实现更新。然后k8s将停止旧Pod中的容器,并将它们迁移到新Pod中。一旦所有容器都成功迁移,旧Pod将被删除,"Rolling Update"完成   
 
-- 5. 删除阶段当Pod不再需要时  
+- 5.删除阶段当Pod不再需要时  
 可以通过删除Pod对象来释放资源。k8s将删除所有关联的容器,并从集群中删除该Pod对象  
 
 ## 7.2.2 pod生命周期的常见状态
@@ -575,11 +581,10 @@ k8ss首先会通过创建一个新的Pod来实现更新。然后k8s将停止旧P
 - Failed失败：pod中的所有容器都已终止了,但至少有一个容器是因为失败终止,即容器返回了非0值的退出状态
 - Unknown未知：apiServer无法获取得pod对象的状态信息,通常是因为与Pod所在主机网络通信失败  
 
-
 ***Pod的生命周期示意图,从图中可以看到Pod状态的变化***  
-[Pod状态的变化1](pic/podphase1.png)
-[pod状态的变化2](pic/podphase2.png)
-[Pod状态的变化3](pic/podphase3.pjpeg)
-[pod状态的变化4](pic/podphase4.png)
+![Pod状态的变化1](pic/podphase1.png)
+![pod状态的变化2](pic/podphase2.png)
+![Pod状态的变化3](pic/podphase3.pjpeg)
+![pod状态的变化4](pic/podphase4.png)
 
 
