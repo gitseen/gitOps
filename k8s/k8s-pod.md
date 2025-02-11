@@ -588,4 +588,28 @@ k8ss首先会通过创建一个新的Pod来实现更新。然后k8s将停止旧P
 ![Pod状态的变化3](pic/podphase3.jpeg)
 ![pod状态的变化4](pic/podphase4.png)
 
+## 7.3 pod创建
+```mermaid
+%%{init:{"theme":"neutral"}}%%
+sequenceDiagram
+    actor me
+    participant apiSrv as 控制面<br><br>api-server
+    participant etcd as 控制面<br><br>etcd 数据存储
+    participant cntrlMgr as 控制面<br><br>控制器管理器
+    participant sched as 控制面<br><br>调度器
+    participant kubelet as 节点<br><br>kubelet
+    participant container as 节点<br><br>容器运行时
+    me->>apiSrv: 1. kubectl create -f pod.yaml
+    apiSrv-->>etcd: 2. 保存新状态
+    cntrlMgr->>apiSrv: 3. 检查变更
+    sched->>apiSrv: 4. 监视未分派的 Pod(s)
+    apiSrv->>sched: 5. 通知 nodename=" " 的 Pod
+    sched->>apiSrv: 6. 指派 Pod 到节点
+    apiSrv-->>etcd: 7. 保存新状态
+    kubelet->>apiSrv: 8. 查询新指派的 Pod(s)
+    apiSrv->>kubelet: 9. 将 Pod 绑定到节点
+    kubelet->>container: 10. 启动容器
+    kubelet->>apiSrv: 11. 更新 Pod 状态
+    apiSrv-->>etcd: 12. 保存新状态
+```
 
