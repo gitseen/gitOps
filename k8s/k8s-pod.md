@@ -473,7 +473,14 @@ HOME=/root
  
 在这段时间中,Pod会处于多种不同的状态,并执行一系统操作,操作如下： 
  
-**创建pause容器 → 创建 → 调度 → 初始化init容器启动→ 主容器启动mainContainer → 主容器postStart启动后钩子 → 主容器preStop终止前钩子 → 主容器探针检测 → 主容器运行Running → 终止Termination → 清理**  
+**创建pause容器 → 创建 → 调度 → 初始化init容器启动→ 主容器启动mainContainer → 主容器postStart启动后钩子 → 主容器preStop终止前钩子 → 主容器探针检测 → 主容器运行Running → 终止Termination → 清理**   
+
+***pod生命周期架构图***    
+![pod生命周期图1](pic/podlife1.png)  
+![pod生命周期图2](pic/podlife2.png)  
+![pod生命周期图3](pic/podlife3.png)  
+![pod生命周期图4](pic/podlife4.png)  
+![pod生命周期图5](pic/podlife5.jpeg)  
 
 pod对象从创建至终的这段时间范围称为pod的生命周期,它主要包含下面的过程：  
 - [pod生命周期-pod基础容器Pause](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#71-pause容器)
@@ -542,4 +549,5 @@ kubernetes中的pause容器主要为每个业务容器提供以下功能
 - 生命周期绑定：Pause容器的启动、运行和终止与Pod的生命周期完全同步  
 - 设计意义：通过解耦Pod基础设施与业务容器,k8s实现了更灵活的容器编排能力  
 - 理解Pause容器的作用,有助于深入掌握k8s的网络模型、资源隔离机制以及多容器协作原理  
+
 
