@@ -430,6 +430,12 @@ df -Th|grep -E 'ext4|xfs'|awk  '{print $6}'|sed 's/%//'|sed -n '/[7-9][0-9]/p'
 
 echo -e  "\e[1;32m sshd service optimization \e[0m"
 
+df -Thi inodes100%
+find / -xdev -type f | cut -d "/" -f 2 | sort | uniq -c | sort -nr | head -20
+yum -y install ncdu
+ncdu --si
+
+
 ifconfig|grep [a-z]*cast
 ip a|grep inet|grep brd
 
