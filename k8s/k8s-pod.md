@@ -612,4 +612,19 @@ sequenceDiagram
     kubelet->>apiSrv: 11. 更新 Pod 状态
     apiSrv-->>etcd: 12. 保存新状态
 ```
+***Pod是k8ss的基础单元,pod创建过程:  ***   
+```bash
+①用户通过kubectl或其他API客户端提交Pod.Spec给APIServer。
+②APIServer尝试将Pod对象的相关信息存储到etcd中,等待写入操作完成,APIServer返回确认信息到客户端。
+③APIServer开始反映etcd中的状态变化。
+④所有的k8s组件通过"watch"机制跟踪检查APIServer上的相关信息变动。
+⑤kube-scheduler调度器通过其"watcher"检测到APIServer创建了新的Pod对象但是没有绑定到任何工作节点。
+⑥kube-scheduler为Pod对象挑选一个工作节点并将结果信息更新到APIServer。
+⑦调度结果新消息由APIServer更新到etcd,并且APIServer也开始反馈该Pod对象的调度结果。
+⑧Pod被调度到目标工作节点上的kubelet尝试在当前节点上调用docker-engine进行启动容器,并将容器的状态结果返回到APIServer。
+⑨APIServer将Pod信息存储到etcd系统中。
+⑩在etcd确认写入操作完成,APIServer将确认信息发送到相关的kubelet。
+```
+
+
 
