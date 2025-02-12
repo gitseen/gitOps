@@ -483,6 +483,7 @@ HOME=/root
 ![pod生命周期图3](pic/podlife3.png)  
 ![pod生命周期图4](pic/podlife4.png)  
 ![pod生命周期图5](pic/podlife5.jpeg)  
+![pod生命周期图6](pic/podlife6.png)  
 
 pod对象从创建至终的这段时间范围称为pod的生命周期,它主要包含下面的过程：  
 - [pod生命周期-pod基础容器Pause](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#71-pause容器)
@@ -671,6 +672,124 @@ sequenceDiagram
 - 由于Init容器必须在应用容器启动之前运行完成,因此Init容器提供了一种机制来阻塞或延迟应用容器的启动,直到满足了一组先决条件;一旦前置条件满足,Pod内的所有的应用容器会并行启动。
 
 ### 7.4.3 initContainer示例
+
+<details>
+  <summary>initContainers-域名解析示例</summary>
+  <pre><code>
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service-1
+spec:
+  ports:
+   - protocol: TCP
+     port: 80
+     targetPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service-2
+spec:
+  ports:
+   - protocol: TCP
+     port: 80
+     targetPort: 8080
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: init-demo
+  labels:
+    app: init-app
+spec:
+  containers:
+  - name: my-init-demo
+    image: fangjiaxiaobai/my-app:v1
+    command: ["sh", "-c", "echo the app is running! && sleep 3600"]
+  initContainers:
+  - name: init-myservice-1
+    image: busybox
+    command: ['sh', '-c', "until nslookup my-service-1; do echo 'waiting for my-service-1'; sleep 2; done;"]
+    #command: ['/bin/sh', '-c', 'until ping 192.168.23.188 -c 1; do echo waiting for mysql; sleep 3; done;']
+  - name: init-myservice-2
+    image: busybox
+    command: ['sh', '-c', "until nslookup my-service-2; do echo 'waiting for my-service-2'; sleep 2; done;"]
+    #command: ['/bin/sh', '-c', 'until ping 192.168.23.189 -c 1; do echo waiting for redis; sleep 3; done;']
+#验证
+kubectl create -f init-demo.yaml
+kubectl get pods -w -o wide
+kubectl logs -f init-demo -c init-myservice-1
+kubectl logs -f init-demo -c init-myservice-2
+kubectl logs -f init-demo
+Defaulted container "my-init-demo" out of: my-init-demo, init-myservice-1 (init), init-myservice-2 (init)
+the app is running!
+  </code></pre>
+</details>
+
+<details>
+  <summary>initContainers-busybox</summary>
+  <pre><code>
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: myservice
+spec:
+  selector:
+    app: myservice
+  ports:
+    - port: 80
+      targetPort: 9376
+      protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mydb
+spec:
+  selector:
+    app: mydb
+  ports:
+    - port: 80
+      targetPort: 9377
+      protocol: TCP
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: initcpod-test
+  labels:
+    app: initcpod-test
+spec:
+  containers:
+    - name: initcpod-test
+      image: busybox:1.32.0
+      imagePullPolicy: IfNotPresent
+      command: ['sh','-c','echo The app is running! && sleep 3600']
+  initContainers:
+    - name: init-myservice
+      image: busybox:1.32.0
+      imagePullPolicy: IfNotPresent
+      command: ['sh','-c','until nslookup myservice; do echo waitting for myservice; sleep 2;done;']
+    - name: init-mydb
+      image: busybox:1.32.0
+      imagePullPolicy: IfNotPresent
+      command: ['sh','-c','until nslookup mydb; do echo waitting for mydb; sleep 2;done;']
+  restartPolicy: Always
+#先查看pod启动情况kubectl get pods
+#详细查看pod启动情况kubectl describe pod initcpod-test
+#查看initcpod-test中的第一个initContainer日志kubectl logs initcpod-test -c init-myservice
+#运行init服务kubectl apply -f init.yml
+#查看init服务运行情况kubectl get svc
+#查看initcpod-test运行情况,需要耐心等一会,会发现pod的第一个init已经就绪kubectl get pods
+#查看init-myservice服务运行情况kubectl get svc
+#查看initcpod-test运行情况,需要耐心等一会,会发现pod的两个init已经就绪,pod状态为ready
+kubectl get pod -w
+  </code></pre>
+</details>
+
 
 
 
