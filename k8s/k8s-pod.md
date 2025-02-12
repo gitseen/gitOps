@@ -215,11 +215,13 @@ kubectl run my-standalone-pod --image=192.168.11.247/web-demo/goweb-demo:2022122
 
 **创建pod的容器分类**  
 * 1、基础容器: pause
-* 2、init(初始化状态):init c 1和2过程中,pod的状态init 1/3
-* 3、业务容器
+* 2、initContainer(初始化状态):init c 1和2过程中,pod的状态init 1/3
+* 3、manContainer业务容器
 
+每个Pod都有一个特殊的被称为"根容器"的Pause容器  
+Pause容器对应的镜像属于k8s平台的一部分,除了Pause容器，每个Pod还包含一个或者多个紧密相关的用户业务容器和init初始化容器  
+![pod组成图](pic/pod1.png)
 
-----
  
 ## 4POD内容器间资源共享实现机制
 ### 4.1Pod共享数据的机制
@@ -486,8 +488,8 @@ pod对象从创建至终的这段时间范围称为pod的生命周期,它主要�
 - [pod生命周期-pod基础容器Pause](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#71-pause容器)
 - [pod生命周期-pod阶段](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#72-pod阶段)
 - [pod生命周期-pod创建](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#73-pod创建)
-- [pod生命周期-initContainer初始化容器运行](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)
-- [pod生命周期-mainContainer主容器运行](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)
+- [pod生命周期-initContainer初始化容器运行](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#74-initcontainer初始化容器运行)
+- [pod生命周期-mainContainer主容器运行](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#75-mainContainer主容器运行)
 - [pod生命周期-主容器钩子函数](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)
   * postStart启动后钩子
   * preStop终止前钩子
@@ -602,7 +604,7 @@ k8ss首先会通过创建一个新的Pod来实现更新。然后k8s将停止旧P
 ![pod状态的变化4](pic/podphase4.png)
 
 ## 7.3 pod创建
-![pod的创建过程](pic/podcreate1,png)  
+![pod的创建过程](pic/podcreate1.png)  
 
 ```mermaid
 %%{init:{"theme":"neutral"}}%%
