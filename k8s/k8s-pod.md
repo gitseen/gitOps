@@ -508,19 +508,21 @@ Infracontainer是一个非常小的镜像,大概700KB 左右,是一个C语言写
 Pod里运行着一个特殊的被称之为Pause的容器,其他容器则为业务容器,这些业务容器共享Pause容器的网络栈和Volume挂载卷,因此他们之间通信和数据交换更为高效  
 
 pause共享两种资源(存储、网络)  
-网络： 每个pod都会被分配一个集群内部的唯一ip地址,pod内的容器共享网络,pod在集群内部的ip地址和端口;  
-       pod内部的容器可以使用localhost互相通信,pod中的容器与外部通信时,从共享的资源当中进行分配,宿主机的端口映射    
-存储： pod可以指定共享的volume,pod内的容器共享这些volume,volume可以实现持久化。防止pod重新构建之后文件消失  
+- 网络：   
+         每个pod都会被分配一个集群内部的唯一ip地址,pod内的容器共享网络,pod在集群内部的ip地址和端口;  
+         pod内部的容器可以使用localhost互相通信,pod中的容器与外部通信时,从共享的资源当中进行分配,宿主机的端口映射    
+- 存储： 
+         pod可以指定共享的volume,pod内的容器共享这些volume,volume可以实现持久化。防止pod重新构建之后文件消失  
 
 Pause容器也称为"Infra容器"或"Sandbox容器"是Pod生命周期中一个非常关键的底层组件  
 Pause它虽然看似"透明"但对Pod的稳定性和功能实现起着核心作用,以下是Pod生命周期与Pause容器的关系  
 
 ### 7.1.1、Pause容器的核心作用
 kubernetes中的pause容器主要为每个业务容器提供以下功能
-- PID命名空间：Pod中的不同应用程序可以看到其他应用程序的进程ID,pid命名空间开启init进程;所有容器共享同一个进程树(通过kubectl exec看进程)
+- PID命名空间： Pod中的不同应用程序可以看到其他应用程序的进程ID,pid命名空间开启init进程;所有容器共享同一个进程树(通过kubectl exec看进程)
 - 网络命名空间：Pod中的多个容器能够共享同一个IP和端口范围;所有Pod内容器共享同一个IP和端口空间  
-- IPC命名空间：Pod中的多个容器能够使用SystemV IPC或POSIX消息队列进行通信;允许容器间通过进程间通信(如共享内存)  
-- UTS命名空间：Pod中的多个容器共享一个主机名;Volumes(共享存储卷)  
+- IPC命名空间： Pod中的多个容器能够使用SystemV IPC或POSIX消息队列进行通信;允许容器间通过进程间通信(如共享内存)  
+- UTS命名空间： Pod中的多个容器共享一个主机名;Volumes(共享存储卷)  
 ![pod状态的变化2](pic/podphase0.png)  
 
 ### 7.1.2、Pause容器与Pod生命周期的关系
@@ -591,6 +593,7 @@ k8s首先会通过创建一个新的Pod来实现更新。然后k8s将停止旧Po
 
 - 5.删除阶段当Pod不再需要时  
 可以通过删除Pod对象来释放资源。k8s将删除所有关联的容器,并从集群中删除该Pod对象  
+![pod状态的变化4](pic/podphase4.png)  
 
 ## 7.2.2 pod生命周期的常见状态
 ***pod生命周期的几个状态phase值*** 
@@ -600,7 +603,6 @@ k8s首先会通过创建一个新的Pod来实现更新。然后k8s将停止旧Po
 - Failed失败：pod中的所有容器都已终止了,但至少有一个容器是因为失败终止,即容器返回了非0值的退出状态
 - Unknown未知：apiServer无法获取得pod对象的状态信息,通常是因为与Pod所在主机网络通信失败  
 ![pod状态的变化2](pic/podphase2.png)  
-![pod状态的变化4](pic/podphase4.png)  
 
 ***Pod的生命周期示意图,从图中可以看到Pod状态的变化***  
 ![Pod状态的变化1](pic/podphase1.png)
