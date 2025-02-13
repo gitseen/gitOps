@@ -206,11 +206,11 @@ kubectl run my-standalone-pod --image=192.168.11.247/web-demo/goweb-demo:2022122
 - 动态Pod通过控制器创建和管理,适用于大多数生产环境中的工作负载 
 
 **[容器类型](https://mp.weixin.qq.com/s/-TXbvQiR-tpB0RgQ5d-QDw)**  
-- 基础容器(pause container)  
-- 初始化容器(init container)  
-- Sidecar Container: 边车容器  
-- Ephemeral Container: 临时容器  
-- Multi Container: 多容器  
+- 基础容器(pausecontainer)  
+- 初始化容器(initcontainer)  
+- [SidecarContainer: 边车容器](https://kubernetes.io/zh-cn/docs/concepts/workloads/pods/sidecar-containers/#sidecar-example)  
+- EphemeralContainer: 临时容器  
+- MultiContainer: 多容器  
 - 普通容器(业务容器/应用容器)  
 
 **创建pod的容器分类**  
