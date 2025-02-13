@@ -622,7 +622,7 @@ sequenceDiagram
     kubelet->>apiSrv: 11. 更新 Pod 状态
     apiSrv-->>etcd: 12. 保存新状态
 ```
-***Pod是k8ss的基础单元,pod创建过程:  ***   
+***Pod是k8s的基础单元,pod创建过程***  
 ```bash
 ①用户通过kubectl或其他API客户端提交Pod.Spec给APIServer。
 ②APIServer尝试将Pod对象的相关信息存储到etcd中,等待写入操作完成,APIServer返回确认信息到客户端。
