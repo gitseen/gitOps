@@ -975,7 +975,7 @@ InitContainer是k8s中实现 启动顺序控制 和 初始化依赖管理 的关
     - 收到SIGTERM信号,执行预设的清理逻辑(如关闭数据库连接)  
     - 默认等待30秒(可配置terminationGracePeriodSeconds)  
   * 强制终止：超时后发送SIGKILL强制终止容器  
-    - ```bah
+    ```bash
     kubectl delete ns ns_name --force --grace-period=0  
     kubectl delete pod pod_name --force --grace-period=0  
     ```
