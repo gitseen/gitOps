@@ -556,17 +556,15 @@ kubernetes中的pause容器主要为每个业务容器提供以下功能
 - 生命周期绑定：Pause容器的启动、运行和终止与Pod的生命周期完全同步  
 - 设计意义：通过解耦Pod基础设施与业务容器,k8s实现了更灵活的容器编排能力  
 - 理解Pause容器的作用,有助于深入掌握k8s的网络模型、资源隔离机制以及多容器协作原理  
-
 ```bash
-puse基础容器( infrastructure. container)
+puse基础容器infrastructure.container)
      维护整个Pod网络和存储空间。
-      启动一个容器时,k8s会自动启动一个基础容器
+     启动一个容器时,k8s会自动启动一个基础容器
 cat /opt/kubernetes/cfg/kubelet
 ......
 --pod-infra-container-image=registry.cn-hangzhou.aliyuncs.com/google-containers/pause:3.0
 每次创建Pod时候就会创建,运行的每一个容器都有一个pause的基础容器自动会运行,对于用户是透明的：
-
-docker ps -a 
+docker ps -a|grep pause 
 registry .cn-hangzhou .aliyuncs. com/ google-containers/pause:3.0  "/pause"
 ```
 
