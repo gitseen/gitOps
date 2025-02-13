@@ -504,7 +504,7 @@ pod对象从创建至终的这段时间范围称为pod的生命周期,它主要�
 ## 7、1 pause容器
 pause是一个"暂停"的容器, 它的作用是: 解决pod的网络和存储的问题   
 pause容器称为InfraContainer,其他的容器称为业务容器(mianContainer)  
-Infracontainer是一个非常小的镜像,大概700KB 左右,是一个C语言写的、永远处于"暂停"状态的容器  
+Infracontainer是一个非常小的镜像,是一个C语言写的、永远处于"暂停"状态的容器  
 Pod里运行着一个特殊的被称之为Pause的容器,其他容器则为业务容器,这些业务容器共享Pause容器的网络栈和Volume挂载卷,因此他们之间通信和数据交换更为高效  
 
 pause共享两种资源(存储、网络)  
@@ -680,7 +680,7 @@ spec:
   - 目标不同：initContainer负责初始化,主容器运行业务逻辑    
   - 生命周期：initContainer执行完成后立即终止,主容器持续运行  
   - 资源隔离：initContainer可以独立配置资源(CPU/内存)和镜像    
-  - initContainer不支持探针livenessProbe、readinessProbe   
+  - initContainer不支持探针startupProbe、livenessProbe、readinessProbe   
 * 共享机制    
   - initContainer与mainContainer主容器共享同一Pod的Volume、网络命名空间、但文件系统隔离(除非显式挂载)  
 
@@ -931,6 +931,133 @@ spec:
 InitContainer是k8s中实现 启动顺序控制 和 初始化依赖管理 的关键机制   
 通过将初始化任务与业务逻辑解耦，显著提升了应用的可靠性和可维护性   
 合理使用InitContainer可以避免主容器因依赖未就绪而频繁崩溃,是复杂应用部署的必备工具 
+
+## 7.5 mainContainer主容器运行
+在k8s中,Pod是最小的调度和部署单元,包含一个或多个共享网络和存储资源的容器(如主容器、Sidecar容器、Init容器)等而主容器mainContainer是Pod中运行核心业务逻辑的容器。  
+### 7.5.1 mainContainer主容器核心特性
+- 容器共享同一网络命名空间(通过localhost通信)   
+- 容器共享同一组存储卷Volumes   
+- 生命周期统一管理(调度、启动、终止)   
+
+### 7.5.2 mainContainer主容器的核心作用
+主容器是Pod中承担核心业务逻辑的容器
+- 运行Web服务器Nginx、Apache 
+- 执行微服务如SpringBoot、Node.js应用  
+- 处理数据任务如Spark、Flink作业  
+
+| 主容器的关键特性  | 说明 |
+| --------- | ------- |
+| 启动顺序 | 在Init容器全部成功后启动  |
+| 生命周期 | 持续运行,直到任务完成或Pod被删除  |
+| 资源隔离 | 可独立配置CPU/内存资源(requests和limits)  |
+| 健康检查 | 支持探针startupProbe启动探针、livenessProbe就绪探针、readinessProbe存活探针  |
+| 日志与监控 | 日志通过标准输出(stdout/stderr)收集,监控通过暴露的指标端点实现  |
+
+### 7.5.3 mainContainer主容器的生命周期管理
+- 1.动流程  
+  * Pod调度：由调度器Scheduler分配到合适节点  
+  * Init容器执行：Init容器按顺序执行并成功退出  
+  * 主容器启动  
+    - 拉取镜像(若本地不存在)  
+    - 挂载Volume(如ConfigMap、Secret、emptyDir)  
+    - 执行启动命令(command、args)  
+- 2.运行阶段
+  * 健康检查  
+    - startupProbe: 检查成功才由存活检查接手,用于保护慢启动容器(检测pod内的容器是否已经启动成功并准备好接收流量)  
+    - livenessProbe：检测容器是否存活(失败则重启容器)
+    - readinessProbe：检测容器是否就绪(失败则从Service的Endpoints移除）
+    
+  * 资源管理
+    - 根据resources.requests和resources.limits限制CPU/内存使用   
+  
+- 3. 终止流程  
+  * 优雅终止(Graceful Shutdown）  
+    - 收到SIGTERM信号,执行预设的清理逻辑(如关闭数据库连接)  
+    - 默认等待30秒(可配置terminationGracePeriodSeconds)  
+  * 强制终止：超时后发送SIGKILL强制终止容器  
+    -  kubectl delete ns ns_name --force --grace-period=0  
+    -  kubectl delete pod pod_name --force --grace-period=0  
+
+### 7.5.4 mainContainer主容器的配置示例
+<details>
+  <summary>mainContainer主容器的配置示例</summary>
+  <pre><code>
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp-pod
+spec:
+  initContainers:          # 初始化容器（可选）
+    - name: init-config
+      image: busybox
+      command: ["sh", "-c", "echo 'Initializing...'"]
+  containers:             # 主容器（必选）
+    - name: main-app      # 主容器名称
+      image: nginx:1.25   # 主容器镜像
+      #command: ["python"]        #覆盖镜像默认命令  可省
+      #args: ["-m", "http.server", "8000"]  #传递参数  可省
+      ports:
+        - containerPort: 80
+      resources:          # 主容器（资源限制）
+        requests:
+          cpu: "100m"
+          memory: "128Mi"
+        limits:
+          cpu: "200m"
+          memory: "256Mi"
+      startupProbe:      # 主容器(启动探针）
+          httpGet:
+            path: /login
+            port: 8090
+          failureThreshold: 30
+          periodSeconds: 10
+      livenessProbe:      # 主容器（存活探针）
+        httpGet:
+          path: /healthz
+          port: 8080
+        initialDelaySeconds: 10  #容器启动后等待10秒开始探测
+        periodSeconds: 5         #每5秒检查一次
+      readinessProbe:       # 主容器（就绪探针）
+        tcpSocket:
+          port: 8080
+        initialDelaySeconds: 5
+        periodSeconds: 10
+      env:                  # 主容器（环境变量传递）
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name:  TZ
+          value： Asia/Shanghai
+        - name: CSE-SERVERURL
+          value: https://www.g.cn
+      volumeMounts:          # 主容器（存储挂载）
+        - name: main-app-data
+          mountPath: /data
+        - name: main-app-sidecar
+      volumeMounts:
+        - name: shared-data
+          mountPath: /sidecar-data 
+    volumes: #   定义一组挂载设备(宿主机或ConfigMap、Secret、emptyDir) 
+      - name: volume #定义一个挂载设备的名字
+        #meptyDir: {}       
+        hostPath:
+          path: /opt #挂载设备类型为hostPath,路径为宿主机下的/opt,这里设备类型支持很多种
+#主容器频繁重启问题
+kubectl get events --field-selector involvedObject.name=<pod-name>
+    </code></pre>
+</details>
+
+***mainContainer主容器运行总结***  
+pod是容器编排的核心单元,主容器是其运行业务逻辑的核心组件。  
+主容器与Init容器、Sidecar容器协作,通过共享网络和存储实现高效通信。  
+合理配置资源、健康检查和生命周期管理,是保障应用稳定性的关键。
+
 
 
 
