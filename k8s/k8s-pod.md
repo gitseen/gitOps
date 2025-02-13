@@ -970,14 +970,15 @@ InitContainer是k8s中实现 启动顺序控制 和 初始化依赖管理 的关
   * 资源管理
     - 根据resources.requests和resources.limits限制CPU/内存使用   
   
-- 3. 终止流程  
+- 3.终止流程  
   * 优雅终止(Graceful Shutdown）  
     - 收到SIGTERM信号,执行预设的清理逻辑(如关闭数据库连接)  
     - 默认等待30秒(可配置terminationGracePeriodSeconds)  
   * 强制终止：超时后发送SIGKILL强制终止容器  
-    -  kubectl delete ns ns_name --force --grace-period=0  
-    -  kubectl delete pod pod_name --force --grace-period=0  
-
+    - ```bah
+    kubectl delete ns ns_name --force --grace-period=0  
+    kubectl delete pod pod_name --force --grace-period=0  
+    ```
 ### 7.5.4 mainContainer主容器的配置示例
 <details>
   <summary>mainContainer主容器的配置示例</summary>
