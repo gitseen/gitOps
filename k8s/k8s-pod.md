@@ -640,6 +640,31 @@ sequenceDiagram
 每个Pod中可以包含多个容器, 应用运行在这些容器里面,同时Pod也可以有一个或多个先于应用容器启动的Init容器。    
 初始化容器是在pod的主容器启动之前要运行的容器,主要是做一些主容器的前置工作;init容器不是必须的,取决于需求。  
 
+<details>
+  <summary>initContainers构建manContainers的前置工作</summary>
+  <pre><code>
+--- 
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+spec:
+  initContainers:
+  - name: init-container-1
+    image: busybox
+    command: ["sh", "-c", "echo Initializing...; sleep 5"]
+  - name: init-container-2
+    image: alpine
+    command: ["sh", "-c", "echo Performing setup...; sleep 10"]
+  containers:
+  - name: main-container
+    image: my-app-image
+    # 主应用容器的配置
+    # ...
+    # ...
+  </code></pre>
+</details>
+
 ### 7.4.1 initContainer的特点
 **initContainer它具有两大特征** 
 - initContainer初始化容器必须运行完成直至结束,若某初始化容器运行失败,那么k8s需要重启它直到成功完成  
