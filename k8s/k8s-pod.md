@@ -565,6 +565,13 @@ kubectl get pod podName -o yaml | grep phase
 
 kubectl get pod podName -o jsonpath="{.status.phase}"
 ```
+| Pod的阶段  | 描述 |     
+| --------- | :-------: | 
+| Pending | k8s已经开始创建Pod但由于Pod中的容器还未创建成功,所以Pod还处于挂起的状态。这时Pod可能在等待被调度,或者在等待下载镜像  |
+| Runging | Pod已经被调度到某个节点上了,Pod中的所有容器都已被成功创建,并且至少有一个容器正处于启动、重启、运行这3个状态中的1个  |
+| Success | Pod中的所有容器都已成功执行完成,并且不会再重启  |
+| Failed  | Pod所有容器都已经停止运行,并且至少有一个容器是因为失败而退出(即容器以非0状态退出或者被系统强制终止)  |
+| Unknown | 因为某些原因导致无法取得Pod的状态。这种情况通常是由于网络的造成,例如Pod所在主机通信失败等  |
 
 ## 7.2.1 pod生命周期的几个阶段
 - 1.创建阶段在创建新Pod时  
