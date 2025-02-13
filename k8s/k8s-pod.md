@@ -893,6 +893,40 @@ kubectl logs myapp-pod -c init-mydb      # 查看第二个Init容器
   </code></pre>
 </details>
 
+<details>
+  <summary>initContainers-生成配置文件</summary>
+  <pre><code>
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp-pod
+spec:
+  initContainers:
+    - name: init-service-check
+      image: busybox:1.28
+      command: ['sh', '-c', 'until nslookup mysql-service; do echo "Waiting for MySQL..."; sleep 2; done']
+    - name: init-config-download
+      image: alpine/curl
+      command: ['curl', '-o', '/app/config.yaml', 'https://config-server/config.yaml']
+      volumeMounts:
+        - name: app-config
+          mountPath: /app
+  containers:
+    - name: main-app
+      image: myapp:1.0
+      volumeMounts:
+        - name: app-config
+          mountPath: /etc/app
+  volumes:
+    - name: app-config
+      emptyDir: {}
+#init-service-check：等待MySQL服务的DN 解析可用
+#init-config-download：从远程服务器下载配置文件到共享Volume app-config 
+#主容器 main-app：使用已下载的配置文件启动应用  
+  </code></pre>
+</details>
+
 ***initContainer总结***  
 InitContainer是k8s中实现 启动顺序控制 和 初始化依赖管理 的关键机制   
 通过将初始化任务与业务逻辑解耦，显著提升了应用的可靠性和可维护性   
