@@ -202,7 +202,7 @@ kubectl run my-standalone-pod --image=192.168.11.247/web-demo/goweb-demo:2022122
 
 **Pod类型总结**  
 - 静态Pod用于运行需要在所有节点上运行的服务,不受k8sAPI服务管理  
-- 自主式Pod通常用于一次性任务或测试目的,直接通过k8ssAPI服务创建  
+- 自主式Pod通常用于一次性任务或测试目的,直接通过k8sAPI服务创建  
 - 动态Pod通过控制器创建和管理,适用于大多数生产环境中的工作负载 
 
 **[容器类型](https://mp.weixin.qq.com/s/-TXbvQiR-tpB0RgQ5d-QDw)**  
@@ -502,24 +502,26 @@ pod对象从创建至终的这段时间范围称为pod的生命周期,它主要�
 ~~- [pod生命周期-pod状态](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)~~  
 
 ## 7、1 pause容器
-pause是一个"暂停"的容器, 它的作用是: 解决pod的网络和存储的问题  
-
-pause容器称为Infra Container,其他的容器称为业务容器。Infra container是一个非常小的镜像,大概700KB 左右,是一个C语言写的、永远处于"暂停"状态的容器  
-
+pause是一个"暂停"的容器, 它的作用是: 解决pod的网络和存储的问题   
+pause容器称为InfraContainer,其他的容器称为业务容器(mianContainer)  
+Infracontainer是一个非常小的镜像,大概700KB 左右,是一个C语言写的、永远处于"暂停"状态的容器  
 Pod里运行着一个特殊的被称之为Pause的容器,其他容器则为业务容器,这些业务容器共享Pause容器的网络栈和Volume挂载卷,因此他们之间通信和数据交换更为高效  
 
 pause共享两种资源(存储、网络)  
-网络： 每个pod都会被分配一个集群内部的唯一ip地址,pod内的容器共享网络,pod在集群内部的ip地址和端口。pod内部的容器可以使用localhost互相通信  
-      pod中的容器与外部通信时,从共享的资源当中进行分配,宿主机的端口映射  
-存储： pod可以指定共享的volume,pod内的容器共享这些volume,volume可以实现持久化。防止pod重新构建之后文件消失    
+网络： 每个pod都会被分配一个集群内部的唯一ip地址,pod内的容器共享网络,pod在集群内部的ip地址和端口;  
+       pod内部的容器可以使用localhost互相通信,pod中的容器与外部通信时,从共享的资源当中进行分配,宿主机的端口映射    
+存储： pod可以指定共享的volume,pod内的容器共享这些volume,volume可以实现持久化。防止pod重新构建之后文件消失  
 
-Pause容器也称为"Infra容器"或"Sandbox容器"是Pod生命周期中一个非常关键的底层组件。它虽然看似"透明",但对Pod的稳定性和功能实现起着核心作用,以下是Pod生命周期与Pause容器的关系  
+Pause容器也称为"Infra容器"或"Sandbox容器"是Pod生命周期中一个非常关键的底层组件  
+Pause它虽然看似"透明"但对Pod的稳定性和功能实现起着核心作用,以下是Pod生命周期与Pause容器的关系  
+
 ### 7.1.1、Pause容器的核心作用
 kubernetes中的pause容器主要为每个业务容器提供以下功能
 - PID命名空间：Pod中的不同应用程序可以看到其他应用程序的进程ID,pid命名空间开启init进程;所有容器共享同一个进程树(通过kubectl exec看进程)
 - 网络命名空间：Pod中的多个容器能够共享同一个IP和端口范围;所有Pod内容器共享同一个IP和端口空间  
 - IPC命名空间：Pod中的多个容器能够使用SystemV IPC或POSIX消息队列进行通信;允许容器间通过进程间通信(如共享内存)  
 - UTS命名空间：Pod中的多个容器共享一个主机名;Volumes(共享存储卷)  
+![pod状态的变化2](pic/podphase0.png)  
 
 ### 7.1.2、Pause容器与Pod生命周期的关系
 - Pod启动阶段  
@@ -576,7 +578,7 @@ kubectl get pod podName -o jsonpath="{.status.phase}"
 
 ## 7.2.1 pod生命周期的几个阶段
 - 1.创建阶段在创建新Pod时  
-k8s首先会检查使用的容器镜像是否存在,并检查Pod配置是否正确。如果一切正常,k8ss将创建一个名为"Pending"的初始状态  
+k8s首先会检查使用的容器镜像是否存在,并检查Pod配置是否正确。如果一切正常,k8s将创建一个名为"Pending"的初始状态  
 
 - 2.运行阶段一旦Pod处于Pending状态  
 k8s将开始为它分配资源并启动容器。当所有容器都成功启动后,Pod将进入"Running"状态  
@@ -585,7 +587,7 @@ k8s将开始为它分配资源并启动容器。当所有容器都成功启动�
 如果某个容器意外终止,则k8s将自动重启该容器。如果该容器无法自动重启,则Pod将进入"Failed"状态  
 
 - 4.更新阶段在进行更新操作时  
-k8ss首先会通过创建一个新的Pod来实现更新。然后k8s将停止旧Pod中的容器,并将它们迁移到新Pod中。一旦所有容器都成功迁移,旧Pod将被删除,"Rolling Update"完成   
+k8s首先会通过创建一个新的Pod来实现更新。然后k8s将停止旧Pod中的容器,并将它们迁移到新Pod中。一旦所有容器都成功迁移,旧Pod将被删除,"Rolling Update"完成   
 
 - 5.删除阶段当Pod不再需要时  
 可以通过删除Pod对象来释放资源。k8s将删除所有关联的容器,并从集群中删除该Pod对象  
@@ -597,12 +599,12 @@ k8ss首先会通过创建一个新的Pod来实现更新。然后k8s将停止旧P
 - Succeeded成功：Pod中的所有容器都被成功终止,并且不会再重启  
 - Failed失败：pod中的所有容器都已终止了,但至少有一个容器是因为失败终止,即容器返回了非0值的退出状态
 - Unknown未知：apiServer无法获取得pod对象的状态信息,通常是因为与Pod所在主机网络通信失败  
+![pod状态的变化2](pic/podphase2.png)  
+![pod状态的变化4](pic/podphase4.png)  
 
 ***Pod的生命周期示意图,从图中可以看到Pod状态的变化***  
 ![Pod状态的变化1](pic/podphase1.png)
-![pod状态的变化2](pic/podphase2.png)
 ![Pod状态的变化3](pic/podphase3.jpeg)
-![pod状态的变化4](pic/podphase4.png)
 
 ## 7.3 pod创建
 ![pod的创建过程](pic/podcreate1.png)  
@@ -672,7 +674,6 @@ sequenceDiagram
 - 由于Init容器必须在应用容器启动之前运行完成,因此Init容器提供了一种机制来阻塞或延迟应用容器的启动,直到满足了一组先决条件;一旦前置条件满足,Pod内的所有的应用容器会并行启动。
 
 ### 7.4.3 initContainer示例
-
 <details>
   <summary>initContainers-域名解析示例</summary>
   <pre><code>
