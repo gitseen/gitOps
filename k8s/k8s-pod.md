@@ -1091,6 +1091,151 @@ kubectl explain pods.spec.containers.lifecycle.preStop.tcpSocket
   * tcpSocket: 在当前容器尝试访问指定的socket  
 
 ### 7.6.1 postStart启动后钩子
+**作用**   
+- 触发时机：在容器创建后立即执行(与容器的主进程并行启动,而非严格顺序)  
+- 目的：执行容器启动后的初始化任务(如配置生成、服务注册、依赖检查等)  
+
+**使用场景**  
+- 生成动态配置文件（例如从环境变量渲染模板） 
+- 向服务注册中心(如Consul、Etcd)注册服务实例  
+- 检查依赖服务(如数据库、缓存)是否可用  
+- 初始化日志或监控组件  
+  
+**注意事项**    
+- 执行结果不影响容器状态:即使postStart钩子执行失败,容器仍会被标记为Running  
+- 超时处理：如果钩子未在指定时间内完成(默认无超时),容器可能继续运行但钩子任务被终止  
+- 与Init容器的区别：postStart在主容器启动后触发,而Init容器在主容器启动前运行  
+  
+
+### 7.6.2 preStop钩子
+**作用**   
+- 触发时机：在容器终止前执行(收到SIGTERM信号后,但在强制终止前)  
+- 目的：执行优雅关闭逻辑(如保存状态、清理资源、通知其他服务)  
+  
+**使用场景**  
+- 向服务注册中心注销服务实例   
+- 等待正在处理的请求完成(例如睡眠30秒)   
+- 保存内存中的缓存数据到持久化存储  
+- 关闭数据库连接或释放文件锁  
+  
+**注意事项** 
+- 必须快速完成: preStop 钩子的执行时间应远小于 terminationGracePeriodSeconds(默认30秒),否则容器会被强制终止  
+- 幂等性设计：确保钩子任务可重复执行(避免因重试导致副作用)  
+- 依赖外部服务的风险: 如果钩子需要调用外部API需考虑网络不可用的情况  
+
+
+### 7.6.3 钩子示例 
+<details>
+  <summary>commandline-postStart-exec测试示例</summary>
+  <pre><code>
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-test-post-start
+spec: 
+  containers:
+  - name: main-container
+    image: nginx
+    command: ["/bin/sh", "-c"]
+    args: ["echo $(date +'%Y-%m-%d %H:%M:%S.%3N') ' :container command started!!!' >> /var/log/testlog.log; nginx -g 'daemon off;'"]
+    lifecycle:
+      postStart: 
+        exec:   
+          command:  
+            - sh
+            - -c
+            - echo $(date +'%Y-%m-%d %H:%M:%S.%3N') " :postStart done!!!" >> /var/log/testlog.log
+          #command: ["/bin/sh", "-c","echo $(date +'%Y-%m-%d %H:%M:%S.%3N') ':postStart done!!!' >> /var/log/testlog.log"]
+  
+#容器启动命令和postStart都会写入1条信息入指定的log
+kubectl exec -it nginx-test-post-start -c main-container -- /bin/bash
+cat /var/log/testlog.log 
+2024-03-31 18:14:15.797  :container command started!!!
+2024-03-31 18:14:15.821  :postStart done!!!
+实际log上看到, commandline执行的时间比postStart更早, 虽然只有几毫秒的区别
+  </code></pre>
+</details>
+
+
+<details>
+  <summary>postStart-preStop-exec</summary>
+  <pre><code>
+apiVersion: v1
+kind: Pod
+metadata:
+  name: lifecycle-demo
+spec:
+  containers:
+    - name: app
+      image: myapp:1.0
+      ports:
+        - containerPort: 8080
+      lifecycle:
+        postStart:
+          exec:
+            command: ["/bin/sh", "-c", "echo 'App started' > /app/status.txt"]
+      lifecycle:
+        postStart: 
+          exec: # 在容器启动的时候执行一个命令,修改掉nginx的默认首页内容
+            command: ["/bin/sh", "-c", "echo postStart... > /usr/share/nginx/html/index.html"]
+        preStop:
+          exec:
+            command: ["/bin/sh", "-c", "curl -X POST http://localhost:8080/stop && sleep 30"]
+        preStop:
+        exec: # 在容器停止之前停止nginx服务
+          command: ["/usr/sbin/nginx","-s","quit"]
+      terminationGracePeriodSeconds: 60
+  </code></pre>
+</details>
+
+
+<details>
+  <summary>钩子处理器支持使用下面三种方式定义动作</summary>
+  <pre><code>
+
+* Exec命令  #在容器内执行一次命令
+```
+lifecycle:
+    postStart: 
+      exec:
+        command:
+        - cat
+        - /tmp/healthy
+```
+
+* TCPSocket #在当前容器尝试访问指定的socket
+```
+lifecycle:
+    postStart:
+      tcpSocket:
+        port: 8080
+```
+
+* HTTPGet   #在当前容器中向某url发起http请求  
+```
+lifecycle:
+    postStart:
+      httpGet:
+        path: / #URI地址
+        port: 80 #端口号
+        host: 192.168.5.3 #主机地址
+        scheme: HTTP #支持的协议,http或者https
+```
+  </code></pre>
+</details>
+
+
+**钩子函数总结**
+- PostStart hook是在容器创建(created)之后立马被调用,并且PostStart跟容器的ENTRYPOINT是异步执行的,无法保证它们之间的顺序
+- PreStop hook是容器处于Terminated状态时立马被调用(也就是说要是Job任务的话,执行完之后其状态为completed,所以不会触发PreStop的钩子),同时PreStop是同步阻塞的,PreStop执行完才会执行删除Pod的操作
+- PostStart会阻塞容器成为Running状
+- PreStop会阻塞容器的删除,但是过了terminationGracePeriodSeconds时间后,容器会被强制删除
+
+>postStart和preStop是k8s中管理容器生命周期的重要工具    
+>>postStart: 初始化任务(非关键路径)  
+>>preStop: 优雅关闭(关键路径,必须可靠)  
+>核心价值: 通过自定义逻辑增强应用的可观测性和健壮性,确保服务平滑启停  
 
 
 
