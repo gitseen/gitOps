@@ -989,42 +989,49 @@ kind: Pod
 metadata:
   name: myapp-pod
 spec:
-  initContainers:          # 初始化容器（可选）
+  initContainers:          # 初始化容器(可选)
     - name: init-config
       image: busybox
       command: ["sh", "-c", "echo 'Initializing...'"]
-  containers:             # 主容器（必选）
+  containers:             # 主容器(必选)
     - name: main-app      # 主容器名称
       image: nginx:1.25   # 主容器镜像
-      #command: ["python"]        #覆盖镜像默认命令  可省
-      #args: ["-m", "http.server", "8000"]  #传递参数  可省
+      command: ["python"]        #覆盖镜像默认命令  （可选）
+      args: ["-m", "http.server", "8000"]  #传递参数（可选）
       ports:
         - containerPort: 80
-      resources:          # 主容器（资源限制）
+      lifecycle: # 主容器(postStart、preStop;command优先于>initContainers优先于>postStart执行)
+        postStart:
+          exec:
+            command: ['/bin/sh', '-c', 'echo Hello from podStart handler > /usr/share/message']
+        preStop:
+          exec:
+            command: ['/bin/sh', '-c', 'echo Bye from podStop handler']
+      resources:          # 主容器(资源限制)
         requests:
           cpu: "100m"
           memory: "128Mi"
         limits:
           cpu: "200m"
           memory: "256Mi"
-      startupProbe:      # 主容器(启动探针）
+      startupProbe:      # 主容器(启动探针)
           httpGet:
             path: /login
             port: 8090
           failureThreshold: 30
           periodSeconds: 10
-      livenessProbe:      # 主容器（存活探针）
+      livenessProbe:      # 主容器(存活探针)
         httpGet:
           path: /healthz
           port: 8080
         initialDelaySeconds: 10  #容器启动后等待10秒开始探测
         periodSeconds: 5         #每5秒检查一次
-      readinessProbe:       # 主容器（就绪探针）
+      readinessProbe:       # 主容器(就绪探针)
         tcpSocket:
           port: 8080
         initialDelaySeconds: 5
         periodSeconds: 10
-      env:                  # 主容器（环境变量传递）
+      env:                  # 主容器(环境变量传递)
         - name: NODE_NAME
           valueFrom:
             fieldRef:
@@ -1037,14 +1044,13 @@ spec:
           value： Asia/Shanghai
         - name: CSE-SERVERURL
           value: https://www.g.cn
-      volumeMounts:          # 主容器（存储挂载）
+      volumeMounts:          # 主容器(存储挂载)
         - name: main-app-data
           mountPath: /data
-        - name: main-app-sidecar
       volumeMounts:
         - name: shared-data
           mountPath: /sidecar-data 
-    volumes: #   定义一组挂载设备(宿主机或ConfigMap、Secret、emptyDir) 
+    volumes: #   定义一组挂载设备(宿主机或ConfigMap、Secret、emptyDir)
       - name: volume #定义一个挂载设备的名字
         #meptyDir: {}       
         hostPath:
@@ -1059,7 +1065,32 @@ pod是容器编排的核心单元,主容器是其运行业务逻辑的核心组�
 主容器与Init容器、Sidecar容器协作,通过共享网络和存储实现高效通信。  
 合理配置资源、健康检查和生命周期管理,是保障应用稳定性的关键。
 
+## 7.6 主容器钩子函数
+在k8s中Pod的主容器支持生命周期钩子函数(Lifecycle Hooks)用于在容器启动和终止的关键节点触发自定义操作  
 
+k8s支持钩子函数postStart和preStop为容器提供了更精细的生命周期管理能力  
+- postStart  
+           于容器创建完成之后立即运行的钩子处理器;在主容器启动后,k8s将立即发送postStart事件  
+- preStop  
+           容器终止之前执行,执行完成之后容器将成功终止,在其完成之前会阻塞删除容器的操作;在主容器被终结之前,k8s将发送一个preStop事件  
+
+- 钩子函数语法示例  
+```bash
+kubectl explain pods.spec.containers.lifecycle.postStart.exec.command
+kubectl explain pods.spec.containers.lifecycle.postStart.httpGet
+kubectl explain pods.spec.containers.lifecycle.postStart.tcpSocket
+
+kubectl explain pods.spec.containers.lifecycle.preStop.exec.command
+kubectl explain pods.spec.containers.lifecycle.preStop.httpGet
+kubectl explain pods.spec.containers.lifecycle.preStop.tcpSocket
+```
+
+- 钩子函数处理实现方法   
+  * exec:      在容器内执行命令,如果命令的退出状态码是0表示执行成功,否则表示失败  
+  * httpGet:   在当前容器中向指定url发起http请求(URL返回的HTTP状态码在[200、400]之间表示请求成功,否则表示失败)  
+  * tcpSocket: 在当前容器尝试访问指定的socket  
+
+### 7.6.1 postStart启动后钩子
 
 
 
