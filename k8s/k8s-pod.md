@@ -491,10 +491,10 @@ pod对象从创建至终的这段时间范围称为pod的生命周期,它主要�
 - [pod生命周期-pod创建](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#73-pod创建)
 - [pod生命周期-initContainer初始化容器运行](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#74-initcontainer初始化容器运行)
 - [pod生命周期-mainContainer主容器运行](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#75-mainContainer主容器运行)
-- [pod生命周期-主容器钩子函数](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)
-  * postStart启动后钩子
-  * preStop终止前钩子
-- [pod生命周期-主容器健康检查(三种探针)](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)
+- [pod生命周期-主容器钩子函数](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#76-主容器钩子函数)
+  * [postStart启动后钩子](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#761-postStart启动后钩子)   
+  * [preStop终止前钩子](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#762-preStop终止前钩子)    
+- [pod生命周期-主容器健康检查(三种探针)](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#77-主容器健康检查(三种探针))
   * startupProbe启动探针
   * livenessProbe存活性探测
   * readinessProbe就绪性探测
