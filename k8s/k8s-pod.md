@@ -1362,9 +1362,9 @@ kubectl get pod podname -oyaml |grep restartPolicy
   - ExecAction(执行命令)在容器内执行命令,若退出码为0则视为成功 
   - 适用场景：自定义脚本检查(如检查文件是否存在、进程状态等)  
 
-* httpGet:  对容器的IP地址、端口号及路径发起HTTP请求,返回200-400范围状态码为成功  
+* httpGet:  对容器的IP地址、端口号及路径发起HTTP请求,返回>=200且<400范围状态码为成功  
   - 发起HTTP请求,返回200-400范围状态码为成功  
-  - 向容器IP发送httpGet请求,响应状态码为200-400视为成功  
+  - 向容器IP发送httpGet请求,响应状态码为>=200且<400成功   
   - 适用场景：Web服务健康检查(如/healthz端点)  
 
 * tcpSocket:  对容器的IP地址、端口号执行TCP检查,如果能够建立TCP连接,则表明容器成功   
@@ -1418,12 +1418,14 @@ spec:
       containers:
       - name: goweb-demo
         image: 192.168.11.247/web-demo/goweb-demo:20221229v3
-        livenessProbe:
-          httpGet:
-            path: /login
-            port: 8090
-          failureThreshold: 1
-          periodSeconds: 10
+        livenessProbe:   #定义探测机制
+          httpGet:       #探测方式为httpGet
+            scheme: HTTP ##指定协议
+            path: /login #指定路径下的文件，如果不存在，探测失败
+            port: 8090   
+          initialDelaySeconds: 10 #当容器运行多久之后开始探测(单位是s) 
+          failureThreshold: 1     #探测失败的重试次数
+          periodSeconds: 5       ##探测频率(单位s),每隔5秒探测一次
         startupProbe:
           httpGet:
             path: /login
@@ -1684,6 +1686,84 @@ kubectl describe pod goweb-demo-5d7d55f846-vm2kc -n test-a
 kubectl get pod -n test-a
 NAME                          READY   STATUS    RESTARTS        AGE
 goweb-demo-5d7d55f846-vm2kc   1/1     Running   2 (2m55s ago)   12m
+  </code></pre>
+</details> 
+
+<details>
+  <summary>startupProbe-readinessProbe-livenessProbe混合使用示例</summary>
+  <pre><code>
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rlprobe
+  labels:
+    app: rlprobe
+spec:
+  type: NodePort
+  ports:
+  - name: server
+    port: 8080
+    targetPort: 8080
+    nodePort: 32280
+  - name: managerment
+    port: 8081
+    targetPort: 8081
+    nodePort: 32281
+  selector:
+    app: rlprobe
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rlprobe
+  labels:
+    app: rlprobe
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rlprobe
+  template:
+    metadata:
+      name: rlprobe
+      labels:
+        app: rlprobe
+    spec:
+      containers:
+      - name: rl
+        image: mydlqclub/springboot-helloworld:0.0.1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: server
+          containerPort: 8080
+        - name: managerment
+          containerPort: 8081
+        startupProbe:
+          tcpSocket:
+           port: 8080  #这里故意写错端口，为了验证探测失败后pod是否重启
+          initialDelaySeconds: 5 #容器启动后多久开始探测
+          periodSeconds: 10   #检查的间隔时间
+          timeoutSeconds: 10  #探针执行检测请求后,等待响应的超时时间
+          successThreshold: 1 #探测成功多少次才算成功
+          failureThreshold: 3 #探测失败多少次才算失败
+        readinessProbe:
+          httpGet:
+            scheme: HTTP
+            port: 8081
+            path: /actuator/health
+          initialDelaySeconds: 20
+          periodSeconds: 5
+          timeoutSeconds: 10
+        livenessProbe:
+          httpGet:
+            scheme: HTTP
+            port: 8081
+            path: /actuator/health
+          initialDelaySeconds: 20
+          periodSeconds: 5
+          timeoutSeconds: 10
+#说明：查看pod的Events信息,通过探测，可以知道pod是不健康的,且http访问失败。它会不断重启,而且会将pod设置为不可用的状态,直到重启之后探测成功会将pod状态设置为ready。
   </code></pre>
 </details> 
 
