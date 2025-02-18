@@ -1366,7 +1366,7 @@ kubectl explain pods.spec.containers.startupProbe.tcpSocket
 | timeoutSeconds | 1秒   |  1秒 | 探测超时时间 |
 | successThreshold | 1   |  1 | 处于失败状态时,探测连续成功几次,被认为成功 |
 | failureThreshold | 3   |  1 | 处于成功状态时,探测连续失败几次可被认为失败 |
-| terminationGracePeriodSeconds | 1 |  1 | 宽限时间 |
+| terminationGracePeriodSeconds | 1 |  1 | 宽限时间 与kubectl explain pods.spec.terminationGracePeriodSeconds有区别 |
 | exec |    |   | 在容器内部执行执行Shell命令 |
 | grpc |    |   | 发起一个grpc请求 |
 | httpGet |    |   | 发起HTTP请求  |
