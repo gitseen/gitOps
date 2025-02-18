@@ -969,7 +969,8 @@ InitContainer是k8s中实现 启动顺序控制 和 初始化依赖管理 的关
     
   * 资源管理
     - 根据resources.requests和resources.limits限制CPU/内存使用   
-  
+    - [k8s三个服务质量类别](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-resource-Qos.md)    
+ 
 - 3.终止流程  
   * 优雅终止(Graceful Shutdown）  
     - 收到SIGTERM信号,执行预设的清理逻辑(如关闭数据库连接)  
@@ -1236,6 +1237,463 @@ lifecycle:
 >>postStart: 初始化任务(非关键路径)  
 >>preStop: 优雅关闭(关键路径,必须可靠)  
 >核心价值: 通过自定义逻辑增强应用的可观测性和健壮性,确保服务平滑启停  
+
+
+## 7.7 主容器健康检测(三种探针)  
+在k8s中,健康检查(Health Checks)是确保容器应用可靠运行的核心机制   
+启动探针(StartupProbe)、存活探针(livenessProbe)、就绪探针(readinessProbe)健康检测是检查容器里面的服务是否正常  
+
+### 7.7.1  主容器健康检测作用  
+
+| 探针类型  | 触发时机 |  失败后果 |   典型场景  | 说明  |
+| --------- | ------- |  ------- |    -------  |  -------  |
+| startupProbe | 容器启动后立即检测  |  若失败,持续重试直到成功或超时 | 保护启动慢的应用(如Java应用),避免被存活探针误杀 |  用于判断容器内应用程序是否已经启动  |
+| livenessProbe | 容器启动后周期检测  |  重启容器(根据restartPolicy) | 检测死锁、内存泄漏等不可恢复的故障  |  用于探测容器是否存活(Running状态)  |
+| readinessProbe | 容器启动后周期检测  |  从Service的Endpoints中移除Pod | 等待依赖项(如数据库)就绪,避免流量涌入未准备好的容器 |  用于探测容器内的程序是否健康  |
+
+- startupProbe启动探针  
+  * 检查成功才由存活检查接手,用于保护慢启动容器    
+  * 适用于需要较长启动时间的应用场景,如应用程序需要大量预热或者需要等待外部依赖组件的应用程序  
+  
+- livenessProbe存活探针 
+   * 如果检查失败,kubelet会杀死容器,根据pod的restartPolicy来操作    
+   * 用于检测应用实例是否处于Running状态,如果不是,k8s会重启容器;决定是否重启容器   
+
+- readinessProbe就绪探针   
+  * 如果检查失败,k8s会把Pod从serviceEndpoints中剔除(Pod的IP:Port从对应Service关联的EndPoint地址列表中删除)    
+  * 用于检测应用实例当前是否可以接收请求,如果不能,k8s不会转发流量;决定是否对外提供服务(决定是否将请求转发给容器)    
+
+**startupProbe > readinessProbe > livenessProbe**  
+
+>如定义startupProbe、livenessProbe或者startupProbe、readinessProbe,则只有startupProbe探测成功后,才执行livenessProbe、readinessProbe探针
+
+
+[pod容器重启策略](https://blog.csdn.net/junbaozi/article/details/127077046)  
+Always:当容器终止退出,总是重启容器,默认策略  
+OnFailure:当容器异常退出(退出状态码非0)时,才重启容器  
+Never:当容器终止退出,从不重启容器  
+
+**restartPolicy**  
+podS.pec中的restartPolicy可以用来设置是否对退出的Pod重启,可选项包括Always、OnFailure、Never  
+```bash
+kubectl explain pods.sepc.restartPolicy
+kubectl get pod podname -oyaml |grep restartPolicy
+```
+
+- 单容器的Pod,容器成功退出时,不同restartPolicy时的动作为  
+   * Always: 重启Container; Pod phase保持Running  
+   * OnFailure: Pod phase变成Succeeded  
+   * Never: Pod phase变成Succeeded  
+
+- 单容器的Pod,容器失败退出时,不同restartPolicy时的动作为  
+  * Always: 重启Container; Pod phase保持 Running  
+  * OnFailure: 重启Container; Pod phase保持 Running  
+  * Never: Pod phase变成Failed  
+  
+- 2个容器的Pod,其中一个容器在运行而另一个失败退出时,不同restartPolicy时的动作为  
+  * Always: 重启Container; Pod phase保持Running  
+  * OnFailure: 重启Container; Pod phase保持Running  
+  * Never: 不重启Container; Pod phase保持Running  
+
+- 2个容器的Pod,其中一个容器停止而另一个失败退出时,不同restartPolicy时的动作为  
+  * Always: 重启Container; Pod phase保持Running  
+  * OnFailure: 重启Container; Pod phase保持Running  
+  * Never: Pod phase变成Failed  
+  
+- 单容器的Pod,容器内存不足(OOM),不同restartPolicy时的动作为  
+  * Always: 重启Container; Pod phase保持Running  
+  * OnFailure: 重启Container; Pod phase保持Running  
+  * Never: 记录失败事件; Pod phase变成Failed  
+
+- Pod还在运行,但磁盘不可访问时  
+  * 终止所有容器Pod phase变成Failed  
+  * 如果Pod是由某个控制器管理的,则重新创建一个Pod并调度到其他Node运行   
+
+- Pod还在运行,但由于网络分区故障导致Node无法访问   
+  * Node controller等待Node事件超时  
+  * Node controller将Pod phase设置为Failed  
+  * 如果Pod是由某个控制器管理的,则重新创建一个Pod并调度到其他Node运行 
+
+
+### 7.7.2  探针配置参数
+>所有探针支持以下通用参数   
+- initialDelaySeconds：容器启动后等待多少秒开始探测(默认0)   
+  * 容器启动后要等待多少秒后才启动startupProbe、livenessProbe、readinessProbe探针   
+  * 如定义了starupProbe成功之后才开始执行livenessProbe、readinessProbe  
+  * 如periodSeconds的值大于initialDelaySeconds,则initialDelaySeconds将被忽略;默认是0秒,最小值是0  
+
+- periodSeconds：探测周期(默认10)   
+  * 执行探测的时间间隔(单位是秒);默认是10秒,最小值是1  
+
+- timeoutSeconds：探测超时时间(默认1)   
+  * 探测超时后等待多少秒;默认值是1秒,最小值是1  
+
+- successThreshold：连续成功次数视为探测成功(默认1)  
+  * 探针在失败后,被视为成功的最小连续成功数;默认值是1,最小值是1  
+  * startupProbe、livenessProbe探测参数值必须是1  
+
+- failureThreshold：连续失败次数视为探测失败(默认3)  
+  * 探针连续失败了failureThreshold次之后, k8s认为总体上检查已失败:容器状态未就绪、不健康、不活跃   
+  * 对于startupProbe、livenessProbe而言,如至少有一个failureThreshold失败, k8s会将容器视为不健康并触发重启操作,kubelet遵循该容器的terminationGracePeriodSeconds   
+  * 对于失败的readinessProbe探针,kubelet继续运行检查失败的容器,并继续运行更多探针; 因为检查失败,kubelet将Pod的Ready状况设置为false  
+
+>terminationGracePeriodSeconds  
+为kubelet配置从为失败的容器触发终止操作到强制容器运行时停止该容器之前等待的宽限时长    
+默认值是继承Pod级别的terminationGracePeriodSeconds值;如果不设置则为30秒,最小值为1     
+
+| 参数名称  | 默认值 |  最小值 |   描述  |
+| --------- | ------- |  ------- |    -------  |
+| initialDelaySeconds | 0秒  |  0秒 | 容器启动后多久开始进行第一次探测 |
+| periodSeconds  | 10秒  |  1秒 | 探测频度,频率过高会对pod带来较大的额外开销,频率过低则无法及时反映容器真实情况  |
+| timeoutSeconds | 1秒   |  1秒 | 探测超时时间 |
+| successThreshold | 1   |  1 | 处于失败状态时,探测连续成功几次,被认为成功 |
+| failureThreshold | 3   |  1 | 处于成功状态时,探测连续失败几次可被认为失败 |
+
+
+### 7.7.3  探针检测方式与检测结果
+容器探测是pod对象生命周期中的一项重要的日常任务,它是kubelet对容器周期性执行的健康状态诊断,诊断操作由容器的处理器进行定义  
+
+***探针检测方式***  
+
+* exec:  在容器内部执行执行Shell命令返回状态码是0为成功  
+  - 执行Shell命令返回状态码是0为成功  
+  - ExecAction(执行命令)在容器内执行命令,若退出码为0则视为成功 
+  - 适用场景：自定义脚本检查(如检查文件是否存在、进程状态等)  
+
+* httpGet:  对容器的IP地址、端口号及路径发起HTTP请求,返回200-400范围状态码为成功  
+  - 发起HTTP请求,返回200-400范围状态码为成功  
+  - 向容器IP发送httpGet请求,响应状态码为200-400视为成功  
+  - 适用场景：Web服务健康检查(如/healthz端点)  
+
+* tcpSocket:  对容器的IP地址、端口号执行TCP检查,如果能够建立TCP连接,则表明容器成功   
+  - 尝试与容器指定端口建立TCP连接,若连接成功视为健康  
+  - 适用场景：非HTTP服务(如数据库、Redis)  
+  
+* grpc:   对容器的IP地址、端口发起一个grpc请求(前提是服务实现了grpc健康检查协议),返回响应的状态是SERVING则认为诊断成功  
+
+***探针执行者*** 
+execAction(借助容器运行时执行)
+tcpSocketAction(由kubelet直接检测)
+httpGetAction(由kubelet直接检测)
+grpc(由grpc健康检查协议检测)
+
+***探针结果***
+Success(成功)：容器通过了诊断  
+Failure(失败)：容器未通过诊断   
+Unknown(未知)：诊断失败,因此不会采取任何行动  
+
+
+
+### 7.7.4  主容器健康检测示例
+
+<details>
+  <summary>startupProbe示例</summary>
+  <pre><code> 
+#startupProbe(启动探针)保护慢启动容器
+有一种情景是这样的,某些应用在启动时需要较长的初始化时间。要这种情况下,若要不影响对死锁作出快速响应的探测,设置存活探测参数是要技巧  
+技巧就是使用相同的命令来设置启动探测,针对HTTP或TCP检测,可以通过将failureThreshold * periodSeconds参数设置为足够长的时间来应对糟糕情况下的启动时间 
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: test-a
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goweb-demo
+  namespace: test-a
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: goweb-demo
+  template:
+    metadata:
+      labels:
+        app: goweb-demo
+    spec:
+      containers:
+      - name: goweb-demo
+        image: 192.168.11.247/web-demo/goweb-demo:20221229v3
+        livenessProbe:
+          httpGet:
+            path: /login
+            port: 8090
+          failureThreshold: 1
+          periodSeconds: 10
+        startupProbe:
+          httpGet:
+            path: /login
+            port: 8090
+          failureThreshold: 30
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: goweb-demo
+  namespace: test-a
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8090
+  selector:
+    app: goweb-demo
+  type: NodePort
+
+#注 应用程序将会有最多5分钟(30 * 10 = 300s)的时间来完成其启动过程
+     一旦启动探测成功一次,存活探测任务就会接管对容器的探测,对容器死锁作出快速响应
+     如果启动探测一直没有成功,容器会在300秒后被杀死,并且根据restartPolicy来执行进一步处置
+ </code></pre>
+</details>
+
+ 
+<details>
+  <summary>livenessProbe-exec</summary>
+  <pre><code>
+#livenessProbe(存活探针):使用exec的方式(执行Shell命令返回状态码是0则为成功) 
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: test-a
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goweb-demo
+  namespace: test-a
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: goweb-demo
+  template:
+    metadata:
+      labels:
+        app: goweb-demo
+    spec:
+      containers:
+      - name: goweb-demo
+        image: 192.168.11.247/web-demo/goweb-demo:20221229v3
+        livenessProbe:
+          exec:
+            command:
+            - ls
+            - /opt/goweb-demo/runserver
+            #command: ["/bin/ls","/opt/goweb-demo/runserver"]  
+          initialDelaySeconds: 5
+          periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: goweb-demo
+  namespace: test-a
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8090
+  selector:
+    app: goweb-demo
+  type: NodePort
+#注 periodSeconds字段指定了kubelet应该每5秒执行一次存活探测
+    initialDelaySeconds字段告诉kubelet在执行第一次探测前应该等待5秒
+    kubelet在容器内执行命令 ls /opt/goweb-demo/runserver来进行探测;如果命令执行成功并且返回值为0,kubelet就会认为这个容器是健康存活的。 
+                                                                 如果这个命令返回非0值,kubelet会杀死这个容器并重新启动它
+#验证存活检查的效果
+1.查看某个pod的里的容器,
+kubectl get pods goweb-demo-686967fd56-556m9 -n test-a -o jsonpath={.spec.containers[*].name}
+2.进入某个pod里的容器
+kubectl exec -it goweb-demo-686967fd56-556m9 -c goweb-demo -n test-a -- bash
+3.进入容器后,手动删除掉runserver可执行文件,模拟故障
+rm -rf /opt/goweb-demo/runserver
+4.查看Pod详情(在输出结果的最下面,有信息显示存活探针失败了,这个失败的容器被杀死并且被重建了。)
+kubectl describe pod goweb-demo-686967fd56-556m9 -n test-a
+Events:
+  Type     Reason     Age                   From     Message
+  ----     ------     ----                  ----     -------
+  Warning  Unhealthy  177m (x6 over 3h59m)  kubelet  Liveness probe failed: ls: cannot access '/opt/goweb-demo/runserver': No such file or directory
+5.一旦失败的容器恢复为运行状态,RESTARTS 计数器就会增加 1
+tantianran@test-b-k8s-master:~$ kubectl get pods -n test-a
+NAME                          READY   STATUS    RESTARTS      AGE
+goweb-demo-686967fd56-556m9   1/1     Running   1 (22s ago)   13m # RESTARTS字段加1,
+goweb-demo-686967fd56-8hzjb   1/1     Running   0             13m
+  </code></pre>
+</details>
+
+
+<details>
+  <summary>livenessProbe-httpGet</summary>
+  <pre><code>
+#livenessProbe(存活探针):使用httpGet请求的方式检查uri path是否正常  
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: test-a
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goweb-demo
+  namespace: test-a
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: goweb-demo
+  template:
+    metadata:
+      labels:
+        app: goweb-demo
+    spec:
+      containers:
+      - name: goweb-demo
+        image: 192.168.11.247/web-demo/goweb-demo:20221229v3
+        livenessProbe:
+          httpGet:
+            path: /login
+            port: 8090
+            httpHeaders:
+            - name: Custom-Header
+              value: Awesome
+          initialDelaySeconds: 3
+          periodSeconds: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: goweb-demo
+  namespace: test-a
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8090
+  selector:
+    app: goweb-demo
+  type: NodePort
+#注:在这个配置文件中Pod定义 periodSeconds字段指定了kubelet每隔3秒执行一次存活探测
+                             initialDelaySeconds字段告诉kubelet在执行第一次探测前应该等待3秒
+                             kubelet会向容器内运行的服务(服务在监听8090端口)发送一个HTTP GET请求来执行探测。 如果服务器上/login路径下的处理程序返回成功代码,则kubelet认为容器是健康存活的
+                             如果处理程序返回失败代码,则kubelet会杀死这个容器并将其重启。返回大于或等于200并且小于400的任何代码都表示成功,其它返回代码都表示失败。
+#验证效果
+1. 进入容器删除静态文件,模拟故障
+kubectl exec -it goweb-demo-586ff85ddb-4646k -c goweb-demo -n test-a -- bash
+rm -rf login.html
+2. 查看pod的log
+kubectl logs goweb-demo-586ff85ddb-4646k -n test-a
+2023/01/12 06:45:19 [Recovery] 2023/01/12 - 06:45:19 panic recovered:
+GET /login HTTP/1.1
+Host: 10.244.222.5:8090
+Connection: close
+Accept: */*
+Connection: close
+Custom-Header: Awesome
+User-Agent: kube-probe/1.25
+html/template: "login.html" is undefined
+/root/my-work-space/pkg/mod/github.com/gin-gonic/gin@v1.8.2/context.go:911 (0x8836d1)
+/root/my-work-space/pkg/mod/github.com/gin-gonic/gin@v1.8.2/context.go:920 (0x88378c)
+/root/my-work-space/src/goweb-demo/main.go:10 (0x89584e)
+3. 查看pod详情
+kubectl describe pod goweb-demo-586ff85ddb-4646k -n test-a
+Warning  Unhealthy  34s (x3 over 40s)   kubelet            Liveness probe failed: HTTP probe failed with statuscode: 500 # 状态码为500
+4. 恢复后查看Pod,RESTARTS计数器已经增1
+kubectl get pod goweb-demo-586ff85ddb-4646k -n test-a
+NAME                          READY   STATUS    RESTARTS      AGE
+goweb-demo-586ff85ddb-4646k   1/1     Running   1 (80s ago)   5m39s
+  </code></pre>
+</details>
+
+  
+<details>
+  <summary>readinessProbe-tcpSocket示例</summary>
+  <pre><code>
+#readinessProbe(就绪探针)结合livenessProbe(存活探针)探测tcp端口  
+存活探测是使用TCP套接字,使用这种配置时kubelet会尝试在指定端口和容器建立套接字链接。 如果能建立连接,这个容器就被看作是健康的,如果不能则这个容器就被看作是有问题的
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: test-a
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goweb-demo
+  namespace: test-a
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: goweb-demo
+  template:
+    metadata:
+      labels:
+        app: goweb-demo
+    spec:
+      containers:
+      - name: goweb-demo
+        image: 192.168.11.247/web-demo/goweb-demo:20221229v3
+        readinessProbe:
+          tcpSocket:
+            port: 8090
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 8090
+          initialDelaySeconds: 15
+          periodSeconds: 20
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: goweb-demo
+  namespace: test-a
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8090
+  selector:
+    app: goweb-demo
+  type: NodePort
+#注:TCP检测的配置和HTTP检测非常相似。 这个例子同时使用就绪和存活探针
+            kubelet会在容器启动5秒后发送第一个就绪探针。 探针会尝试连接goweb-demo容器的8090端口
+            如果探测成功则Pod会被标记为就绪状态,kubelet将继续每隔10秒运行一次探测。除了就绪探针,这个配置包括了一个存活探针
+            kubelet会在容器启动15秒后进行第一次存活探测。与就绪探针类似,存活探针会尝试连接goweb-demo容器的8090端口。如果存活探测失败,容器会被重新启动
+#验证效果
+1. 进入容器后,杀掉goweb-demo的进程
+kubectl exec -it goweb-demo-5d7d55f846-vm2kc -c goweb-demo -n test-a -- bash
+root@goweb-demo-5d7d55f846-vm2kc:/opt/goweb-demo# ps -aux
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root           1  0.0  0.0   2476   576 ?        Ss   07:23   0:00 /bin/sh -c /opt/goweb-demo/runserver
+root@goweb-demo-5d7d55f846-vm2kc:/opt/goweb-demo# kill -9 1
+2. 查看pod详情,已经发出警告
+kubectl describe pod goweb-demo-5d7d55f846-vm2kc -n test-a
+  Warning  Unhealthy  16s                 kubelet            Readiness probe failed: dial tcp 10.244.240.48:8090: connect: connection refused
+  Warning  BackOff    16s                 kubelet            Back-off restarting failed container
+3. 查看pod,RESTARTS计数器已经增加为2,因为有两个探针
+kubectl get pod -n test-a
+NAME                          READY   STATUS    RESTARTS        AGE
+goweb-demo-5d7d55f846-vm2kc   1/1     Running   2 (2m55s ago)   12m
+  </code></pre>
+</details> 
+
+[探针-路多辛](https://www.toutiao.com/article/7206670428587164192/)  
+[kubernetes官方文档](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)   
+
+
+**健康检测(三种探针)总结**
+通过合理配置三种探针,可以实现  
+- 启动保护：避免慢启动应用被误杀StartupProbe  
+- 高可用性：快速恢复故障容器livenessProbe  
+- 流量控制：确保只有就绪的Pod接收请求readinessProbe 
 
 
 
