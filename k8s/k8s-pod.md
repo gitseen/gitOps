@@ -1371,11 +1371,11 @@ kubectl get pod podname -oyaml |grep restartPolicy
   
 * grpc:   对容器的IP地址、端口发起一个grpc请求(前提是服务实现了grpc健康检查协议),返回响应的状态是SERVING则认为诊断成功  
 
-***探针执行者*** 
-execAction(借助容器运行时执行)
-tcpSocketAction(由kubelet直接检测)
-httpGetAction(由kubelet直接检测)
-grpc(由grpc健康检查协议检测)
+***探针执行者***   
+execAction(借助容器运行时执行)  
+tcpSocketAction(由kubelet直接检测)  
+httpGetAction(由kubelet直接检测)  
+grpc(由grpc健康检查协议检测)  
 
 ***探针结果***
 Success(成功)：容器通过了诊断  
