@@ -1346,6 +1346,19 @@ kubectl get pod podname -oyaml |grep restartPolicy
 为kubelet配置从为失败的容器触发终止操作到强制容器运行时停止该容器之前等待的宽限时长    
 默认值是继承Pod级别的terminationGracePeriodSeconds值;如果不设置则为30秒,最小值为1     
 
+***探针语法***  
+```bash
+kubectl explain pods.spec.containers.startupProbe
+kubectl explain pods.spec.containers.readinessProbe
+kubectl explain pods.spec.containers.livenessProbe
+
+kubectl explain pods.spec.containers.startupProbe.initialDelaySeconds
+kubectl explain pods.spec.containers.startupProbe.tcpSocket
+....
+
+```
+***探针参数***  
+
 | 参数名称  | 默认值 |  最小值 |   描述  |
 | --------- | ------- |  ------- |    -------  |
 | initialDelaySeconds | 0秒  |  0秒 | 容器启动后多久开始进行第一次探测 |
@@ -1353,6 +1366,11 @@ kubectl get pod podname -oyaml |grep restartPolicy
 | timeoutSeconds | 1秒   |  1秒 | 探测超时时间 |
 | successThreshold | 1   |  1 | 处于失败状态时,探测连续成功几次,被认为成功 |
 | failureThreshold | 3   |  1 | 处于成功状态时,探测连续失败几次可被认为失败 |
+| terminationGracePeriodSeconds | 1 |  1 | 宽限时间 |
+| exec |    |   | 在容器内部执行执行Shell命令 |
+| grpc |    |   | 发起一个grpc请求 |
+| httpGet |    |   | 发起HTTP请求  |
+| tcpSocket |    |   | 发起tpcSocket请求 |
 
 
 ### 7.7.3  探针检测方式与检测结果
@@ -1382,11 +1400,10 @@ tcpSocketAction(由kubelet直接检测)
 httpGetAction(由kubelet直接检测)  
 grpc(由grpc健康检查协议检测)  
 
-***探针结果***
+***探针结果***  
 Success(成功)：容器通过了诊断  
 Failure(失败)：容器未通过诊断   
 Unknown(未知)：诊断失败,因此不会采取任何行动  
-
 
 
 ### 7.7.4  主容器健康检测示例
