@@ -495,10 +495,12 @@ pod对象从创建至终的这段时间范围称为pod的生命周期,它主要�
   * [postStart启动后钩子](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#761-postStart启动后钩子)   
   * [preStop终止前钩子](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#762-preStop终止前钩子)    
 - [pod生命周期-主容器健康检查(三种探针)](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#77-主容器健康检查(三种探针))
-  * startupProbe启动探针
-  * livenessProbe存活性探测
-  * readinessProbe就绪性探测
-- [pod生命周期-pod终止](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)  
+  * [主容器健康检测作用](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#771--主容器健康检测作用)  
+  * [主容器探针配置参数](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#772--探针配置参数)  
+  * [主容器探针检测方式与检测结果](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#773--探针检测方式与检测结果)  
+  * [主容器健康检测示例](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#774--主容器健康检测示例)  
+- [pod生命周期-pod终止](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#78-pod终止)   
+
 - ~~[pod生命周期-pod状态](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)~~  
 
 ## 7、1 pause容器
