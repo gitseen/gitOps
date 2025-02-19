@@ -1875,15 +1875,17 @@ spec:
 7、pod对象中的容器进程收到停止信号  
 8、宽限期结束后,若pod中还存在运行的进程,kubelet向容器发送SIGKILL信号,强制关闭容器进程   
 9、kubelet请求apiServer将此pod资源的宽限期设置为0,从而完成删除操作,此时pod对用户已不可见  
+![pod删除流程1](pic/poddel1.png)  
 
+![pod删除流程2](pic/poddel2.png)
 
-在删除pod时,有两条平行的时间线。一条是改变网络规则,一条是删除pod   
-1、网络规则生效  
+**删除pod时有两条平行的时间线。一条是改变网络规则,一条是删除pod**     
+- 1、网络规则生效  
 apiserver接收到pod删除请求,将pod在Etcd中的状态更新为Terminating  
 EndpointController从Endpoint对象中删除pod的IP  
 kuber-proxy根据Endpoint对象的变化更新iptables的规则,不再将流量路由到被删除的Pod  
 
-2、删除pod  
+- 2、删除pod  
 apiserver接收到Pod删除请求,将Pod在Etcd中的状态更新为terminating  
 preStop钩子被执行  
 kubelet向容器发送SIGTERM   
@@ -1893,6 +1895,4 @@ Pod被终止,处于terminating状态
 k8s删除Pod相关资源:如网络配置、数据卷等  
 
 ![pod删除过程](pic/poddel0.png)  
-![pod删除流程1](pic/poddel1.png)  
-![pod删除流程2](pic/poddel2.png)  
 
