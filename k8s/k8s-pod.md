@@ -518,7 +518,7 @@ pause共享两种资源(存储、网络)
 - 存储
         pod可以指定共享的volume,pod内的容器共享这些volume,volume可以实现持久化。防止pod重新构建之后文件消失  
 
-![pause容器](pic/podphase00.png)  
+![pause容器](pic/podpause00.png)  
 
 ### 7.1.1、Pause容器的核心作用提供共享命名空间  
 kubernetes中的pause容器主要为每个业务容器提供共享命名空间  
@@ -526,7 +526,7 @@ kubernetes中的pause容器主要为每个业务容器提供共享命名空间
 - 网络命名空间：Pod中的多个容器能够共享同一个IP和端口范围;所有Pod内容器共享同一个IP和端口空间  
 - IPC命名空间： Pod中的多个容器能够使用SystemV IPC或POSIX消息队列进行通信;允许容器间通过进程间通信(如共享内存)  
 - UTS命名空间： Pod中的多个容器共享一个主机名;Volumes(共享存储卷)  
-![pod状态的变化2](pic/podphase0.png)  
+![pod状态的变化](pic/podpause0.png)  
 
 
 ### 7.1.2、Pause容器与Pod生命周期的关系
