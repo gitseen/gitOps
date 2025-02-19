@@ -1852,18 +1852,50 @@ spec:
 ![Pod的生命周期-示例](pic/podlife00.png)  
 从上图的日志就可看出,被分为6个执行阶段;执行的先后顺序：   
 
-**initContainers --> main-container --> postStart --> startupProbe --> readinessProbe --> livenessProbe --> preStop**     
+**<font color=red>initContainers --> mainContainer --> postStart --> startupProbe --> readinessProbe --> livenessProbe --> preStop</font>**       
 >main-container和postStart是同时执行,虽然readinessProbe和livenessProbe也是同时执行,但是他们不是真正的并行执行,也有先后顺序的   
 
 [探针-路多辛](https://www.toutiao.com/article/7206670428587164192/)  
 [kubernetes官方文档](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)   
 
-**健康检测(三种探针)总结**
-通过合理配置三种探针,可以实现  
+**健康检测(三种探针)总结**  
+通过合理配置三种探针,可以实现   
 - 启动保护：避免慢启动应用被误杀StartupProbe  
 - 高可用性：快速恢复故障容器livenessProbe  
 - 流量控制：确保只有就绪的Pod接收请求readinessProbe 
 
+## 7.8 pod终止过程
+**pod终止(删除)过程**  
+
+```bash  
+1、用户向apiserver发送删除pod对象的命令
+2、apiserver中的pod对象信息会随着时间的推移而更新,在宽限期内(默认30s,spec.terminationGracePeriodSeconds),pod被视为dead
+3、将pod标记为terminating(正在删除)状态
+4、kubelet在监控到pod对象转为terminating状态的同时就会启动pod关闭过程
+5、endpoint控制器监控到pod对象的关闭行为时将其从所有匹配到此endpoint的svc资源endpoint列表中删除
+6、如果当前pod对象定义了preStop钩子处理器,则在其被标记为terminating后会意同步的方式启动执行
+7、pod对象中的容器进程收到停止信号
+8、宽限期结束后,若pod中还存在运行的进程,kubelet向容器发送SIGKILL信号,强制关闭容器进程
+9、kubelet请求apiServer将此pod资源的宽限期设置为0,从而完成删除操作,此时pod对用户已不可见
+
+在删除pod时,有两条平行的时间线。一条是改变网络规则,一条是删除pod 
+1、网络规则生效
+apiserver接收到pod删除请求,将pod在Etcd中的状态更新为Terminating
+EndpointController从Endpoint对象中删除pod的IP
+kuber-proxy根据Endpoint对象的变化更新iptables的规则,不再将流量路由到被删除的Pod
+
+2、删除pod
+apiserver接收到Pod删除请求,将Pod在Etcd中的状态更新为terminating
+preStop钩子被执行
+kubelet向容器发送SIGTERM 
+继续等待,直到容器停止,或者超时spec.terminationGracePeriodSeconds默认30s
+如果超过了spec.terminationGracePeriodSeconds容器仍然没有停止,k8s将会发送SIGKILL信号给容器,强制关闭容器进程
+Pod被终止,处于terminating状态
+k8s删除Pod相关资源:如网络配置、数据卷等
+```
+![pod删除过程](pic/poddel0.png)  
+![pod删除流程1](pic/poddel1.png)  
+![pod删除流程2](pic/poddel2.png)  
 
 
 
