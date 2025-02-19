@@ -639,7 +639,7 @@ k8s中Pod的创建过程是一个多组件协作的流程：
 8、Pod被调度到目标工作节点上的kubelet尝试在当前节点上调用docker-engine进行启动容器,并将容器的状态结果返回到APIServer  
 9、APIServer将Pod信息存储到etcd系统中  
 10、在etcd确认写入操作完成,APIServer将确认信息发送到相关的kubelet  
-```
+
 
 ```mermaid
 %%{init:{"theme":"neutral"}}%%
@@ -667,7 +667,6 @@ sequenceDiagram
 ![podcreate](pic/podcreate0.png)    
 
 ## 7.4 initContainer初始化容器运行
-
 k8s中的initContainer(初始化容器)是一种在pod主容器启动前运行的专用容器,主要用于完成前置初始化任务  
 
 <details>
