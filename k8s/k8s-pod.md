@@ -612,9 +612,23 @@ k8s首先会通过创建一个新的Pod来实现更新。然后k8s将停止旧Po
 ![Pod状态的变化3](pic/podphase3.jpeg)
 
 ## 7.3 pod创建
+k8s中Pod的创建过程是一个多组件协作的流程：  
+主要涉及etcd、apiServer、kube-scheduler、kubelet、kube-proxy、ControllerManager、CRI等核心组件  
 ![pod的创建过程](pic/podcreate1.png)  
 
-***Pod是k8s的基础单元,pod创建过程***  
+**组件协作总结**    
+| 组件      | 职责 | 
+| --------- | ------- |
+| apiServer | 接收请求、验证、持久化数据到etcd,并广播状态变更 |
+| scheduler | 资源调度决策，确保Pod分配到最优节点 |
+| kubelet   | 在节点执行容器生命周期管理,并与容器运行时、网络/存储插件交互 |
+| proxy     | 流量转发与服务发现 |
+| etcd      | 存储集群所有资源对象的配置和状态信息,保障数据一致性 |
+| CRI       | 运行时接口 |
+
+**Client(请求提交) --> apiServer --> etcd(存储配置) --> Scheduler(调度决策绑定节点) --> etcd --> kubelet(创建容器) --> ContainerRuntime**  
+
+**Pod是k8s的基础单元,pod创建过程**
 ```bash
 ①用户通过kubectl或其他API客户端提交Pod.Spec给APIServer。
 ②APIServer尝试将Pod对象的相关信息存储到etcd中,等待写入操作完成,APIServer返回确认信息到客户端。
@@ -627,6 +641,7 @@ k8s首先会通过创建一个新的Pod来实现更新。然后k8s将停止旧Po
 ⑨APIServer将Pod信息存储到etcd系统中。
 ⑩在etcd确认写入操作完成,APIServer将确认信息发送到相关的kubelet。
 ```
+
 ```mermaid
 %%{init:{"theme":"neutral"}}%%
 sequenceDiagram
@@ -650,6 +665,7 @@ sequenceDiagram
     kubelet->>apiSrv: 11. 更新 Pod 状态
     apiSrv-->>etcd: 12. 保存新状态
 ```
+![podcreate](pic/podcreate0.png)    
 
 ## 7.4 initContainer初始化容器运行
 
