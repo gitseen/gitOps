@@ -601,9 +601,9 @@ k8s首先会通过创建一个新的Pod来实现更新。然后k8s将停止旧Po
 - Succeeded成功：Pod中的所有容器都被成功终止,并且不会再重启  
 - Failed失败：pod中的所有容器都已终止了,但至少有一个容器是因为失败终止,即容器返回了非0值的退出状态
 - Unknown未知：apiServer无法获取得pod对象的状态信息,通常是因为与Pod所在主机网络通信失败  
-- Completed 或 Successded: 容器内部的进程运行完毕,正常退出,没有发生错误  
-- Evicted驱除状态: 容器已驱除  
-- Terminating终止状态中: 这个pod正在被删除,里面的容器正在终止,资源回收、垃圾清理、以及终止过程中需要执行的命令  
+- Completed 或 Successded：容器内部的进程运行完毕,正常退出,没有发生错误  
+- Evicted驱除状态：容器已驱除  
+- Terminating终止状态中：这个pod正在被删除,里面的容器正在终止,资源回收、垃圾清理、以及终止过程中需要执行的命令  
 
 ![pod状态的变化2](pic/podphase2.png)  
 
@@ -652,8 +652,8 @@ sequenceDiagram
 ```
 
 ## 7.4 initContainer初始化容器运行
-每个Pod中可以包含多个容器, 应用运行在这些容器里面,同时Pod也可以有一个或多个先于应用容器启动的Init容器。    
-初始化容器是在pod的主容器启动之前要运行的容器,主要是做一些主容器的前置工作;init容器不是必须的,取决于需求。  
+
+k8s中的initContainer(初始化容器)是一种在pod主容器启动前运行的专用容器,主要用于完成前置初始化任务  
 
 <details>
   <summary>initContainers构建manContainers的前置工作</summary>
@@ -680,14 +680,17 @@ spec:
   </code></pre>
 </details>
 
+![initContainers流程图](pic/initContainers.png)  
+
 ## 7.4.1 initContainer的核心特点
 * 执行顺序  
-  - 一个Pod中可以定义多个initContainers,它们按照顺序执行,前一个成功完成后才会启动下一个  
+  - 一个Pod中可以定义多个initContainers,它们按照顺序执行,只有前一个成功退出(exit 0)后,才会启动下一个  
   - 若某个initContainer失败,k8s会根据restartPolicy决定是否重试(默认不重启)
 * initContainer与mainContainer主容器的区别   
   - 目标不同：initContainer负责初始化,主容器运行业务逻辑    
   - 生命周期：initContainer执行完成后立即终止,主容器持续运行  
-  - 资源隔离：initContainer可以独立配置资源(CPU/内存)和镜像    
+  - 资源隔离：initContainer可以独立配置资源(CPU/内存)和镜像
+              initContainer与应用容器共享存储卷Volumes,但拥有独立文件系统视图,可安全执行敏感操作(如访问Secrets)      
   - initContainer不支持探针startupProbe、livenessProbe、readinessProbe   
 * 共享机制    
   - initContainer与mainContainer主容器共享同一Pod的Volume、网络命名空间、但文件系统隔离(除非显式挂载)  
@@ -711,15 +714,18 @@ spec:
 ### 7.4.3 initContainer容器执行流程
 - 1.Pod 创建  
   * 调度器Scheduler将Pod分配到节点,触发initContainer执行  
+
 - 2.顺序执行  
   * 第一个initContainer启动,完成后退出(状态码需为0)  
   * 后续initContainer依次执行,全部成功后主容器启动  
+
 - 3.失败处理  
   * 若某个InitContainer失败(退出码非0)Pod状态为Init:Error  
   * 根据restartPolicy决定是否重启   
      - Always：自动重启失败的InitContainer(无限重试)  
      - OnFailure：仅当失败时重启(默认策略)  
      - Never：不重启,Pod进入Init:Error状态  
+
 - 4.资源释放  
   * 所有initContainer终止后,其占用的资源(如临时存储)会被释放  
   
