@@ -507,28 +507,27 @@ pod对象从创建至终的这段时间范围称为pod的生命周期,它主要�
 - ~~[pod生命周期-pod状态](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)~~  
 
 ## 7、1 pause容器
-pause是一个"暂停"的容器, 它的作用是: 解决pod的网络和存储的问题   
-pause容器称为InfraContainer,其他的容器称为业务容器(mianContainer)  
-Infracontainer是一个非常小的镜像,是一个C语言写的、永远处于"暂停"状态的容器  
-Pod里运行着一个特殊的被称之为Pause的容器,其他容器则为业务容器,这些业务容器共享Pause容器的网络栈和Volume挂载卷,因此他们之间通信和数据交换更为高效  
+k8s中的Pause容器(又称InfraContainer)是Pod的基础设施组件  
+pause核心作用是为Pod内的其他容器提供共享的运行环境;通过共享命名空间和稳定生命周期,实现了多容器的高效协作     
+Pod里运行Pause容器、业务容器(mianContainer),业务容器共享Pause容器的网络栈和Volume挂载卷,实现高效通信和数据交换  
 
-pause共享两种资源(存储、网络)  
-- 网络     
-        每个pod都会被分配一个集群内部的唯一ip地址,pod内的容器共享网络,pod在集群内部的ip地址和端口;  
-        pod内部的容器可以使用localhost互相通信,pod中的容器与外部通信时,从共享的资源当中进行分配,宿主机的端口映射    
-- 存储  
+pause共享两种资源(存储、网络)
+- 网络
+        每个pod都会被分配一个集群内部的唯一ip地址,pod内的容器共享网络,pod在集群内部的ip地址和端口  
+        pod内部的容器可以使用localhost互相通信,pod中的容器与外部通信时,从共享的资源当中进行分配,宿主机的端口映射  
+- 存储
         pod可以指定共享的volume,pod内的容器共享这些volume,volume可以实现持久化。防止pod重新构建之后文件消失  
 
-Pause容器也称为"Infra容器"或"Sandbox容器"是Pod生命周期中一个非常关键的底层组件  
-Pause它虽然看似"透明"但对Pod的稳定性和功能实现起着核心作用,以下是Pod生命周期与Pause容器的关系  
+![pause容器](pic/podphase00.png)  
 
-### 7.1.1、Pause容器的核心作用
-kubernetes中的pause容器主要为每个业务容器提供以下功能
+### 7.1.1、Pause容器的核心作用提供共享命名空间  
+kubernetes中的pause容器主要为每个业务容器提供共享命名空间  
 - PID命名空间： Pod中的不同应用程序可以看到其他应用程序的进程ID,pid命名空间开启init进程;所有容器共享同一个进程树(通过kubectl exec看进程)
 - 网络命名空间：Pod中的多个容器能够共享同一个IP和端口范围;所有Pod内容器共享同一个IP和端口空间  
 - IPC命名空间： Pod中的多个容器能够使用SystemV IPC或POSIX消息队列进行通信;允许容器间通过进程间通信(如共享内存)  
 - UTS命名空间： Pod中的多个容器共享一个主机名;Volumes(共享存储卷)  
 ![pod状态的变化2](pic/podphase0.png)  
+
 
 ### 7.1.2、Pause容器与Pod生命周期的关系
 - Pod启动阶段  
