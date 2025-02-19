@@ -1369,8 +1369,8 @@ kubectl explain pods.spec.containers.startupProbe.tcpSocket
 | terminationGracePeriodSeconds | 1 |  1 | 宽限时间 与kubectl explain pods.spec.terminationGracePeriodSeconds有区别 |
 | exec |    |   | 在容器内部执行执行Shell命令 |
 | grpc |    |   | 发起一个grpc请求 |
-| httpGet |    |   | 发起HTTP请求  |
-| tcpSocket |    |   | 发起tpcSocket请求 |
+| httpGet |    |   | 发起HTTP请求 监听接口,属于七层 |
+| tcpSocket |    |   | 发起tpcSocket请求 监听端口,属于四层|
 
 
 ### 7.7.3  探针检测方式与检测结果
@@ -1787,9 +1787,76 @@ spec:
   </code></pre>
 </details> 
 
+<details>
+  <summary>Pod的生命周期-示例</summary>
+  <pre><code>
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pod-hook-exec
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+     app: pod-hook-exec
+  template:
+    metadata:
+      labels:
+        app: pod-hook-exec
+    spec:
+      terminationGracePeriodSeconds: 5 #设置5秒宽限时间,默认是30s
+      nodeName: local-168-182-110 #指定调度机器
+      initContainers:
+      - name: init-containers
+        image: busybox
+        command: ["sh","-c","echo init-containers...|tee -a /tmp/pod-hook-exec.log;sleep 5s"]
+        volumeMounts:
+        - name: logs
+          mountPath: /tmp/pod-hook-exec.log
+          subPath: pod-hook-exec.log
+      containers:
+      - name: main-container
+        image: busybox
+        command: ["sh","-c","echo main-container...|tee -a /tmp/pod-hook-exec.log;sleep 3600s"] #只有这个才会输出到屏幕,也就是通过logs只能查看主容器日志
+        volumeMounts:
+        - name: logs
+          mountPath: /tmp/pod-hook-exec.log
+          subPath: pod-hook-exec.log
+        startupProbe:
+          exec:
+            command: ["sh","-c","echo startupProbe...|tee -a /tmp/pod-hook-exec.log;sleep 5s"]
+          timeoutSeconds: 10
+        livenessProbe:
+          exec:
+            command: ["sh","-c","echo livenessProbe...|tee -a /tmp/pod-hook-exec.log;sleep 5s"]
+          timeoutSeconds: 10
+        readinessProbe:
+          exec:
+            command: ["sh","-c","echo readinessProbe...|tee -a /tmp/pod-hook-exec.log;sleep 5s"]
+          timeoutSeconds: 10
+        lifecycle:
+          postStart:
+            exec: #在容器启动的时候执行一个命令
+              command: ["sh","-c","echo postStart...|tee -a /tmp/pod-hook-exec.log;sleep 5s"]
+          preStop: # 在pod停止之前执行
+            exec:
+              command: ["sh","-c","echo preStop...|tee -a /tmp/pod-hook-exec.log"]
+      volumes:
+      - name: logs #和上面保持一致 这是本地的文件路径，上面是容器内部的路径
+        hostPath:
+          path: /opt/k8s/test/
+  </code></pre>
+</details>
+
+![Pod的生命周期-示例](pic/podlife00.png)  
+从上图的日志就可看出,被分为6个执行阶段;执行的先后顺序：   
+
+**initContainers --> main-container --> postStart --> startupProbe --> readinessProbe --> livenessProbe --> preStop**     
+>main-container和postStart是同时执行,虽然readinessProbe和livenessProbe也是同时执行,但是他们不是真正的并行执行,也有先后顺序的   
+
 [探针-路多辛](https://www.toutiao.com/article/7206670428587164192/)  
 [kubernetes官方文档](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)   
-
 
 **健康检测(三种探针)总结**
 通过合理配置三种探针,可以实现  
