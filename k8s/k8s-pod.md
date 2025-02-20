@@ -19,8 +19,8 @@
       - [主容器探针配置参数](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#772--探针配置参数)  
       - [主容器探针检测方式与检测结果](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#773--探针检测方式与检测结果)  
       - [主容器健康检测示例](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#774--主容器健康检测示例)  
-  - [pod生命周期-pod终止过程](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#78-pod终止过程)  
-  - ~~[pod生命周期-pod状态](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)~~  
+    * [pod生命周期-pod终止过程](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#78-pod终止过程)  
+    * [pod生命周期-pod状态](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#79-pod状态)     
 
 ---
 
@@ -503,8 +503,7 @@ pod对象从创建至终的这段时间范围称为pod的生命周期,它主要�
   * [主容器探针检测方式与检测结果](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#773--探针检测方式与检测结果)  
   * [主容器健康检测示例](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#774--主容器健康检测示例)  
 - [pod生命周期-pod终止](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#78-pod终止过程)   
-
-- ~~[pod生命周期-pod状态](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#)~~  
+- [pod生命周期-pod状态](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#79-pod状态)   
 
 ## 7、1 pause容器
 k8s中的Pause容器(又称InfraContainer)是Pod的基础设施组件  
@@ -1927,4 +1926,257 @@ Pod被终止,处于terminating状态
 k8s删除Pod相关资源:如网络配置、数据卷等  
 
 ![pod删除过程](pic/poddel0.png)  
+
+
+## 7.9 pod状态
+
+在88s中Pod的状态(PodStatus)反映了其生命周期中的不同阶段和运行情况  
+
+![podstatus](pic/podstatus.png)
+
+
+1. Pending(挂起)
+描述：Pod已被系统接受,但尚未调度到节点上,或正在下载镜像。
+处理过程：调度器(Scheduler)为Pod选择合适的节点;如果节点资源不足或镜像下载失败,Pod会保持Pending状态。
+
+2. ContainerCreating(容器创建中)
+描述：Pod已调度到节点,正在创建容器。
+处理过程：节点上的kubelet拉取镜像并创建容器;如果镜像拉取失败或容器启动失败,Pod会保持此状态。
+
+3. Running(运行中)
+描述：Pod已绑定到节点,所有容器已创建且至少有一个在运行。
+处理过程：容器按定义启动并运行;kubelet监控容器状态,确保其持续运行。
+
+4. Succeeded(成功)
+描述：所有容器成功完成任务并终止。
+处理过程：容器完成任务后退出,状态码为0;Pod不再运行,但保留在集群中以供查询。
+
+5. Failed(失败)
+描述：Pod中的至少有一个容器因错误终止。
+处理过程：容器因非零状态码或系统错误退出;kubelet记录失败原因,Pod保留在集群中供查询。
+
+6. Unknown(未知)
+描述：Pod状态无法确定,通常由于与节点通信失败。
+处理过程：kubelet无法报告Pod状态,可能是节点故障或网络问题;系统会尝试重新获取状态或重启Pod。
+
+7. Terminating(终止中)
+描述：Pod正在被删除。
+处理过程：用户或控制器发出删除请求后,Pod进入Terminating状态;kubelet发送终止信号给容器,等待其优雅关闭;如果容器未及时关闭,kubelet会强制终止。
+
+7. Terminated(已终止)
+描述：Pod中的所有容器已终止。
+处理过程：容器因任务完成或错误终止,Pod进入Terminated状态;Pod不再运行,但保留在集群中以供查询。
+
+8. Deleted(已删除)
+描述：Pod已从集群中移除。
+处理过程：所有资源被释放,Pod从API服务器中删除;相关日志和事件可能保留供后续分析。
+
+9. CrashLoopBackOff(崩溃循环)
+描述：容器反复崩溃并重启。
+处理过程：kubelet检测到容器频繁崩溃,进入CrashLoopBackOff状态;每次重启间隔时间逐渐增加,以减少系统负载。
+
+10. ImagePullBackOff(镜像拉取失败)
+描述：无法拉取容器镜像。
+处理过程：kubelet尝试拉取镜像失败,进入ImagePullBackOff状态;每次重试间隔时间逐渐增加,以减少系统负载。
+
+11. Error(错误)
+描述：Pod因配置错误或其他问题无法启动。
+处理过程：kubelet检测到配置错误或启动失败,进入Error状态;错误信息记录在事件日志中,供管理员排查。
+
+12. Completed(完成)
+描述：Pod中的所有容器成功完成任务并退出。
+处理过程：容器完成任务后退出,状态码为0;Pod不再运行,但保留在集群中以供查询。
+
+13. Evicted(驱逐)
+描述：Pod因资源不足被驱逐。
+处理过程：节点资源不足时,kubelet驱逐部分Pod以释放资源;被驱逐的Pod进入Evicted状态(需手动清理)。
+
+14. OutOfCPU(CPU不足)
+描述：Pod因CPU资源不足无法调度。
+处理过程：调度器检测到节点CPU资源不足,Pod无法调度;Pod保持Pending状态,直到有足够CPU资源。
+
+15. OutOfMemory(内存不足)
+描述：Pod因内存资源不足无法调度。
+处理过程：调度器检测到节点内存资源不足,Pod无法调度;Pod保持Pending状态,直到有足够内存资源。
+
+16. NodeAffinity(节点亲和性)
+描述：Pod因节点亲和性规则无法调度。
+处理过程：调度器根据节点亲和性规则选择节点;如果没有符合规则的节点,Pod保持Pending状态。
+
+17. PodAffinity(Pod亲和性)
+描述：Pod因Pod亲和性规则无法调度。
+处理过程：调度器根据Pod亲和性规则选择节点;如果没有符合规则的节点,Pod保持Pending状态。
+
+18. PodAntiAffinity(Pod反亲和性)
+描述：Pod因Pod反亲和性规则无法调度。
+处理过程：调度器根据Pod反亲和性规则选择节点;如果没有符合规则的节点,Pod保持Pending状态。
+
+19. Taint(污点)
+描述：Pod因节点污点无法调度。
+处理过程：调度器检测到节点有污点,Pod无法调度;Pod保持Pending状态,直到污点被移除或Pod容忍污点。
+
+20. Toleration(容忍)
+描述：Pod容忍节点污点。
+处理过程：调度器检测到Pod容忍节点污点,Pod可以调度到该节点;Pod进入Running状态,容器正常启动。
+
+21. Preempting(抢占)
+描述：Pod因优先级较高抢占其他Pod资源。
+处理过程：调度器检测到高优先级Pod需要资源,驱逐低优先级Pod;被抢占的Pod进入Terminating状态,高优先级Pod进入Pending状态。
+
+22. Preempted(被抢占)
+描述：Pod因优先级较低被其他Pod抢占资源。
+处理过程：调度器检测到高优先级Pod需要资源,驱逐低优先级Pod;被抢占的Pod进入Terminating状态,高优先级Pod进入Pending状态。
+
+23. Unschedulable(不可调度)
+描述：Pod因资源不足或其他原因无法调度。
+处理过程：调度器检测到Pod无法调度,保持Pending状态;相关事件记录在事件日志中,供管理员排查。
+
+24. Scheduled(已调度)
+描述：Pod已成功调度到节点。
+处理过程：调度器为Pod选择合适节点,Pod进入Pending状态;kubelet开始拉取镜像并创建容器。
+
+25. Initialized(已初始化)
+描述：Pod的初始化容器已完成。
+处理过程：初始化容器按顺序运行并成功完成;主容器开始启动,Pod进入Running状态。
+
+26. Ready(已就绪)
+描述：Pod已准备好接收流量。
+处理过程：所有容器通过就绪探针检查,Pod进入Ready状态;服务可以将流量路由到该Pod。
+
+27. NotReady(未就绪)
+描述：Pod未准备好接收流量。
+处理过程：容器未通过就绪探针检查,Pod进入NotReady状态;服务不会将流量路由到该Pod。
+
+28. Unhealthy(不健康)
+描述：Pod的健康检查失败。
+处理过程：容器未通过健康检查,Pod进入Unhealthy状态;kubelet尝试重启容器或Pod。
+
+29. Healthy(健康)
+描述：Pod的健康检查通过。
+处理过程：容器通过健康检查,Pod进入Healthy状态;Pod正常运行,服务可以路由流量。
+
+30. Restarting(重启中)
+描述：Pod中的容器正在重启。
+处理过程：容器因故障或配置更改重启,Pod进入Restarting状态;kubelet监控重启过程,确保容器恢复正常。
+
+31. OOMKilled(内存不足被杀死)
+描述：容器因内存不足被系统杀死。
+处理过程：容器内存使用超出限制,被系统杀死;kubelet记录OOMKilled事件,Pod进入Failed状态。
+
+32. DeadlineExceeded(超时)
+描述：Pod因超时未完成初始化或任务。
+处理过程：初始化容器或主容器未在规定时间内完成,Pod进入DeadlineExceeded状态;kubelet记录超时事件,Pod进入Failed状态。
+
+33. AdmissionError(准入错误)
+描述：Pod因准入控制错误无法创建。
+处理过程：准入控制器拒绝Pod创建请求,Pod进入AdmissionError状态;相关事件记录在事件日志中,供管理员排查。
+
+36. FailedScheduling(调度失败)
+描述：Pod因资源不足或其他原因调度失败。
+处理过程：调度器无法为Pod找到合适节点,Pod进入FailedScheduling状态;相关事件记录在事件日志中,供管理员排查。
+
+37. Scheduling(调度中)
+描述：Pod正在被调度到节点。
+处理过程：调度器为Pod选择合适节点,Pod进入Scheduling状态;如果调度成功,Pod进入Pending状态；否则进入FailedScheduling状态。
+
+38. Binding(绑定中)
+描述：Pod正在绑定到节点。
+处理过程：调度器为Pod选择节点后,Pod进入Binding状态;绑定成功后,Pod进入Pending状态；否则进入FailedScheduling状态。
+
+39. Bound(已绑定)
+描述：Pod已成功绑定到节点。
+处理过程：调度器为Pod选择节点并成功绑定,Pod进入Bound状态;kubelet开始拉取镜像并创建容器。
+
+40. Unbound(未绑定)
+描述：Pod未绑定到任何节点。
+处理过程：调度器未为Pod选择节点,Pod进入Unbound状态;Pod保持Pending状态,直到成功绑定到节点。
+
+41. Unscheduleable(不可调度)
+描述：Pod因资源不足或其他原因无法调度。kube-scheduler没有匹配到合适的node节点。
+处理过程：调度器检测到Pod无法调度,保持Pending状态;相关事件记录在事件日志中,供管理员排查。
+
+
+ # Pod详细的状态说明       
+| 状态    | 描述 | 
+| :-------- | :----- |
+| CrashLoopBackOff  | 容器异常退出,kubelet正在将它重启  |
+| CreateContainerConfigError  | 不能创建kubelet使用的容器配置  |
+| CreateContainerError  |  创建容器失败 |
+| CreateContainerConfigError | 不能创建kubelet使用的容器配置  |
+| ContainersNotInitialized  | 容器没有初始化完毕  |
+| ContainersNotReady	  | 容器没有准备完毕  |
+| ContainerCreating	  | Pod正在创建中  |
+| ContainersReady | 表示Pod中的所有容器是否已经准备就绪  |
+| DockerDaemonNotReady   | docker还没有完全启动  |
+| Evicted  | 被驱除 |
+| Error    | Pod启动过程中发生错误,配置错误或其他问题无法启动 |
+| ErrImageNeverPull  | 策略禁止拉取镜像,镜像中心权限是私有等  |
+| ErrImagePull	  |  镜像拉取出错,超时或下载被强制终止 |	
+| NetworkPluginNotReady  | 网络插件还没有完全启动  |
+| NodeLost               | Pod所在节点失联 |
+| ImageInspectError  | 无法校验镜像,镜像不完整导致  |
+| ImagePullBackOff	  |  镜像拉取失败,但是正在重新拉取 |
+| Initialized | 表示Pod中的所有容器是否已经初始化  |
+| Initializing | Pod正在初始化中 |
+| InvalidImageName | node节点无法解析镜像名称,导致镜像无法下载  |
+| Pending          | Pending(挂起),Pod等待被调度、未调度到节点上或正在下载镜像 |
+| PreStartContainer |  执行preStarthook报错 |
+| PostStartHookError  | 执行postStart-hook报错  |
+| PodScheduled  | 表示Pod是否已经被调度到了节点上  |
+| PodInitializing  | pod初始化中  |
+| RunContainerError | Pod运行失败,容器中没有初始化PID为1的守护进程等  |
+| Ready   | Pod是否已经准备就绪,即所有容器都已经启动并且可以接收流量|
+| RegistryUnavailable | 连接不到镜像中心  |
+| Terminating | Pod正在被销毁或删除 |
+| Terminated  | PodPod中的所有容器已终止 |
+| Unkown      | Pod所在节点失联或其它未知异常 |
+| Waiting     | Pod已被调度到某个节点,但容器尚未完成启动,等待启动 |
+
+
+
+查看pod状态方式 
+- 1. 基础状态(kubectl get pods)
+Pending(挂起)
+Running(运行中)
+Succeeded(成功终止)
+Completed(已完成)
+Failed(失败终止)
+Unknown(未知)
+Evicted(已驱逐)节点资源不足导致Pod被驱逐
+CrashLoopBackOff(崩溃循环)容器频繁崩溃重启,kubelet正在尝试恢复
+ImagePullBackOff：镜像拉取失败(如镜像不存在或权限不足)
+ImagePullBackOff 
+ContainerCreating：容器创建中(可能因镜像拉取或资源分配延迟)
+Init:0/x   
+PodInitializing
+Initialized所有pod中的初始化容器已经完成了。
+Terminating(终止中)
+
+- 2. 详细状态(kubectl describe pod)
+PodScheduled：是否已调度到节点
+Initialized：初始化容器是否完成执行
+ContainersReady：所有容器是否准备就绪
+Ready：Pod是否可接收流量(如服务流量)
+
+
+- 3. 排查方式
+kubectl get po -A
+kubectl describe pod <pod-name>  #查看Events、Conditions
+kubectl logs <pod-name>          #分析容器内部运行情况
+
+除此之外，PodStatus对象中还包含一个PodCondition的数组，里面包含如下属性：
+1：lastProbeTime：最后一次探测Pod Condition的时间戳
+2：lastTransitionTime：上次Condition从一种状态转换到另一种状态的时间
+3：message：上次Condition状态转换的详细描述
+4：reason：Condition最后一次转换的原因
+5：satatus：Condition状态类型，可以为True，Flase和Unknow
+6：type：Condition类型，包含如下：
+	1：PodScheduled：Pod已经被调度到其他Node中
+	2：PodHasNetwork：Alpha功能，表示Runtime已经创建并配置了网络
+	3：ContainersReady：Pod 中的所有容器都是Ready状态
+	4：Initialized：所有的init Container都已经完成
+	5：Ready：Pod 能够处理请求，Service可以将流量转发到此Pod
+	6：Unscheduleble：调度程序现在无法调度Pod，由于缺乏资源或者其他限制
+
+
 
