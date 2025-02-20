@@ -961,7 +961,11 @@ InitContainer是k8s中实现 启动顺序控制 和 初始化依赖管理 的关
 合理使用InitContainer可以避免主容器因依赖未就绪而频繁崩溃,是复杂应用部署的必备工具 
 
 ## 7.5 mainContainer主容器运行
-在k8s中,Pod是最小的调度和部署单元,包含一个或多个共享网络和存储资源的容器(如主容器、Sidecar容器、Init容器)等而主容器mainContainer是Pod中运行核心业务逻辑的容器。  
+在k8s中,Pod是最小的调度和部署单元,包含一个或多个共享网络和存储资源的容器(如主容器、Sidecar容器、Init容器)等  
+主容器mainContainer是Pod中运行核心业务逻辑的容器  
+![mainContainer](pic/mainContainer0.png)  
+[mainContiner](https://www.n.cn/search/c66b3f3f93564d4387887f8d9f6dd5a3?fr=none&so_key=0)  
+
 ### 7.5.1 mainContainer主容器核心特性
 - 容器共享同一网络命名空间(通过localhost通信)   
 - 容器共享同一组存储卷Volumes   
@@ -982,10 +986,10 @@ InitContainer是k8s中实现 启动顺序控制 和 初始化依赖管理 的关
 | 日志与监控 | 日志通过标准输出(stdout/stderr)收集,监控通过暴露的指标端点实现  |
 
 ### 7.5.3 mainContainer主容器的生命周期管理
-- 1.动流程  
+- 1.启动流程  
   * Pod调度：由调度器Scheduler分配到合适节点  
   * Init容器执行：Init容器按顺序执行并成功退出  
-  * 主容器启动  
+  * 主容器启动(kubelet与CRI同步状态或上报)  
     - 拉取镜像(若本地不存在)  
     - 挂载Volume(如ConfigMap、Secret、emptyDir)  
     - 执行启动命令(command、args)  
