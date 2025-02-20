@@ -964,7 +964,7 @@ InitContainer是k8s中实现 启动顺序控制 和 初始化依赖管理 的关
 在k8s中,Pod是最小的调度和部署单元,包含一个或多个共享网络和存储资源的容器(如主容器、Sidecar容器、Init容器)等  
 主容器mainContainer是Pod中运行核心业务逻辑的容器  
 ![mainContainer](pic/mainContainer0.png)  
-[mainContiner](https://www.n.cn/search/c66b3f3f93564d4387887f8d9f6dd5a3?fr=none&so_key=0)  
+[mainContiner详细流程图](https://www.n.cn/search/c66b3f3f93564d4387887f8d9f6dd5a3?fr=none&so_key=0)  
 
 ### 7.5.1 mainContainer主容器核心特性
 - 容器共享同一网络命名空间(通过localhost通信)   
@@ -1100,6 +1100,8 @@ pod是容器编排的核心单元,主容器是其运行业务逻辑的核心组�
 
 ## 7.6 主容器钩子函数
 在k8s中Pod的主容器支持生命周期钩子函数(Lifecycle Hooks)用于在容器启动和终止的关键节点触发自定义操作  
+![mainContainerHook](pic/Hooks.png)  
+[mainContinerHooks详细流程图](https://www.n.cn/search/07c24bf429f44b5eb2f90379ec58e227?fr=none&so_key=0)  
 
 k8s支持钩子函数postStart和preStop为容器提供了更精细的生命周期管理能力  
 - postStart  
@@ -1273,15 +1275,18 @@ lifecycle:
 
 ## 7.7 主容器健康检测(三种探针)  
 在k8s中,健康检查(Health Checks)是确保容器应用可靠运行的核心机制   
-启动探针(StartupProbe)、存活探针(livenessProbe)、就绪探针(readinessProbe)健康检测是检查容器里面的服务是否正常  
+启动探针(StartupProbe)、存活探针(livenessProbe)、就绪探针(readinessProbe)健康检测是检查容器里面的服务是否正常 
+ 
+![mainContainer-health-Probe](pic/healthProbe.png)  
+[mainContiner-health-Probe详细流程图](https://www.n.cn/search/9315b5209e2448e0b5447c8531c14b43?fr=none&so_key=0)  
 
 ### 7.7.1  主容器健康检测作用  
 
 | 探针类型  | 触发时机 |  失败后果 |   典型场景  | 说明  |
 | --------- | ------- |  ------- |    -------  |  -------  |
-| startupProbe | 容器启动后立即检测  |  若失败,持续重试直到成功或超时 | 保护启动慢的应用(如Java应用),避免被存活探针误杀 |  用于判断容器内应用程序是否已经启动  |
-| livenessProbe | 容器启动后周期检测  |  重启容器(根据restartPolicy) | 检测死锁、内存泄漏等不可恢复的故障  |  用于探测容器是否存活(Running状态)  |
-| readinessProbe | 容器启动后周期检测  |  从Service的Endpoints中移除Pod | 等待依赖项(如数据库)就绪,避免流量涌入未准备好的容器 |  用于探测容器内的程序是否健康  |
+| startupProbe   | 容器启动后立即检测 | 若失败,持续重试直到成功或超时 | 保护启动慢的应用(Java),避免被存活探针误杀 | 关注启动阶段,避免误杀初始化慢的应用 |
+| livenessProbe  | 容器启动后周期检测 | 重启容器(根据restartPolicy)   | 检测死锁、内存泄漏等不可恢复的故障        | 关注容器存活状态,失败触发重启  |
+| readinessProbe | 容器启动后周期检测 | 从Service的Endpoints中移除Pod | 等待依赖项(如数据库)就绪,避免流量涌入未准备好的容器 | 关注服务可用性,失败暂停流量 |
 
 - startupProbe启动探针  
   * 检查成功才由存活检查接手,用于保护慢启动容器    
