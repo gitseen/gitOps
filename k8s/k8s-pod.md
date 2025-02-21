@@ -2193,12 +2193,13 @@ Ready：Pod是否可接收流量(如服务流量)
 ...
 ```
 
-- 3. 排查总结  
+- 3.排查总结  
 
 ```bash
 kubectl get po -A
 kubectl describe pod <pod-name>  #查看Events、Conditions
 kubectl logs <pod-name>          #分析容器内部运行情况
 ```
+
 
 
