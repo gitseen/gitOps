@@ -2137,13 +2137,14 @@ k8s删除Pod相关资源:如网络配置、数据卷等
 描述：Pod因资源不足或其他原因无法调度。kube-scheduler没有匹配到合适的node节点。
 处理过程：调度器检测到Pod无法调度,保持Pending状态;相关事件记录在事件日志中,供管理员排查。
 ```
-### [7.9.23 Pod状况](https://kubernetes.io/zh-cn/docs/concepts/workloads/pods/pod-lifecycle/#pod-conditions) 
+### 7.9.2 [Pod状况](https://kubernetes.io/zh-cn/docs/concepts/workloads/pods/pod-lifecycle/#pod-conditions) 
 
 Pod有一个PodStatus对象,其中包含一个PodConditions数组。Pod可能通过也可能未通过其中的一些状况测试  
 
 ```bash
 kubelet explain pods.status.Conditions
 ```
+
 | 字段名称    | 描述 | 
 | :-------- | :----- |
 | type     | Pod状况的名称  |
@@ -2162,7 +2163,8 @@ typeCondition类型,kubelet管理以下PodCondition包含如下
 
 
 ### 7.9.3 Pod状态查询方式    
-- 1. 基础状态(kubectl get pods)  
+- 1.基础状态(kubectl get pods)  
+
 ```bash
 Pending(挂起)
 Running(运行中)
@@ -2181,7 +2183,8 @@ Initialized所有pod中的初始化容器已经完成了。
 ...
 ```
 
-- 2. 详细状态(kubectl describe pod)  
+- 2.详细状态(kubectl describe pod) 
+  
 ```bash
 PodScheduled：是否已调度到节点
 Initialized：初始化容器是否完成执行
@@ -2190,10 +2193,12 @@ Ready：Pod是否可接收流量(如服务流量)
 ...
 ```
 
-- 3. 排查总结
+- 3. 排查总结  
+
 ```bash
 kubectl get po -A
 kubectl describe pod <pod-name>  #查看Events、Conditions
 kubectl logs <pod-name>          #分析容器内部运行情况
 ```
+
 
