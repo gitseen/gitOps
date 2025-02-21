@@ -1424,6 +1424,7 @@ kubectl explain pods.spec.containers.startupProbe.tcpSocket
   - 适用场景：非HTTP服务(如数据库、Redis)  
   
 * grpc:   对容器的IP地址、端口发起一个grpc请求(前提是服务实现了grpc健康检查协议),返回响应的状态是SERVING则认为诊断成功  
+          使用gRPC执行一个远程过程调用。目标应该实现gRPC健康检查;如果响应的状态是 "SERVING"则认为诊断成功
 
 ***探针执行者***   
 execAction(借助容器运行时执行)  
@@ -1930,34 +1931,75 @@ k8s删除Pod相关资源:如网络配置、数据卷等
 
 ## 7.9 pod状态
 
-在88s中Pod的状态(PodStatus)反映了其生命周期中的不同阶段和运行情况  
+在k8s中Pod的状态(PodStatus)反映了其生命周期中的不同阶段和运行情况  
 
 ![podstatus](pic/podstatus.png)
 
+### 7.9.1 Pod详细的状态说明       
+| 状态    | 描述 | 
+| :-------- | :----- |
+| CrashLoopBackOff  | 容器异常退出,kubelet正在将它重启  |
+| CreateContainerConfigError  | 不能创建kubelet使用的容器配置  |
+| CreateContainerError  |  创建容器失败 |
+| CreateContainerConfigError | 不能创建kubelet使用的容器配置  |
+| ContainersNotInitialized  | 容器没有初始化完毕  |
+| ContainersNotReady	  | 容器没有准备完毕  |
+| ContainerCreating	  | Pod正在创建中  |
+| ContainersReady | 表示Pod中的所有容器是否已经准备就绪  |
+| DockerDaemonNotReady   | docker还没有完全启动  |
+| Evicted  | 被驱除 |
+| Error    | Pod启动过程中发生错误,配置错误或其他问题无法启动 |
+| ErrImageNeverPull  | 策略禁止拉取镜像,镜像中心权限是私有等  |
+| ErrImagePull	  |  镜像拉取出错,超时或下载被强制终止 |	
+| NetworkPluginNotReady  | 网络插件还没有完全启动  |
+| NodeLost               | Pod所在节点失联 |
+| ImageInspectError  | 无法校验镜像,镜像不完整导致  |
+| ImagePullBackOff	  |  镜像拉取失败,但是正在重新拉取 |
+| Initialized | 表示Pod中的所有容器是否已经初始化  |
+| Initializing | Pod正在初始化中 |
+| InvalidImageName | node节点无法解析镜像名称,导致镜像无法下载  |
+| Pending          | Pending(挂起),Pod等待被调度、未调度到节点上或正在下载镜像 |
+| PreStartContainer |  执行preStarthook报错 |
+| PostStartHookError  | 执行postStart-hook报错  |
+| PodScheduled  | 表示Pod是否已经被调度到了节点上  |
+| PodInitializing  | pod初始化中  |
+| RunContainerError | Pod运行失败,容器中没有初始化PID为1的守护进程等  |
+| Ready   | Pod是否已经准备就绪,即所有容器都已经启动并且可以接收流量|
+| RegistryUnavailable | 连接不到镜像中心  |
+| Terminating | Pod正在被销毁或删除 |
+| Terminated  | PodPod中的所有容器已终止 |
+| Unkown      | Pod所在节点失联或其它未知异常 |
+| Waiting     | Pod已被调度到某个节点,但容器尚未完成启动,等待启动 |
 
+**pod状态说明**
+```bash
 1. Pending(挂起)
-描述：Pod已被系统接受,但尚未调度到节点上,或正在下载镜像。
-处理过程：调度器(Scheduler)为Pod选择合适的节点;如果节点资源不足或镜像下载失败,Pod会保持Pending状态。
+描述：Pod已经被创建,但还没有完成调度,或者说有一个或多个镜像正处于从远程仓库下载的过程。
+处理过程：Pod可能正在写数据到etcd中、调度、pull镜像或启动容器;如果节点资源不足或镜像下载失败,Pod会保持Pending状态。
+
 
 2. ContainerCreating(容器创建中)
 描述：Pod已调度到节点,正在创建容器。
 处理过程：节点上的kubelet拉取镜像并创建容器;如果镜像拉取失败或容器启动失败,Pod会保持此状态。
 
 3. Running(运行中)
-描述：Pod已绑定到节点,所有容器已创建且至少有一个在运行。
+描述：Pod已绑定到节点,所有容器已创建且至少有一个在运行,或者正处于启动或重启状态。
 处理过程：容器按定义启动并运行;kubelet监控容器状态,确保其持续运行。
 
+
 4. Succeeded(成功)
-描述：所有容器成功完成任务并终止。
+描述：Pod中的所有的容器已正常执行后退出,并且不会自动重启,一般会是在部署job的时候会出现。
 处理过程：容器完成任务后退出,状态码为0;Pod不再运行,但保留在集群中以供查询。
 
+
 5. Failed(失败)
-描述：Pod中的至少有一个容器因错误终止。
+描述：Pod中的所有容器都已终止,且至少有一个容器是因为失败终止;也就是说,容器以非0状态退出或者被系统终止。
 处理过程：容器因非零状态码或系统错误退出;kubelet记录失败原因,Pod保留在集群中供查询。
+
 
 6. Unknown(未知)
 描述：Pod状态无法确定,通常由于与节点通信失败。
-处理过程：kubelet无法报告Pod状态,可能是节点故障或网络问题;系统会尝试重新获取状态或重启Pod。
+处理过程：apiServer无法正常获取Pod状态信息,通常是由于其无法与所在工作节点的kubelet通信所致。
 
 7. Terminating(终止中)
 描述：Pod正在被删除。
@@ -2094,89 +2136,64 @@ k8s删除Pod相关资源:如网络配置、数据卷等
 41. Unscheduleable(不可调度)
 描述：Pod因资源不足或其他原因无法调度。kube-scheduler没有匹配到合适的node节点。
 处理过程：调度器检测到Pod无法调度,保持Pending状态;相关事件记录在事件日志中,供管理员排查。
+```
+### [7.9.23 Pod状况](https://kubernetes.io/zh-cn/docs/concepts/workloads/pods/pod-lifecycle/#pod-conditions) 
 
+Pod有一个PodStatus对象,其中包含一个PodConditions数组。Pod可能通过也可能未通过其中的一些状况测试  
 
- # Pod详细的状态说明       
-| 状态    | 描述 | 
+```bash
+kubelet explain pods.status.Conditions
+```
+| 字段名称    | 描述 | 
 | :-------- | :----- |
-| CrashLoopBackOff  | 容器异常退出,kubelet正在将它重启  |
-| CreateContainerConfigError  | 不能创建kubelet使用的容器配置  |
-| CreateContainerError  |  创建容器失败 |
-| CreateContainerConfigError | 不能创建kubelet使用的容器配置  |
-| ContainersNotInitialized  | 容器没有初始化完毕  |
-| ContainersNotReady	  | 容器没有准备完毕  |
-| ContainerCreating	  | Pod正在创建中  |
-| ContainersReady | 表示Pod中的所有容器是否已经准备就绪  |
-| DockerDaemonNotReady   | docker还没有完全启动  |
-| Evicted  | 被驱除 |
-| Error    | Pod启动过程中发生错误,配置错误或其他问题无法启动 |
-| ErrImageNeverPull  | 策略禁止拉取镜像,镜像中心权限是私有等  |
-| ErrImagePull	  |  镜像拉取出错,超时或下载被强制终止 |	
-| NetworkPluginNotReady  | 网络插件还没有完全启动  |
-| NodeLost               | Pod所在节点失联 |
-| ImageInspectError  | 无法校验镜像,镜像不完整导致  |
-| ImagePullBackOff	  |  镜像拉取失败,但是正在重新拉取 |
-| Initialized | 表示Pod中的所有容器是否已经初始化  |
-| Initializing | Pod正在初始化中 |
-| InvalidImageName | node节点无法解析镜像名称,导致镜像无法下载  |
-| Pending          | Pending(挂起),Pod等待被调度、未调度到节点上或正在下载镜像 |
-| PreStartContainer |  执行preStarthook报错 |
-| PostStartHookError  | 执行postStart-hook报错  |
-| PodScheduled  | 表示Pod是否已经被调度到了节点上  |
-| PodInitializing  | pod初始化中  |
-| RunContainerError | Pod运行失败,容器中没有初始化PID为1的守护进程等  |
-| Ready   | Pod是否已经准备就绪,即所有容器都已经启动并且可以接收流量|
-| RegistryUnavailable | 连接不到镜像中心  |
-| Terminating | Pod正在被销毁或删除 |
-| Terminated  | PodPod中的所有容器已终止 |
-| Unkown      | Pod所在节点失联或其它未知异常 |
-| Waiting     | Pod已被调度到某个节点,但容器尚未完成启动,等待启动 |
+| type     | Pod状况的名称  |
+| status   | 表明该状况是否适用,可能的取值有"True"、"False"、"Unknown"  |
+| reason   | 机器可读的、驼峰编码(UpperCamelCase)的文字,表述上次状况变化的原因  |
+| message  | 人类可读的消息,给出上次状态转换的详细信息  |
+| lastProbeTime | 上次探测Pod状况时的时间戳   |
+| lastTransitionTime | Pod上次从一种状态转换到另一种状态时的时间戳  |  
+
+typeCondition类型,kubelet管理以下PodCondition包含如下  
+- PodScheduled：Pod已经被调度到某节点  
+- PodReadyToStartContainers：Pod沙箱被成功创建并且配置了网络  
+- ContainersReady：Pod 中所有容器都已就绪  
+- Initialized：所有的Init容器都已成功完成  
+- Ready：Pod可以为请求提供服务,并且应该被添加到对应服务的负载均衡池中   
 
 
-
-查看pod状态方式 
-- 1. 基础状态(kubectl get pods)
+### 7.9.3 Pod状态查询方式    
+- 1. 基础状态(kubectl get pods)  
+```bash
 Pending(挂起)
 Running(运行中)
 Succeeded(成功终止)
 Completed(已完成)
 Failed(失败终止)
 Unknown(未知)
+Terminating(终止中) 
 Evicted(已驱逐)节点资源不足导致Pod被驱逐
 CrashLoopBackOff(崩溃循环)容器频繁崩溃重启,kubelet正在尝试恢复
-ImagePullBackOff：镜像拉取失败(如镜像不存在或权限不足)
-ImagePullBackOff 
-ContainerCreating：容器创建中(可能因镜像拉取或资源分配延迟)
+ImagePullBackOff镜像拉取失败(如镜像不存在或权限不足)
+ContainerCreating容器创建中(可能因镜像拉取或资源分配延迟)
 Init:0/x   
 PodInitializing
 Initialized所有pod中的初始化容器已经完成了。
-Terminating(终止中)
+...
+```
 
-- 2. 详细状态(kubectl describe pod)
+- 2. 详细状态(kubectl describe pod)  
+```bash
 PodScheduled：是否已调度到节点
 Initialized：初始化容器是否完成执行
 ContainersReady：所有容器是否准备就绪
 Ready：Pod是否可接收流量(如服务流量)
+...
+```
 
-
-- 3. 排查方式
+- 3. 排查总结
+```bash
 kubectl get po -A
 kubectl describe pod <pod-name>  #查看Events、Conditions
 kubectl logs <pod-name>          #分析容器内部运行情况
-
-除此之外，PodStatus对象中还包含一个PodCondition的数组，里面包含如下属性：
-1：lastProbeTime：最后一次探测Pod Condition的时间戳
-2：lastTransitionTime：上次Condition从一种状态转换到另一种状态的时间
-3：message：上次Condition状态转换的详细描述
-4：reason：Condition最后一次转换的原因
-5：satatus：Condition状态类型，可以为True，Flase和Unknow
-6：type：Condition类型，包含如下：
-	1：PodScheduled：Pod已经被调度到其他Node中
-	2：PodHasNetwork：Alpha功能，表示Runtime已经创建并配置了网络
-	3：ContainersReady：Pod 中的所有容器都是Ready状态
-	4：Initialized：所有的init Container都已经完成
-	5：Ready：Pod 能够处理请求，Service可以将流量转发到此Pod
-	6：Unscheduleble：调度程序现在无法调度Pod，由于缺乏资源或者其他限制
-
-
+```
 
