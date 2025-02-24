@@ -2223,8 +2223,10 @@ kubectl scale deployment/<deployment-name> -n <namespace> --replicas=2  #恢复,
 kubectl delete pod <pod_name> -n <namespace>  #删除后控制器会自动重建,k8s声明式API会自动补足副本数 
 
 kubectl replace --force -f pod.yaml   #强制替换Pod对象
-kubectl get pod <pod_name> -n <namespace> -o yaml | kubectl replace --force -f -  #导出并重建
-#这种方法是通过更新Pod,从触发k8spod的更新
+kubectl get pod <pod_name> -n <namespace> -o yaml | kubectl replace --force -f -  #导出并重建;这种方法是通过更新Pod,触发k8spod的更新
+
+pod容器中执行kill 1
+kubectl exec -it <pod_name> -c <container_name> --/bin/sh -c "kill 1" #这种方法就是在容器里面kill 1号进程。但是此方法有个局限,必须要求你的1号进程要捕获TERM信号,否则在容器里面无法kill
 ```
 
 三、高级配置触发重启(kubectl [annotate|set])  
@@ -2239,14 +2241,9 @@ kubectl set env deployment <deployment name> -n <namespace> DEPLOY_DATE="$(date)
 #通过设置环境变量,其实也是更新podspec从而触发滚动升级。只不过这里通过kubectl命令行,当我们通过API更新podspec后一样会触发滚动升级  
 ```
 
-方法六： kill 1  
-```bash
-kubectl exec -it <pod_name> -c <container_name> --/bin/sh -c "kill 1"
-#这种方法就是在容器里面kill 1号进程。但是此方法有个局限,必须要求你的1号进程要捕获TERM信号,否则在容器里面无法kill
-```
-
 >Pod重启说明  
 >>优先选择滚动重启(rollout restart)兼顾稳定性和无缝性  
 >>临时调试场景：直接删除Pod或替换YAML  
 >>配置更新场景：通过修改镜像或注解触发重建  
+
 
