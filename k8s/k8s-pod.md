@@ -2204,11 +2204,11 @@ kubectl logs <pod-name>          #分析容器内部运行情况
 
 ## 8pod重启方法
 在k8s中重启Pod有多种方式,具体方法的选择取决于Pod的管理方式(Deployment、Statefulset、DaemonSet等)和操作需求  
-以下是常见且实用的重启方法：
+![pod-reboot](pic/podreboot.png)    
 
-一、通过控制器管理Pod的重启(kubectl [rollout|scale] restart)
-滚动重启: (Rolling Restart）
-适用场景：Deployment、Statefulset、DaemonSet等管理的Pod需优雅重启避免服务中断;调整副本数(Scale to Zero & Back)
+一、通过控制器管理Pod的重启(kubectl [rollout|scale] restart)  
+滚动重启: (Rolling Restart）  
+适用场景：Deployment、Statefulset、DaemonSet等管理的Pod需优雅重启避免服务中断;调整副本数(Scale to Zero & Back)  
 ```bash
 kubectl rollout restart deployment <deployment_name> -n <namespace> #推荐滚动升级类似比较平滑
 kubectl scale deployment/<deployment-name> -n <namespace> --replicas=0  #缩容至0,然后再改回目的副本数
@@ -2216,8 +2216,8 @@ kubectl scale deployment/<deployment-name> -n <namespace> --replicas=2  #恢复,
 这种方法相对来说,比较粗放,我们可以先将副本调成0
 ```
 
-二、直接操作Pod重启(kubectl delete pod)
-适用场景：单个Pod异常时快速重启;强制替换Pod(Replace API)
+二、直接操作Pod重启(kubectl delete pod)  
+适用场景：单个Pod异常时快速重启;强制替换Pod(Replace API)  
 ```bash
 kubectl delete pod <pod_name> -n <namespace>  #删除后控制器会自动重建,k8s声明式API会自动补足副本数 
 
@@ -2226,22 +2226,22 @@ kubectl get pod <pod_name> -n <namespace> -o yaml | kubectl replace --force -f -
 这种方法是通过更新Pod,从触发k8spod的更新
 ```
 
-三、高级配置触发重启(kubectl [annotate|set])
-修改注解(Annotation)或环境变量;修改Pod模板触发滚动更新
-适用场景：触发Pod重建以应用新配置;通过更新镜像版本或环境变量触发重建。
+三、高级配置触发重启(kubectl [annotate|set])  
+修改注解(Annotation)或环境变量;修改Pod模板触发滚动更新  
+适用场景：触发Pod重建以应用新配置;通过更新镜像版本或环境变量触发重建  
 ```bash
-kubectl annotate pod/<pod-name> app-version=$(date +%s) --overwrite  # 更新时间戳原理,k8s检测到注解变化后重建Pod
-kubectl set image deployment/<deployment-name> <container>=<new-image>  # 更新镜像
+kubectl annotate pod/<pod-name> app-version=$(date +%s) --overwrite  #更新时间戳原理,k8s检测到注解变化后重建Pod  
+kubectl set image deployment/<deployment-name> <container>=<new-image>  #更新镜像  
 kubectl set env deployment <deployment name> -n <namespace> DEPLOY_DATE="$(date)" 
-通过设置环境变量,其实也是更新podspec从而触发滚动升级。只不过这里通过kubectl命令行,当我们通过API更新podspec后一样会触发滚动升级
+通过设置环境变量,其实也是更新podspec从而触发滚动升级。只不过这里通过kubectl命令行,当我们通过API更新podspec后一样会触发滚动升级  
 
-方法六： kill 1
+方法六： kill 1  
 ```bash
 kubectl exec -it <pod_name> -c <container_name> --/bin/sh -c "kill 1"
 这种方法就是在容器里面kill 1号进程。但是此方法有个局限,必须要求你的1号进程要捕获TERM信号,否则在容器里面无法kill
 ```
-
-优先选择滚动重启(rollout restart)兼顾稳定性和无缝性
-临时调试场景：直接删除Pod或替换YAML
-配置更新场景：通过修改镜像或注解触发重建
+>Pod重启说明  
+>>优先选择滚动重启(rollout restart)兼顾稳定性和无缝性  
+>>临时调试场景：直接删除Pod或替换YAML  
+>>配置更新场景：通过修改镜像或注解触发重建  
 
