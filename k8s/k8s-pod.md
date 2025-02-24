@@ -2213,8 +2213,7 @@ kubectl logs <pod-name>          #分析容器内部运行情况
 kubectl rollout restart deployment <deployment_name> -n <namespace> #推荐滚动升级类似比较平滑
 
 kubectl scale deployment/<deployment-name> -n <namespace> --replicas=0  #缩容至0,然后再改回目的副本数
-kubectl scale deployment/<deployment-name> -n <namespace> --replicas=2  #恢复,会中断服务
-#这种方法相对来说,比较粗放,我们可以先将副本调成0
+kubectl scale deployment/<deployment-name> -n <namespace> --replicas=2  #恢复,会中断服务;#这种方法相对来说,比较粗放,我们可以先将副本调成0
 ```
 
 二、直接操作Pod重启(kubectl delete pod)  
@@ -2237,8 +2236,7 @@ kubectl annotate pod/<pod-name> app-version=$(date +%s) --overwrite  #更新时�
 
 kubectl set image deployment/<deployment-name> <container>=<new-image>  #更新镜像  
 
-kubectl set env deployment <deployment name> -n <namespace> DEPLOY_DATE="$(date)" 
-#通过设置环境变量,其实也是更新podspec从而触发滚动升级。只不过这里通过kubectl命令行,当我们通过API更新podspec后一样会触发滚动升级  
+kubectl set env deployment <deployment name> -n <namespace> DEPLOY_DATE="$(date)" #通过设置环境变量,其实也是更新podspec从而触发滚动升级。只不过这里通过kubectl命令行,当我们通过API更新podspec后一样会触发滚动升级  
 ```
 
 >Pod重启说明  
