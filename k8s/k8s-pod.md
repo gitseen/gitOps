@@ -311,11 +311,6 @@ a5331fba7f11   registry.aliyuncs.com/google_containers/pause:latest   "/pause"  
 ---
 
 ## 5Pod常用管理命令
-**pod重启策略**  
-+ Always：当容器终止退出,总是重启容器,默认策略
-+ OnFailure：当容器异常退出（退出状态码非0）时,才重启容器
-+ Never：当容器终止退出,从不重启容器
-
 ```bash
 #查看pod的重启策略
 kubectl get pods test-pod1 -o yaml #找到restartPolicy字段,就是重启策略restartPolicy: Always
@@ -367,7 +362,7 @@ envFrom:
 
 - 动态字段引用  
 ```bash
-通过valueFrom.fieldRef 引用Pod/容器元数据(如IP、名称、命名空间)(支持引用字段包括metadata.name 、status.hostIP)            
+通过valueFrom.fieldRef 引用Pod/容器元数据(如IP、名称、命名空间)(#支持引用字段包括metadata.name 、status.hostIP)            
 env:
 - name: MY_POD_IP 
   valueFrom:
@@ -399,7 +394,7 @@ args: ["$(GREETING) $(NAME)"]
 
 ### 6.3 内置环境变量
 ```bash
-k8s自动注入以下元数据(需通过fieldRef显式声明)：
+k8s自动注入以下元数据(需通过fieldRef显式声明)
 status.podIP ：Pod的IP地址
 metadata.name ：Pod名称
 metadata.namespace ：Pod所在命名空间
