@@ -334,15 +334,91 @@ kubectl logs test-pod1 -c nginx1
 ---
 
 ## 6pod环境变量
-创建Pod时,可以为其下的容器设置环境变量。通过配置文件的env或者envFrom字段来设置环境变量  
-**应用场景**  
-+ 容器内应用程序获取pod信息
-+ 容器内应用程序通过用户定义的变量改变默认行为
-+ 变量值定义的方式  
+在k8s中Pod环境变量是容器化应用配置的重要手段,提供了灵活的配置管理能力,可通过多种方式定义和管理  
+创建Pod时,可以为其下的容器设置环境变量;通过配置文件的env或者envFrom字段来设置环境变量   
 
-**自定义变量值**  
-- 变量值从Pod属性获取
-- 变量值从Secret、ConfigMap获取  
+### 6.1 环境变量设置方式
+- 直接声明  
+```bash
+在Pod定义文件的env字段中直接指定键值对
+env:
+- name: DEMO_GREETING 
+  value: "Hello from env"
+- name: DEMO_FAREWELL 
+  value: "Goodbye"
+#此方式会覆盖镜像默认环境变量28。
+```
+- ConfigMap/Secret引用    
+```bash
+单个引用: 通过valueFrom.configMapKeyRef或valueFrom.secretKeyRef注入  
+env:
+- name: DB_HOST 
+  valueFrom:
+    configMapKeyRef:
+      name: cm-db-config 
+      key: db.host  
+
+批量注入: 通过envFrom字段将ConfigMap/Secret的所有键值注入为环境变量
+envFrom:
+- configMapRef:
+    name: cm-configmap
+- secretRef:
+    name: cm-secret
+若键名不符合POSIX规范(如包含.)可能导致部分变量无法注入
+```
+
+- 动态字段引用  
+```bash
+通过valueFrom.fieldRef 引用Pod/容器元数据(如IP、名称、命名空间)
+env:
+- name: MY_POD_IP 
+  valueFrom:
+    fieldRef:
+      fieldPath: status.podIP  
+支持引用字段包括metadata.name 、status.hostIP 等57。
+```
+
+### 6.2 应用场景
+- 应用配置管理  
+传递数据库地址、日志级别等参数,避免硬编码在镜像中  
+
+- 容器间依赖  
+```bash
+通过$(VAR_NAME)语法实现环境变量间的依赖
+env:
+- name: SERVICE_PORT 
+  value: "8080"
+- name: SERVICE_URL 
+  value: "http://$(SERVICE_NAME):$(SERVICE_PORT)"
+```
+- 元数据传递  
+内置环境变量(如POD_IP、POD_NAME)可用于日志文件名、服务注册等场景
+
+- 与命令行参数结合  
+```bash
+环境变量可作为容器启动命令的参数：
+args: ["$(GREETING) $(NAME)"]
+```
+
+### 6.3 内置环境变量
+```bash
+k8s自动注入以下元数据(需通过fieldRef显式声明)：
+status.podIP ：Pod的IP地址
+metadata.name ：Pod名称
+metadata.namespace ：Pod所在命名空间
+spec.serviceAccountName ：使用的服务账号
+```
+
+>注意事项  
+>>覆盖优先级(env或envFrom设置的变量会覆盖镜像默认值)  
+>>更新限制(环境变量在Pod创建后无法修改,需重建Pod生效(ConfigMap/Secret更新后需重启容器))  
+>>批量注入风险(使用envFrom时,若ConfigMap/Secret包含无效键名,可能导致部分变量注入失败)  
+>>敏感数据保护(敏感信息(如密码)应通过Secret而非普通ConfigMap传递)  
+
+**实际使用时,建议结合ConfigMap/Secret实现配置与代码分离,并通过字段引用动态获取Pod元数据**  
+
+### 6.4 k8s-env示例  
+[具体操作可参考主容器配置](https://github.com/gitseen/gitOps/blob/main/k8s/k8s-pod.md#754-maincontainer主容器的配置示例)   
 <details>
   <summary>POD-ENV示例</summary>
   <pre><code> 
@@ -1065,7 +1141,7 @@ spec:
         initialDelaySeconds: 5
         periodSeconds: 10
       env:                  # 主容器(环境变量传递)
-        - name: NODE_NAME
+        - name: NODE_NAME   # k8s内置环境变量(动态自动注入status.podIP、metadata.name、metadata.namespace、spec.serviceAccountName、spec.nodeNam)  
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
@@ -1073,10 +1149,35 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.podIP
+        - name: DB_HOST           #引用configMap
+          valueFrom: 
+            configMapKeyRef
+              name: cm-db-config
+              key: db.host
+        - name: REDIS_HOST           #引用configMap
+          valueFrom:
+            configMapKeyRef
+              name: redis-config
+              key: redis-hosts
+        - name: DATASOURCE_DBUSER  #引用Secret-DBUSER
+          valueFrom:
+            secretKeyRef: 
+              name: secret-mysql
+              key: username 
+        - name: DATASOURCE_PASSWD  #引用Secret-DBUSER-PASSSWD
+          valueFrom:
+            secretKeyRef:
+              name: secret-mysql
+              key: cipher_password
         - name:  TZ
           value： Asia/Shanghai
         - name: CSE-SERVERURL
           value: https://www.g.cn
+      envFrom:  #批量注入:通过envFrom字段将ConfigMap/Secret的所有键值注入为环境变量 
+        - configMapRef:
+            name: example-configmap
+        - secretRef:
+            name: example-secret
       volumeMounts:          # 主容器(存储挂载)
         - name: main-app-data
           mountPath: /data
@@ -2201,6 +2302,7 @@ kubectl get po -A
 kubectl describe pod <pod-name>  #查看Events、Conditions
 kubectl logs <pod-name>          #分析容器内部运行情况
 ```
+---
 
 ## 8pod重启方法
 在k8s中重启Pod有多种方式,具体方法的选择取决于Pod的管理方式(Deployment、Statefulset、DaemonSet等)和操作需求  
@@ -2228,7 +2330,7 @@ pod容器中执行kill 1
 kubectl exec -it <pod_name> -c <container_name> --/bin/sh -c "kill 1" #这种方法就是在容器里面kill 1号进程。但是此方法有个局限,必须要求你的1号进程要捕获TERM信号,否则在容器里面无法kill
 ```
 
-三、高级配置触发重启(kubectl [annotate|set])  
+三、高级配置触发重启(kubectl [annotate|set [image|env] ])  
 修改注解(Annotation)或环境变量;修改Pod模板触发滚动更新  
 适用场景：触发Pod重建以应用新配置;通过更新镜像版本或环境变量触发重建  
 ```bash
