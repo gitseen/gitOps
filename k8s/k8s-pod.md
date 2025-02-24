@@ -340,17 +340,16 @@ kubectl logs test-pod1 -c nginx1
 ### 6.1 环境变量设置方式
 - 直接声明  
 ```bash
-在Pod定义文件的env字段中直接指定键值对
+在Pod定义文件的env字段中直接指定键值对(#此方式会覆盖镜像默认环境变量)
 env:
 - name: DEMO_GREETING 
   value: "Hello from env"
 - name: DEMO_FAREWELL 
   value: "Goodbye"
-#此方式会覆盖镜像默认环境变量28。
 ```
 - ConfigMap/Secret引用    
 ```bash
-单个引用: 通过valueFrom.configMapKeyRef或valueFrom.secretKeyRef注入  
+1、单个引用: 通过valueFrom.configMapKeyRef或valueFrom.secretKeyRef注入  
 env:
 - name: DB_HOST 
   valueFrom:
@@ -358,29 +357,27 @@ env:
       name: cm-db-config 
       key: db.host  
 
-批量注入: 通过envFrom字段将ConfigMap/Secret的所有键值注入为环境变量
+2、批量注入: 通过envFrom字段将ConfigMap/Secret的所有键值注入为环境变量(#若键名不符合POSIX规范(如包含.)可能导致部分变量无法注入)   
 envFrom:
 - configMapRef:
     name: cm-configmap
 - secretRef:
-    name: cm-secret
-若键名不符合POSIX规范(如包含.)可能导致部分变量无法注入
+    name: cm-secret  
 ```
 
 - 动态字段引用  
 ```bash
-通过valueFrom.fieldRef 引用Pod/容器元数据(如IP、名称、命名空间)
+通过valueFrom.fieldRef 引用Pod/容器元数据(如IP、名称、命名空间)(支持引用字段包括metadata.name 、status.hostIP)            
 env:
 - name: MY_POD_IP 
   valueFrom:
     fieldRef:
       fieldPath: status.podIP  
-支持引用字段包括metadata.name 、status.hostIP 等57。
 ```
 
 ### 6.2 应用场景
 - 应用配置管理  
-传递数据库地址、日志级别等参数,避免硬编码在镜像中  
+  传递数据库地址、日志级别等参数,避免硬编码在镜像中  
 
 - 容器间依赖  
 ```bash
@@ -392,7 +389,7 @@ env:
   value: "http://$(SERVICE_NAME):$(SERVICE_PORT)"
 ```
 - 元数据传递  
-内置环境变量(如POD_IP、POD_NAME)可用于日志文件名、服务注册等场景
+  内置环境变量(如POD_IP、POD_NAME)可用于日志文件名、服务注册等场景
 
 - 与命令行参数结合  
 ```bash
