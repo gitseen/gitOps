@@ -224,7 +224,7 @@ kubectl run my-standalone-pod --image=192.168.11.247/web-demo/goweb-demo:2022122
 
 ### 3.3 动态Pod(Dynamic Pods)
 **由Kubernetes控制器(如Deployment、ReplicaSet、StatefulSet等)自动创建和管理的Pod**  
-动态Pod是通过控制器(Deployment、StatefulSet、ds、Job、CronJob等)创建和管理的Pod;这些Pod由控制器自动管理,包括创建、更新和删除  
+动态Pod是通过控制器(Deployment、StatefulSet、ds、Job、CronJob等)创建和管理的Pod;这些Pod由控制器自动管理(创建、更新、删除)    
 - 特点
   + 受到高可用性保护：如果Pod因故障而被删除,控制器会自动重建Pod  
   + 自愈能力：Pod异常终止或节点故障时,控制器会自动重建Pod    
