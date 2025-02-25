@@ -1,5 +1,3 @@
-from https://www.toutiao.com/article/7196554496028246565  
-
 # [手写K8S的YAML](https://www.toutiao.com/article/7247048547579822627)
 **三把利剑：help、dry-run、explain**  
 
@@ -425,5 +423,8 @@ status: {}
 ```
 kubectl explain [pod|services|deployment|...].spec
 ```  
+
+from https://www.toutiao.com/article/7196554496028246565  
+
 
 
