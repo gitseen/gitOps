@@ -193,7 +193,7 @@ test-static-pod-test-b-k8s-node01   1/1     Running   0          11s
 
 ### 3.2 自主式Pod(Standalone Pods|Bare pod) 
 **直接通过kubectl或ymal文件手动创建的Pod,不依赖任何控制器管理**   
-**自主式Pod是通过kube-api服务直接创建的Pod,而不是通过任何控制器(Deployment、sts、ds、Job等)创建,这些Pod通常作为一次性任务或测试目的使用**  
+**自主式Pod是通过kube-api服务直接创建的Pod,而不是通过任何控制器(deploy、sts、ds、job)创建,该Pod通常作为一次性任务或测试目的使用**  
 
 - 特点 
   + 可以通过kubectl run 或 kubectl create 命令创建
