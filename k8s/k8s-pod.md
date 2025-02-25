@@ -191,8 +191,9 @@ test-static-pod-test-b-k8s-node01   1/1     Running   0          11s
 </details>
 
 ### 3.2自主式Pod(Standalone Pods|Bare pod) 
-**直接通过kubectl或ymal文件手动创建的Pod,不依赖任何控制器管理** 
+**直接通过kubectl或ymal文件手动创建的Pod,不依赖任何控制器管理**   
 **自主式Pod是指通过KubernetesAPI服务直接创建的Pod,而不是通过任何控制器(如Deployment、sts、ds、Job等)创建,这些Pod通常作为一次性任务或测试目的使用**  
+
 - 特点 
   + 可以通过kubectl run 或 kubectl create 命令创建
   + 不受任何控制器的管理,所以如果Pod因故障而被删除,它不会被自动重建
@@ -200,8 +201,9 @@ test-static-pod-test-b-k8s-node01   1/1     Running   0          11s
   + 生命周期与Pod本身绑定,删除后不会自动重建  
   + 适用于临时性任务或测试场景
 
-**示例**  
-```bash
+<details>
+  <summary>自主式Pod-示例</summary>
+  <pre><code>
 ---
 apiVersion: v1
 kind: Pod 
@@ -212,9 +214,12 @@ spec:
   - name: nginx 
     image: nginx:alpine 
 
+or
+
 #使用CLI命令
-kubectl run my-standalone-pod --image=192.168.11.247/web-demo/goweb-demo:20221229v3 #使用kubectl run创建自主式Pod：
-```
+kubectl run my-standalone-pod --image=192.168.11.247/web-demo/goweb-demo:20221229v3  #使用kubectl run创建自主式Pod
+  </code></pre>
+</details>
 
 ### 3.3动态Pod(Dynamic Pods)
 **由Kubernetes控制器(如Deployment、ReplicaSet、StatefulSet等)自动创建和管理的Pod**
@@ -236,7 +241,7 @@ kubectl run my-standalone-pod --image=192.168.11.247/web-demo/goweb-demo:2022122
 自主式Pod通常用于一次性任务或测试目的,直接通过k8sAPI服务创建  
 动态Pod通过控制器创建和管理,适用于大多数生产环境中的工作负载 
 
-**POD类型比总结** 
+**POD类型比总结**   
 | 类型       | 管理方式 | 生命周期 |  典型场景 |
 | ---------  | ------- |------- |
 | 自主式Pod  |  用户手动管理  |  删除后不可恢复 | 临时任务、调试 |
@@ -254,10 +259,6 @@ kubectl run my-standalone-pod --image=192.168.11.247/web-demo/goweb-demo:2022122
 
 **[声明式pod示例参考](https://github.com/gitseen/gitOps/blob/main/k8s/yaml.md)**   
 
-**Pod类型总结**  
-- 静态Pod用于运行需要在所有节点上运行的服务,不受k8sAPI服务管理  
-- 自主式Pod通常用于一次性任务或测试目的,直接通过k8sAPI服务创建  
-- 动态Pod通过控制器创建和管理,适用于大多数生产环境中的工作负载 
 
 **[容器类型](https://mp.weixin.qq.com/s/-TXbvQiR-tpB0RgQ5d-QDw)**  
 - 基础容器(pausecontainer)  
