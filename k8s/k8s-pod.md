@@ -222,7 +222,7 @@ kubectl run my-standalone-pod --image=192.168.11.247/web-demo/goweb-demo:2022122
 </details>
 
 ### 3.3动态Pod(Dynamic Pods)
-**由Kubernetes控制器(如Deployment、ReplicaSet、StatefulSet等)自动创建和管理的Pod**
+**由Kubernetes控制器(如Deployment、ReplicaSet、StatefulSet等)自动创建和管理的Pod**  
 动态Pod是通过控制器(Deployment、StatefulSet、ds、Job、CronJob等)创建和管理的Pod;这些Pod由控制器自动管理,包括创建、更新和删除  
 - 特点
   + 受到高可用性保护：如果Pod因故障而被删除,控制器会自动重建Pod  
@@ -237,18 +237,13 @@ kubectl run my-standalone-pod --image=192.168.11.247/web-demo/goweb-demo:2022122
 * DaemonSet：确保每个节点运行一个Pod(如日志采集组件)   
 * Job/CronJob：执行一次性或周期性任务   
 
-静态Pod用于运行需要在所有节点上运行的服务,不受k8sAPI服务管理   
-自主式Pod通常用于一次性任务或测试目的,直接通过k8sAPI服务创建  
-动态Pod通过控制器创建和管理,适用于大多数生产环境中的工作负载 
-
 **POD类型比总结**   
-| 类型       | 管理方式 | 生命周期 |  典型场景 |
-| ---------  | ------- |------- |
-| 自主式Pod  |  用户手动管理  |  删除后不可恢复 | 临时任务、调试 |
-| 静态Pod    |  节点kubelet直接管理 | 配置文件驱动 | 系统组件、网络插件 |
-| 动态Pod(Dynamic Pods)控制器管理管理 |  控制器自动管理  | 自愈、动态调整 | 生产环境应用(如Web服务、数据库) |
+| 类型       | 管理方式 | 生命周期 |  典型场景 |  
+| ---------  | ------- |------- |------- |  
+| 自主式Pod  |  用户手动管理  |  删除后不可恢复 | 临时任务、调试 |  
+| 静态Pod    |  节点kubelet直接管理 | 配置文件驱动 | 系统组件、网络插件 |  
+| 动态Pod(Dynamic Pods)控制器管理管理 |  控制器自动管理  | 自愈、动态调整 | 生产环境应用(如Web服务、数据库) |  
 
-**POD类型总结**  
 - 静态Pod用于运行需要在所有节点上运行的服务,不受k8sAPI服务管理 
 - 自主式Pod通常用于一次性任务或测试目的,直接通过k8sAPI服务创建
 - 动态Pod通过控制器创建和管理,适用于大多数生产环境中的工作负载
