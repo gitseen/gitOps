@@ -275,39 +275,21 @@ Pause容器对应的镜像属于k8s平台的一部分,除了Pause容器，每个
 ---
  
 ## 4POD内容器间资源共享实现机制
-### 4.1 Pod共享数据的机制
-+ emptyDir  
-  会在Pod被删除的同时也会被删除,当Pod分派到某个节点上时,emptyDir卷会被创建,并且在Pod在该节点上运行期间,卷一直存在。 就像其名称表示的那样,卷最初是空的。 尽管Pod中的容器挂载emptyDir卷的路径可能相同也可能不同,这些容器都可以读写emptyDir卷中相同的文件。 当Pod因为某些原因被从节点上删除时emptyDir卷中的数据也会被永久删除  
-```
-apiVersion: v1
-kind: Pod
-metadata:
-name: test-pod1
-spec:
-containers:
-- image: nginx
-    name: nginx1
-    volumeMounts:
-    - mountPath: /cache
-    name: cache-volume
-- image: busybox
-    name: bs1
-    command: ["/bin/sh", "-c", "sleep 12h"]
-    volumeMounts:
-    - mountPath: /cache
-    name: cache-volume
-volumes:
-- name: cache-volume
-    emptyDir:
-    sizeLimit: 500Mi
-```
-+ cephfs  
-  cephfs 卷允许你将现存的CephFS卷挂载到Pod中,cephfs卷的内容在Pod被删除时会被保留,只是卷被卸载了。 这意味着cephfs卷可以被预先填充数据,且这些数据可以在Pod之间共享。同一cephfs卷可同时被多个写者挂载   
+**在k8s中Pod内多个容器间通过共享命名空间和存储机制实现资源协同,具体实现方式可归纳为以下四个核心机制**    
+### 4.1 网络共享机制(共享网络命名空间)  
+Pod内所有容器共享同一个网络命名空间,表现为共享IP地址、端口范围和网络设备视图  
+ - 实现原理：创建Pod时,先启动一个infra容器(pause容器),其他容器通过加入该容器的网络命名空间实现共享。所有容器的网络流量通过infra容器的网络栈收发  
+ - 应用场景：容器间可通过localhost直接通信(如微服务间API调用)  
 
-### 4.2 Pod共享网络的机制
-共享网络的机制是由Pause容器实现,下面慢慢分析一下,啥是pause,了解一下它的作用等等。  
-1、先准备一个yaml文件（pod1.yaml ）,创建一个pod,pod里包含两个容器,一个是名为nginx1的容器,还有一个是名为bs1的容器  
-```bash
+<details>
+  <summary>示例验证</summary>
+  <pre><code>
+containers:
+- name: nginx 
+  image: nginx 
+- name: busybox 
+  image: busybox   #执行kubectl exec进入busybox容器,可通过netstat -tpln查看到nginx监听的80端口
+---
 apiVersion: v1
 kind: Pod
 metadata:
@@ -329,32 +311,111 @@ spec:
   - name: cache-volume
     emptyDir:
       sizeLimit: 500Mi
-```
-2、开始创建  
-```bash
-kubectl create -f pod1.yaml
-```
-3、创建完后看看在哪个节点  
-```bash
-kubectl get pod -o wide
-```
-4、去到对应的节点查看容器  
-```bash
+  </code></pre>
+</details>
+
+**共享网络的机制是由Pause容器实现,下面慢慢分析一下,啥是pause,了解一下它的作用等等**  
+<details>
+  <summary>Pod共享网络-示例</summary>
+  <pre><code>
+---
+#先准备一个yaml文件(pod1.yaml),创建一个pod,pod里包含两个容器,一个是名为nginx1的容器,还有一个是名为bs1的容
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-pod1
+spec:
+  containers:
+  - image: nginx
+    name: nginx1
+    volumeMounts:
+    - mountPath: /cache
+      name: cache-volume
+  - image: busybox
+    name: bs1
+    command: ["/bin/sh", "-c", "sleep 12h"]
+    volumeMounts:
+    - mountPath: /cache
+      name: cache-volume
+  volumes:
+  - name: cache-volume
+    emptyDir:
+      sizeLimit: 500Mi
+
+kubectl create -f pod1.yaml  #开始创建
+kubectl get pod -o wide      #创建完后看看在哪个节点
+docker ps | grep test-pod1   #去到对应的节点查看容器
 docker ps | grep test-pod1
 0db01653bdac   busybox                                                "/bin/sh -c 'sleep 1…"   9 minutes ago    Up 9 minutes              k8s_bs1_test-pod1_default_c3a15f70-3ae2-4a73-8a84-d630c047d827_0
 296972c29efe   nginx                                                  "/docker-entrypoint.…"   9 minutes ago    Up 9 minutes              k8s_nginx1_test-pod1_default_c3a15f70-3ae2-4a73-8a84-d630c047d827_0
 a5331fba7f11   registry.aliyuncs.com/google_containers/pause:latest   "/pause"                 10 minutes ago   Up 10 minutes             k8s_POD_test-pod1_default_c3a15f70-3ae2-4a73-8a84-d630c047d827_0
-```
+  </code></pre>
+</details>
 
 通过查看容器,名为test-pod1的pod里除了两个业务容器外(k8s_bs1_test-pod1、nginx1_test-pod1)还有一个pause容器,这个到底是什么?  
 
-**对pause容器的理解**  
-- pause容器又叫Infra container,就是基础设施容器的意思,Infra container只是pause容器的一个叫法而已
+**对pause容器的理解** 
+- pause容器又叫Infracontainer就是基础设施容器的意思,Infracontainer只是pause容器的一个叫法而已  
 - 上面看到paus容器,是从registry.aliyuncs.com/google_containers/pause:latest这个镜像拉起的
-- 在其中一台node节点上查看docker镜像,可看到该镜像的大小是240KB
-```bash
+- 在其中一台node节点上查看docker镜像,可看到该镜像的大小是240KB  
+  ```bash
   registry.aliyuncs.com/google_containers/pause        latest       350b164e7ae1   8 years ago     240kB
-```
+  ```
+
+### 4.2 存储共享机制(volumes挂载共享)
+通过Pod级别的Volume(emptyDir)挂载到多个容器,实现文件系统共享  
+- 特点：emptyDir的生命周期与Pod一致,适合临时数据共享  
+- emptyDir   
+      会在Pod被删除的同时也会被删除,当Pod分派到某个节点上时,emptyDir卷会被创建,并且在Pod在该节点上运行期间,卷一直存在就像其名称表示的那样,卷最初是空的;  
+      尽管Pod中的容器挂载emptyDir卷的路径可能相同也可能不同,这些容器都可以读写emptyDir卷中相同的文件;当Pod因为某些原因被从节点上删除时emptyDir卷中的数据也会被永久删除  
+- cephfs
+      cephfs卷允许你将现存的CephFS卷挂载到Pod中,cephfs卷的内容在Pod被删除时会被保留,只是卷被卸载了;  
+      这意味着cephfs卷可以被预先填充数据,且这些数据可以在Pod之间共享。同一cephfs卷可同时被多个写者挂载   
+<details>
+  <summary>volumes-emptyDir</summary>
+  <pre><code>
+spec:
+  containers:
+  - name: nginx 
+    volumeMounts:
+    - name: shared-data 
+      mountPath: /data 
+  - name: busybox 
+    volumeMounts:
+    - name: shared-data 
+      mountPath: /data 
+  volumes:
+  - name: shared-data 
+    emptyDir: {}
+  </code></pre>
+</details>
+
+### 4.3 进程命名空间共享(PID)
+默认情况下,Pod内容器的进程相互隔离。通过设置spec.shareProcessNamespace:true,容器可互相查看进程列表  
+- 应用场景：调试场景中查看其他容器的进程状态  
+- 示例：在 busybox容器中执行ps可查看到nginx 容器的进程
+
+### 4.4 IPC共享内存机制(SystemV/POSIX 共享内存)
+通过挂载/dev/shm或使用Volume实现跨容器的内存共享  
+
+配置方式  
+   - 使用hostPath卷挂载/dev/shm  
+   - 通过emptyDir卷挂载内存目录(medium: Memory)实现高速共享内存  
+   - 限制：需注意内存泄漏风险,避免因共享内存异常导致Pod被驱逐  
+**对比总结**  
+
+| 共享类型  | 实现机制 | 典型应用场景 | 
+| --------- | ------- |------- |
+| 网络 |  共享infra容器的网络命名空间  |  容器间直接通信(如微服务) |
+| 存储 |  Pod级别Volume | 日志收集、临时文件共享 |
+| 进程 |  启用shareProcessNamespace参数  | 跨容器进程调试 |
+| 资源计算 |  影响Pod调度资源  | 仅影响自身资源 |
+| IPC 共享内存 |  /dev/shm或内存卷挂载  | 高性能计算、实时数据处理 |  
+>注意事项  
+>>生产环境建议：优先使用控制器管理的Pod(如Deployment)避免直接操作自主式Pod  
+>>安全性：共享IPC或PID命名空间可能引入安全风险,需结合Pod安全策略(PSP)进行权限控制    
+
+
 ---
 
 ## 5Pod常用管理命令
