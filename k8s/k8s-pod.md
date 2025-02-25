@@ -140,7 +140,7 @@ spec: #specification of the resource content 指定该资源的内容
 - 动态Pod  
 
 ### 3.1 静态Pod(Static Pods)
-**静态Pod在指定的节点上由kubelet守护进程直接管理,而是直接在Node节点上创建并通过kubelet进行管理**  
+**静态Pod在指定的节点上由kubelet守护进程直接管理,而是直接在Node节点上启动运行**  
 **kubelet监视每个静态Pod(在它失败之后重新启动)静态Pod始终都会绑定到特定节点的Kubelet上**  
 **静态Pod的配置文件通常放置在/etc/kubernetes/manifests目录中(或通过 --manifest-dir 参数指定的其他目录)**  
 - 特点
@@ -193,7 +193,7 @@ test-static-pod-test-b-k8s-node01   1/1     Running   0          11s
 
 ### 3.2 自主式Pod(Standalone Pods|Bare pod) 
 **直接通过kubectl或ymal文件手动创建的Pod,不依赖任何控制器管理**   
-**自主式Pod是指通过KubernetesAPI服务直接创建的Pod,而不是通过任何控制器(如Deployment、sts、ds、Job等)创建,这些Pod通常作为一次性任务或测试目的使用**  
+**自主式Pod是通过kube-api服务直接创建的Pod,而不是通过任何控制器(Deployment、sts、ds、Job等)创建,这些Pod通常作为一次性任务或测试目的使用**  
 
 - 特点 
   + 可以通过kubectl run 或 kubectl create 命令创建
