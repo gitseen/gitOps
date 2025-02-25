@@ -139,7 +139,7 @@ spec: #specification of the resource content 指定该资源的内容
 - 自主式Pod
 - 动态Pod  
 
-### 3.1静态Pod(Static Pods)
+### 3.1 静态Pod(Static Pods)
 **静态Pod在指定的节点上由kubelet守护进程直接管理,而是直接在Node节点上创建并通过kubelet进行管理**  
 **kubelet监视每个静态Pod(在它失败之后重新启动)静态Pod始终都会绑定到特定节点的Kubelet上**  
 **静态Pod的配置文件通常放置在/etc/kubernetes/manifests目录中(或通过 --manifest-dir 参数指定的其他目录)**  
@@ -190,7 +190,7 @@ test-static-pod-test-b-k8s-node01   1/1     Running   0          11s
   </code></pre>
 </details>
 
-### 3.2自主式Pod(Standalone Pods|Bare pod) 
+### 3.2 自主式Pod(Standalone Pods|Bare pod) 
 **直接通过kubectl或ymal文件手动创建的Pod,不依赖任何控制器管理**   
 **自主式Pod是指通过KubernetesAPI服务直接创建的Pod,而不是通过任何控制器(如Deployment、sts、ds、Job等)创建,这些Pod通常作为一次性任务或测试目的使用**  
 
@@ -221,7 +221,7 @@ kubectl run my-standalone-pod --image=192.168.11.247/web-demo/goweb-demo:2022122
   </code></pre>
 </details>
 
-### 3.3动态Pod(Dynamic Pods)
+### 3.3 动态Pod(Dynamic Pods)
 **由Kubernetes控制器(如Deployment、ReplicaSet、StatefulSet等)自动创建和管理的Pod**  
 动态Pod是通过控制器(Deployment、StatefulSet、ds、Job、CronJob等)创建和管理的Pod;这些Pod由控制器自动管理,包括创建、更新和删除  
 - 特点
@@ -251,10 +251,10 @@ kubectl run my-standalone-pod --image=192.168.11.247/web-demo/goweb-demo:2022122
 >>控制器管理Pod是生产环境首选,推荐使用Deployment/StatefulSet等控制器实现高可用和自动化运维  
 >>静态Pod需谨慎使用,仅适用于节点级核心组件,避免与普通Pod管理方式混淆  
 
-**[声明式pod示例参考](https://github.com/gitseen/gitOps/blob/main/k8s/yaml.md)**   
+[动态Pod 或 声明式pod示例参考](https://github.com/gitseen/gitOps/blob/main/k8s/yaml.md)    
 
 
-**[容器类型](https://mp.weixin.qq.com/s/-TXbvQiR-tpB0RgQ5d-QDw)**  
+**[容器类型](https://mp.weixin.qq.com/s/-TXbvQiR-tpB0RgQ5d-QDw)** 
 - 基础容器(pausecontainer)  
 - 初始化容器(initcontainer)  
 - [SidecarContainer: 边车容器](https://kubernetes.io/zh-cn/docs/concepts/workloads/pods/sidecar-containers/#sidecar-example)  
@@ -266,14 +266,14 @@ kubectl run my-standalone-pod --image=192.168.11.247/web-demo/goweb-demo:2022122
 * 1、基础容器: pause
 * 2、initContainer(初始化状态):init c 1和2过程中,pod的状态init 1/3
 * 3、manContainer业务容器
-
 每个Pod都有一个特殊的被称为"根容器"的Pause容器  
 Pause容器对应的镜像属于k8s平台的一部分,除了Pause容器，每个Pod还包含一个或者多个紧密相关的用户业务容器和init初始化容器  
-![pod组成图](pic/pod1.png)
+![pod组成图](pic/pod1.png)  
 
+---
  
 ## 4POD内容器间资源共享实现机制
-### 4.1Pod共享数据的机制
+### 4.1 Pod共享数据的机制
 + emptyDir  
   会在Pod被删除的同时也会被删除,当Pod分派到某个节点上时,emptyDir卷会被创建,并且在Pod在该节点上运行期间,卷一直存在。 就像其名称表示的那样,卷最初是空的。 尽管Pod中的容器挂载emptyDir卷的路径可能相同也可能不同,这些容器都可以读写emptyDir卷中相同的文件。 当Pod因为某些原因被从节点上删除时emptyDir卷中的数据也会被永久删除  
 ```
@@ -302,7 +302,7 @@ volumes:
 + cephfs  
   cephfs 卷允许你将现存的CephFS卷挂载到Pod中,cephfs卷的内容在Pod被删除时会被保留,只是卷被卸载了。 这意味着cephfs卷可以被预先填充数据,且这些数据可以在Pod之间共享。同一cephfs卷可同时被多个写者挂载   
 
-### 4.2Pod共享网络的机制
+### 4.2 Pod共享网络的机制
 共享网络的机制是由Pause容器实现,下面慢慢分析一下,啥是pause,了解一下它的作用等等。  
 1、先准备一个yaml文件（pod1.yaml ）,创建一个pod,pod里包含两个容器,一个是名为nginx1的容器,还有一个是名为bs1的容器  
 ```bash
