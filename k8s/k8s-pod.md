@@ -223,8 +223,9 @@ kubectl run my-standalone-pod --image=192.168.11.247/web-demo/goweb-demo:2022122
 </details>
 
 ### 3.3 动态Pod(Dynamic Pods)
-**由Kubernetes控制器(如Deployment、ReplicaSet、StatefulSet等)自动创建和管理的Pod**  
+**由k8s控制器(Deployment、rs、sts、ds、job、cronjob等)自动创建和管理的Pod**  
 动态Pod是通过控制器(Deployment、StatefulSet、ds、Job、CronJob等)创建和管理的Pod;这些Pod由控制器自动管理(创建、更新、删除)    
+
 - 特点
   + 受到高可用性保护：如果Pod因故障而被删除,控制器会自动重建Pod  
   + 自愈能力：Pod异常终止或节点故障时,控制器会自动重建Pod    
@@ -241,8 +242,8 @@ kubectl run my-standalone-pod --image=192.168.11.247/web-demo/goweb-demo:2022122
 **POD类型比总结**   
 | 类型       | 管理方式 | 生命周期 |  典型场景 |
 | ---------  | ------- |------- |------- |
-| 自主式Pod  |  用户手动管理  |  删除后不可恢复 | 临时任务、调试 |
 | 静态Pod    |  节点kubelet直接管理 | 配置文件驱动 | 系统组件、网络插件 |
+| 自主式Pod  |  用户手动管理  |  删除后不可恢复 | 临时任务、调试 |
 | 动态Pod(Dynamic Pods) |  控制器自动管理  | 自愈、动态调整 | 生产环境应用(如Web服务、数据库) |  
 - 静态Pod用于运行需要在所有节点上运行的服务,不受k8sAPI服务管理  
 - 自主式Pod通常用于一次性任务或测试目的,直接通过k8sAPI服务创建
@@ -255,7 +256,7 @@ kubectl run my-standalone-pod --image=192.168.11.247/web-demo/goweb-demo:2022122
 [动态Pod 或 声明式pod示例参考](https://github.com/gitseen/gitOps/blob/main/k8s/yaml.md)    
 
 
-**[容器类型](https://mp.weixin.qq.com/s/-TXbvQiR-tpB0RgQ5d-QDw)** 
+**[容器类型](https://mp.weixin.qq.com/s/-TXbvQiR-tpB-1RgQ5d-QDw)** 
 - 基础容器(pausecontainer)  
 - 初始化容器(initcontainer)  
 - [SidecarContainer: 边车容器](https://kubernetes.io/zh-cn/docs/concepts/workloads/pods/sidecar-containers/#sidecar-example)  
@@ -358,6 +359,18 @@ a5331fba7f11   registry.aliyuncs.com/google_containers/pause:latest   "/pause"  
 
 ## 5Pod常用管理命令
 ```bash
+kubectl create -f <文件名>  #根据yaml文件部署(第一次create)
+kubectl apply -f <文件名>   #根据yaml文件部署(第二次更新应用)
+kubectl delete -f <文件名>  #根据yaml文件删除
+kubectl get node,pod,svc  #查看k8s个组件的状态
+kubectl describe node <node名称>  #查看node详情
+kubectl describe pod <pod名称> #查看pod详情
+kubectl describe svc <svc名称> #查看service详情
+kubectl delete svc <svc名称> -n <命名空间>  #删除svc 
+kubectl exec -it <pod名称> -c <容器组空间> -n <命名空间> -- bash   #进入容器内部
+kubectl cp -n <命名空间> <pod名称>:/文件src /本地文件  #容器拷贝文件到本地服务器
+
+
 #查看pod的重启策略
 kubectl get pods test-pod1 -o yaml #找到restartPolicy字段,就是重启策略restartPolicy: Always
 
