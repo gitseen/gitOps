@@ -364,7 +364,7 @@ a5331fba7f11   registry.aliyuncs.com/google_containers/pause:latest   "/pause"  
 
 ### 4.2 存储共享机制(volumes挂载共享)
 通过Pod级别的Volume(emptyDir)挂载到多个容器,实现文件系统共享  
-- 特点：emptyDir的生命周期与Pod一致,适合临时数据共享  
+- emptyDir的生命周期与Pod一致,适合临时数据共享  
 - emptyDir   
       会在Pod被删除的同时也会被删除,当Pod分派到某个节点上时,emptyDir卷会被创建,并且在Pod在该节点上运行期间,卷一直存在就像其名称表示的那样,卷最初是空的;  
       尽管Pod中的容器挂载emptyDir卷的路径可能相同也可能不同,这些容器都可以读写emptyDir卷中相同的文件;当Pod因为某些原因被从节点上删除时emptyDir卷中的数据也会被永久删除  
