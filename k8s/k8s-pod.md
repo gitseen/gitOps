@@ -155,6 +155,8 @@ spec: #specification of the resource content 指定该资源的内容
 <details>
   <summary>静态pod示例</summary>
   <pre><code> 
+---
+随便登录到某台node节点,然后创建/etc/kubernetes/manifests/static_pod.yaml
 apiVersion: v1
 kind: Pod 
 metadata:
@@ -168,7 +170,6 @@ spec:
     ports:
     - containerPort: 80 
 ---
-随便登录到某台node节点,然后创建/etc/kubernetes/manifests/static_pod.yaml
 apiVersion: v1
 kind: Pod
 metadata:
