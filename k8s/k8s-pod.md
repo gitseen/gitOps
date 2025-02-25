@@ -185,9 +185,9 @@ kubectl get pod
 NAME                                READY   STATUS    RESTARTS   AGE
 test-static-pod-test-b-k8s-node01   1/1     Running   0          11s
 通过上面的输出结果可以看到,该静态pod已经在节点test-b-k8s-node01上面正常运行了
-说明kubelet守护进程已经自动发现并创建了它。你可能会问,它不是不需要API服务器监管吗？为啥在master节点能看到它？
-因为kubelet会尝试通过Kubernetes API服务器为每个静态Pod自动创建一个镜像Pod这意味着节点上运行的静态Pod对API服务来说是可见的,但是不能通过API服务器来控制
-且Pod名称将把以连字符开头的节点主机名作为后缀。
+说明kubelet守护进程已经自动发现并创建了它。你可能会问,它不是不需要API服务器监管吗?为啥在master节点能看到它?
+因为kubelet会尝试通过kube-api服务器为每个静态Pod自动创建一个镜像Pod这意味着节点上运行的静态Pod对API服务来说是可见的,但是不能通过API服务器来控制
+且Pod名称将把以连字符开头的节点主机名作为后缀 
   </code></pre>
 </details>
 
