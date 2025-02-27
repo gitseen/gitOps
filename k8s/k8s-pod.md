@@ -1488,7 +1488,7 @@ lifecycle:
 
 ## 7.7 主容器健康检测(三种探针)  
 在k8s中,健康检查(Health Checks)是确保容器应用可靠运行的核心机制   
-启动探针(StartupProbe)、存活探针(livenessProbe)、就绪探针(readinessProbe)健康检测是检查容器里面的服务是否正常 
+启动探针(StartupProbe)、就绪探针(readinessProbe)、存活探针(livenessProbe)健康检测是检查容器里面的服务是否正常 
  
 ![mainContainer-health-Probe](pic/healthProbe.png)  
 [mainContiner-health-Probe详细流程图](https://www.n.cn/search/9315b5209e2448e0b5447c8531c14b43?fr=none&so_key=0)  
@@ -1497,21 +1497,21 @@ lifecycle:
 
 | 探针类型  | 触发时机 |  失败后果 |   典型场景  | 说明  |
 | --------- | ------- |  ------- |    -------  |  -------  |
-| startupProbe   | 容器启动后立即检测 | 若失败,持续重试直到成功或超时 | 保护启动慢的应用(Java),避免被存活探针误杀 | 关注启动阶段,避免误杀初始化慢的应用 |
-| livenessProbe  | 容器启动后周期检测 | 重启容器(根据restartPolicy)   | 检测死锁、内存泄漏等不可恢复的故障        | 关注容器存活状态,失败触发重启  |
+| startupProbe   | 容器启动后立即检测 | 若失败,持续重试直到成功或超时 | 保护启动慢的应用(Java),避免被存活探针误杀           | 关注启动阶段,避免误杀初始化慢的应用 |
 | readinessProbe | 容器启动后周期检测 | 从Service的Endpoints中移除Pod | 等待依赖项(如数据库)就绪,避免流量涌入未准备好的容器 | 关注服务可用性,失败暂停流量 |
+| livenessProbe  | 容器启动后周期检测 | 重启容器(根据restartPolicy)   | 检测死锁、内存泄漏等不可恢复的故障        | 关注容器存活状态,失败触发重启  |
 
 - startupProbe启动探针  
   * 检查成功才由存活检查接手,用于保护慢启动容器    
   * 适用于需要较长启动时间的应用场景,如应用程序需要大量预热或者需要等待外部依赖组件的应用程序  
   
+- readinessProbe就绪探针
+  * 如果检查失败,k8s会把Pod从serviceEndpoints中剔除(Pod的IP:Port从对应Service关联的EndPoint地址列表中删除)
+  * 用于检测应用实例当前是否可以接收请求,如果不能,k8s不会转发流量;决定是否对外提供服务(决定是否将请求转发给容器)  
+
 - livenessProbe存活探针 
    * 如果检查失败,kubelet会杀死容器,根据pod的restartPolicy来操作    
    * 用于检测应用实例是否处于Running状态,如果不是,k8s会重启容器;决定是否重启容器   
-
-- readinessProbe就绪探针   
-  * 如果检查失败,k8s会把Pod从serviceEndpoints中剔除(Pod的IP:Port从对应Service关联的EndPoint地址列表中删除)    
-  * 用于检测应用实例当前是否可以接收请求,如果不能,k8s不会转发流量;决定是否对外提供服务(决定是否将请求转发给容器)    
 
 **startupProbe > readinessProbe > livenessProbe**  
 
