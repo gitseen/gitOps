@@ -1616,7 +1616,16 @@ kubectl explain pods.spec.containers.startupProbe.tcpSocket
 | grpc |    |   | 发起一个grpc请求 |
 | httpGet |    |   | 发起HTTP请求 监听接口,属于七层 |
 | tcpSocket |    |   | 发起tpcSocket请求 监听端口,属于四层|
+```bash
+initialDelaySeconds: 5  #容器启动多久后开始去执行当前探针
+periodSeconds: 5        #每隔多久去执行一次探针
+successThreshold: 1     #至少探针执行多少次过后才会被认为是真正的成功
+failureThreshold: 3     #执行失败多少次过后才会被认为是真正的失败
 
+timeoutSeconds：#探测超时时间,默认1秒,最小1秒
+successThreshold：#探测失败后,最少连续探测成功多少次才会被认定为成功,默认是1,但是如果是liveness则必须是1,最小值1
+failureThreshold：#探测成功后,最少连续探测失败多少次才会被认定为失败,默认是3,最小值是1  #尽量设置大(30)
+```
 
 ### 7.7.3  探针检测方式与检测结果
 容器探测是pod对象生命周期中的一项重要的日常任务,它是kubelet对容器周期性执行的健康状态诊断,诊断操作由容器的处理器进行定义  
@@ -2123,7 +2132,9 @@ spec:
 9、kubelet请求apiServer将此pod资源的宽限期设置为0,从而完成删除操作,此时pod对用户已不可见  
 ![pod删除流程1](pic/poddel1.png)  
 
-![pod删除流程2](pic/poddel2.png)
+![pod删除流程2](pic/poddel2.png)  
+
+![pod终止过程](pic/podstop.png)  
 
 **删除pod时有两条平行的时间线。一条是改变网络规则,一条是删除pod**     
 - 1、网络规则生效  
