@@ -2167,6 +2167,7 @@ k8s删除Pod相关资源:如网络配置、数据卷等
 | CreateContainerConfigError  | 不能创建kubelet使用的容器配置  |
 | CreateContainerError  |  创建容器失败 |
 | CreateContainerConfigError | 不能创建kubelet使用的容器配置  |
+| Completed | 容器内部的进程运行完毕,正常退出,没有发生错误  |
 | ContainersNotInitialized  | 容器没有初始化完毕  |
 | ContainersNotReady	  | 容器没有准备完毕  |
 | ContainerCreating	  | Pod正在创建中  |
