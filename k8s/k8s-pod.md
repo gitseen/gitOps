@@ -2115,9 +2115,9 @@ spec:
 
 **健康检测(三种探针)总结**  
 通过合理配置三种探针,可以实现   
-- 启动保护：避免慢启动应用被误杀StartupProbe  
-- 高可用性：快速恢复故障容器livenessProbe  
+- 启动保护：避免慢启动应用被误杀StartupProbe 
 - 流量控制：确保只有就绪的Pod接收请求readinessProbe 
+- 高可用性：快速恢复故障容器livenessProbe  
 
 ## 7.8 pod终止过程
 **pod终止(删除)过程**   
