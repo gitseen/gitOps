@@ -2432,7 +2432,7 @@ kubectl logs <pod-name>          #分析容器内部运行情况
 在k8s中重启Pod有多种方式,具体方法的选择取决于Pod的管理方式(Deployment、Statefulset、DaemonSet等)和操作需求  
 ![pod-reboot](pic/podreboot.png)    
 
-一、通过控制器管理Pod的重启(kubectl [rollout|scale] restart)  
+一、通过控制器管理Pod的重启(kubectl [rollout|scale] )  
 滚动重启: (Rolling Restart）  
 适用场景：Deployment、Statefulset、DaemonSet等管理的Pod需优雅重启避免服务中断;调整副本数(Scale to Zero & Back)  
 ```bash
@@ -2459,6 +2459,7 @@ kubectl exec -it <pod_name> -c <container_name> --/bin/sh -c "kill 1" #这种方
 适用场景：触发Pod重建以应用新配置;通过更新镜像版本或环境变量触发重建  
 ```bash
 kubectl annotate pod/<pod-name> app-version=$(date +%s) --overwrite  #更新时间戳原理,k8s检测到注解变化后重建Pod  
+kubectl      get pod/<pod-name> -o jsonpath='{.metadata.annotations}' | jq #验证注解更新
 
 kubectl set image deployment/<deployment-name> <container>=<new-image>  #更新镜像  
 
