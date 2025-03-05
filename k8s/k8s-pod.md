@@ -2112,6 +2112,7 @@ spec:
 
 [探针-路多辛](https://www.toutiao.com/article/7206670428587164192/)  
 [kubernetes官方文档](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)   
+[探针介绍](https://blog.csdn.net/weixin_39941298/article/details/137277508)
 
 **健康检测(三种探针)总结**  
 通过合理配置三种探针,可以实现   
