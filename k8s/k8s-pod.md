@@ -2185,6 +2185,7 @@ k8s删除Pod相关资源:如网络配置、数据卷等
 | Initialized | 表示Pod中的所有容器是否已经初始化  |
 | Initializing | Pod正在初始化中 |
 | InvalidImageName | node节点无法解析镜像名称,导致镜像无法下载  |
+| Outofcpu         | 0/4 nodes are available: 1 Insufficient memory , 3 Insufficient cpu |
 | Pending          | Pending(挂起),Pod等待被调度、未调度到节点上或正在下载镜像 |
 | PreStartContainer |  执行preStarthook报错 |
 | PostStartHookError  | 执行postStart-hook报错  |
