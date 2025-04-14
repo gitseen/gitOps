@@ -127,7 +127,8 @@ http块添加以下配置
 ``` 
 # 新增logdate日期变量
     map $time_iso8601 $logdate {
-      '~^(?<ymd>\d{4}-\d{2}-\d{2})' $ymd;
+      #'~^(?<ymd>\d{4}-\d{2}-\d{2})' $ymd;  #2025-mm-dd.log 
+      '~^(?<year>\d{4})-(?<month>\d{1,2})-(?<day>\d{1,2})' $year$month$day; #2025mmdd.log
       default    'date-not-found';
     }
 server块添加日志文件变量
