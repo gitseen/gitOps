@@ -149,3 +149,30 @@ install_nginx()
 	shellwidth=`stty size|awk '{print $2}'`;yes "-" | sed $shellwidth'q' | tr -d '\n'
 }
 install_nginx
+
+
+#nginx-auto-start
+#/usr/lib/systemd/system/nginx.service
+cat > /usr/lib/systemd/system/nginx.service << 'EOF'
+[Unit]
+Description=Custom NGINX Service
+After=network.target
+
+[Service]
+Type=forking
+PIDFile=/usr/local/nginx/logs/nginx.pid
+Environment="NGINX_CONF=/usr/local/nginx/config/nginx.conf"
+ExecStartPre=/usr/bin/rm -f /usr/local/nginx/logs/nginx.pid
+ExecStartPre=/usr/local/nginx/sbin/nginx -t -c $NGINX_CONF
+ExecStart=/usr/sbin/nginx -c $NGINX_CONF
+ExecReload=/usr/sbin/nginx -s reload -c $NGINX_CONF
+ExecStop=/bin/kill -s QUIT $MAINPID
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
+
+EOF
+
+
