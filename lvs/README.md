@@ -1,6 +1,5 @@
 # Linux网络服务之LVS负载均衡群集-DR
-  https://www.toutiao.com/article/7173310451462636035/  
-
+[https://juejin.cn/post/7102813672266792968](https://blog.csdn.net/Dark_Tk/article/details/116154177)    
 # keepalived
 ```bash
 https://www.cnblogs.com/wenxuehai/p/15013654.html
