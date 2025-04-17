@@ -1,4 +1,4 @@
-[toc]  
+[TOC]  
 [Markdown 官方教程](https://markdown.com.cn/)   
 [Markdown 语法速查表](https://markdown.com.cn/cheat-sheet.html#%E6%80%BB%E8%A7%88)  
 [Markdown 基本语法](https://markdown.com.cn/basic-syntax/)  
