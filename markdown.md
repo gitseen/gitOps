@@ -5,6 +5,8 @@
 [Markdown 基本语法](https://markdown.com.cn/extended-syntax/)  
 [撰写新主题](https://kubernetes.io/zh-cn/docs/contribute/style/write-new-topic/)   
 [样式指南](https://kubernetes.io/zh-cn/docs/contribute/style/style-guide/)  
+[Mermaid](https://mermaid.js.org/intro/)  
+[Mermaid在线编辑器](https://mermaid.live/edit#)    
 
 
 
