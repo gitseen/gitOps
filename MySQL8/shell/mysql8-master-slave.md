@@ -341,9 +341,14 @@ ORDER BY
 ```
 
 
-
-See https://www.toutiao.com/article/7189143834964656643/  for xx
-
+>参考来源   
+See https://dev.mysql.com/downloads/mysql/  for details
+See https://blog.csdn.net/omaidb/article/details/143058811  for details
+See https://developer.aliyun.com/article/744929   for details
+See https://developer.aliyun.com/article/1093674   for details
+See https://mvnrepository.com/artifact/mysql/mysql-connector-java/8.0.13  for details
+See https://www.toutiao.com/article/7119094134296281635/?channel=&source=search_tab  for details
+See https://segmentfault.com/a/1190000023775512  for details
 
 
 ---
