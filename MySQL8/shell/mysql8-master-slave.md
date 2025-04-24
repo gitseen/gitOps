@@ -2,13 +2,13 @@
 
 ## 一、MySQL8主从复制原理  
 
-MySQL的主从复制中主要有三个线程：master（binlog dump thread）、slave（I/O thread 、SQL thread），Master一条线程和Slave中的两条线程。  
+MySQL的主从复制中主要有三个线程: master(binlog dump thread)、slave(I/O thread 、SQL thread)
 
-（1）master服务器将数据的改变记入二进制binlog日志，当master上的数据发生改变时，则将其改变写入二进制日志中；  
+- master服务器将数据的改变记入二进制binlog日志,当master上的数据发生改变时,则将其改变写入二进制日志中  
 
-（2）slave服务器会在一定时间间隔内对master二进制日志进行探测其是否发生改变，如果发生改变，则开始一个I/OThread请求master二进制事件  
+- slave服务器会在一定时间间隔内对master二进制日志进行探测其是否发生改变,如果发生改变,则开始一个I/OThread请求master二进制事件   
 
-（3）同时主节点为每个I/O线程启动一个dump线程，用于向其发送二进制事件，并保存至从节点本地的中继日志中，从节点将启动SQL线程从中继日志中读取二进制日志，在本地重放，使得其数据和主节点的保持一致，最后I/OThread和SQLThread将进入睡眠状态，等待下一次被唤醒。  
+- 同时主节点为每个I/O线程启动一个dump线程,用于向其发送二进制事件,并保存至从节点本地的中继日志中;从节点启动SQL线程从中继日志中读取二进制日志,在本地重放,使得其数据和主节点的保持一致;最后I/OThread和SQLThread将进入睡眠状态,等待下一次被唤醒    
 
 
 ## 二、MySQL8主从部署
