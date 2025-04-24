@@ -1,10 +1,6 @@
-# MySQL8.0.31主从复制配置
-See https://www.toutiao.com/article/7189143834964656643/  for xx  
+# MySQL8.0.[13、31]主从部署
 
-2023-01-16 15:09·潇洒sword  
-MySQL8.0.31主从复制配置(单机环境下的一主两从架构)  
-
-## 一、主从复制原理  
+## 一、MySQL8主从复制原理  
 
 MySQL的主从复制中主要有三个线程：master（binlog dump thread）、slave（I/O thread 、SQL thread），Master一条线程和Slave中的两条线程。  
 
@@ -14,7 +10,347 @@ MySQL的主从复制中主要有三个线程：master（binlog dump thread）、
 
 （3）同时主节点为每个I/O线程启动一个dump线程，用于向其发送二进制事件，并保存至从节点本地的中继日志中，从节点将启动SQL线程从中继日志中读取二进制日志，在本地重放，使得其数据和主节点的保持一致，最后I/OThread和SQLThread将进入睡眠状态，等待下一次被唤醒。  
 
-## 二、环境介绍  
+
+## 二、MySQL8主从部署
+
+**环境信息**  
+|  NAME     |      Ip   |    port    | 
+| --------- | :-------: | :--------: | 
+| MySQL-Master | 26.64.60.1 | 13306  | 
+| MySQL-Slave  | 26.64.60.2 | 13306  |
+
+
+1、MySQL8安装  
+```bash
+#下载https://dev.mysql.com/downloads/mysql
+#mysql-8.0.13-linux-glibc2.12-x86_64.tar.xz安装包
+mysql_base_dir="/data/mysql"       #mysql家目录
+mysql_data_dir="/data/mysql/data"  #mysql家目录
+yum install -y ncurses-compat-libs-6.1-9.20180224.el8.x86_64  libaio-devel
+
+useradd -s /sbin/nologin  mysql  &&  chown -R mysql ${mysql_data_dir}
+
+#${mysql_base_dir}/bin/mysqld --console  --datadir=${mysql_data_dir} --initialize-insecure --user=mysql
+bin/mysqld --defaults-file=/data/mysql/my.cnf  --initialize-insecure --user=mysql --basedir=/data/mysql  --datadir=/data/mysql/data
+
+
+#Add auto-mysqld-services
+cat >/usr/lib/systemd/system/mysqld.service <<EOF
+[Unit]
+Description=MYSQL server
+After=network.target
+
+[Service]
+Type=forking
+TimeoutSec=0
+PermissionsStartOnly=true
+ExecStart=/data/mysql/bin/mysqld --defaults-file=/data/mysql/my.cnf --daemonize $OPTIONS
+ExecReload=/bin/kill -HUP -$MAINPID
+ExecStop=/bin/kill -QUIT $MAINPID
+KillMode=process
+LimitNOFILE=65535
+Restart=on-failure
+RestartSec=10
+RestartPreventExitStatus=1
+PrivateTmp=false
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload  &&   systemctl enable --now  mysqld
+export PATH=$PATH:/data/mysql/bin
+
+#启动后空code
+mysqladmin -uroot  password  'SnT_oPs#2024inkKRD'
+#SHOW GLOBAL VARIABLES LIKE "%lower%";   #检查不区分大小写是否为1
+#update user set password=PASSWORD("SnT_oPs#2024inkKRD")where user="root";
+#update user set password=password("SnT_oPs#2024inkKRD") where user='root' and host='localhost';
+#flush privileges;
+
+mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'SnT_oPs#2024inkKRD' PASSWORD EXPIRE NEVER;"
+CREATE USER 'root'@'%' IDENTIFIED BY 'SnT_oPs#2024inkKRD';
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
+ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY 'SnT_oPs#2024inkKRD' PASSWORD EXPIRE NEVER;
+#mysql -uroot -pSnT_oPs#2024inkKRD -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;"
+#mysql -uroot -pSnT_oPs#2024inkKRD  -e "ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY 'SnT_oPs#2024inkKRD' PASSWORD EXPIRE NEVER;"
+```
+
+>由于mysql8以上的版本会区分表名大小写,所以添加这个lower_case_table_names参数,不会区分大小写,可以避免很多问题!    
+
+
+2、 MySQL8主从配置  
+
+2.1 Master上配置slave同步账号(ip和账号为Slave节点)
+```bash
+create user 'repl'@'26.64.60.2' identified by 'sNt_repl@2MySQL';
+#grant replication slave,replication client on *.* to 'slave'@'%';
+grant replication slave,replication client on *.* to 'repl'@'26.64.60.2';
+grant all on *.* to 'repl'@'26.64.60.2' with grant option;
+flush privileges;  #刷新权限
+show grants for 'repl'@'26.64.60.2';  #查看用户权限
+select host,user from mysql.user;
+show master status;
+show plugins;
+
+#查MySQL主服务Binlog Dump线程
+mysql -uroot -pSnT_oPs#2024inkKRD -e "show processlist" |grep "Binlog Dump" 
+
+mysql: [Warning] Using a password on the command line interface can be insecure.
+8601	repl	26.64.60.2:54250	NULL	Binlog Dump	85482	Master has sent all binlog to slave; waiting for more updates	NULL
+```
+
+2.2 Slave上配置master同步binlog及pos点位  
+```bash
+#change master to master_host='26.64.60.1',master_port=13306,master_user='repl',master_password='sNt_repl@2MySQL',master_log_file='mysql-bin.00003',master_log_pos=0;
+change master to master_host='26.64.60.1',master_port=13306,master_user='repl',master_password='sNt_repl@2MySQL',master_log_file='mysql-bin.000003',master_log_pos=155;
+start slave;
+show slave status \G
+show processlist; 
+
+mysql -uroot -pSnT_oPs#2024inkKRD  -e "show slave status\G" |grep -E "Slave_IO_Running|Slave_SQL_Running|Seconds_Behind_Master|Exec_Master_Log_Pos" #主从同步状态
+```
+
+>网络测试
+Last_IO_Error: error connecting to master 'repl@26.64.60.1:13306' - retry-time: 60  retries: 3  
+mysql -h26.64.60.1 -P13306 -urepl -psNt_repl@2MySQL #测试连通性  
+
+
+3、 MySQL8配置文件my.ccnf  
+```bash
+#master-my.cnf
+[mysqld]
+user=mysql
+port = 13306
+socket = /tmp/mysql.sock
+datadir = /mysql/mysql/data
+character-set-server=utf8
+server-id = 1
+max_connections = 10000
+group_concat_max_len = 102400
+max_connect_errors = 10
+table_open_cache = 4096
+event_scheduler = ON
+skip_name_resolve = ON
+lower_case_table_names = 1
+max_allowed_packet = 64M
+binlog_cache_size = 32M
+max_heap_table_size = 256M
+read_rnd_buffer_size = 64M
+sort_buffer_size = 256M
+join_buffer_size = 512M
+thread_cache_size = 300
+log_bin_trust_function_creators=1
+key_buffer_size = 256M
+read_buffer_size = 32M
+read_rnd_buffer_size = 128M
+bulk_insert_buffer_size = 512M
+sql_mode=NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES
+#READ-UNCOMMITTED, READ-COMMITTED, REPEATABLE-READ, SERIALIZABLE
+transaction_isolation = READ-COMMITTED
+tmp_table_size = 512M
+log-bin=mysql-bin
+binlog_format=mixed
+sync_binlog = 1
+binlog_expire_logs_seconds = 604800  #expire_logs_days = 7
+max_binlog_size = 256M
+binlog_group_commit_sync_delay = 100
+#binlog-do-db = xxl  #指定同步
+slow_query_log = 1
+slow_query_log_file = /mysql/mysql/logs/slow.log
+long_query_time = 5
+
+####### InnoDB
+innodb_buffer_pool_size = 512M
+innodb_thread_concurrency = 16
+innodb_flush_log_at_trx_commit = 2
+innodb_log_buffer_size = 32M
+innodb_log_file_size = 1024M
+innodb_log_files_in_group = 4
+innodb_max_dirty_pages_pct = 90
+innodb_lock_wait_timeout = 120
+#innodb_force_recovery=1
+
+[mysqldump]
+quick
+max_allowed_packet = 64M
+
+[mysql]
+no-auto-rehash
+
+[myisamchk]
+key_buffer = 16M
+sort_buffer_size = 16M
+read_buffer = 8M
+write_buffer = 8M
+
+[mysqlhotcopy]
+interactive-timeout
+
+[mysqld_safe]
+open-files-limit = 65535
+log-error=/mysql/mysql/logs/mysqld.log
+pid-file=/mysql/mysql/logs/mysqld.pid
+
+
+----
+#Slave-my.cnf
+[mysqld]
+user=mysql
+port = 13306
+socket = /tmp/mysql.sock
+datadir = /mysql/mysql/data
+character-set-server = utf8
+server-id = 2
+max_connections = 10000
+group_concat_max_len = 102400
+max_connect_errors = 10
+table_open_cache = 4096
+event_scheduler = ON
+lower_case_table_names = 1
+max_allowed_packet = 64M
+binlog_cache_size = 32M
+max_heap_table_size = 256M
+read_rnd_buffer_size = 64M
+sort_buffer_size = 256M
+join_buffer_size = 512M
+thread_cache_size = 300
+log_bin_trust_function_creators=1
+key_buffer_size = 256M
+read_buffer_size = 32M
+read_rnd_buffer_size = 128M
+bulk_insert_buffer_size = 512M
+sql_mode=NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES
+#READ-UNCOMMITTED, READ-COMMITTED, REPEATABLE-READ, SERIALIZABLE
+transaction_isolation = READ-COMMITTED
+tmp_table_size = 512M
+log-bin=mysql-slave-bin
+binlog_format=mixed
+binlog_expire_logs_seconds = 604800  #expire_logs_days = 7
+log-error = /mysql/mysql/logs/mysql-error.log  #error LOG
+general_log = 1
+general_log_file = /mysql/mysql/logs/mysql-query.log #query LOG
+slow_query_log = 1
+slow_query_log_file = /mysql/mysql/logs/mysql-slow.log
+long_query_time = 5
+sync_binlog = 0
+relay_log = ylw-mysql-relay-bin
+relay_log_info_file = /mysql/mysql/logs/mysql-relay-log.info
+relay_log_purge = ON
+relay_log_recovery = ON
+read_only = ON
+#replicate-do-db = xxl
+replicate-ignore-db = mysql,sys,information_schema,performance_schema
+log_slave_updates = ON
+slave_skip_errors = all
+slave_net_timeout = 60
+skip_name_resolve = ON
+slave_parallel_workers = 8
+slave_parallel_type = LOGICAL_CLOCK
+slave_preserve_commit_order = 1
+
+####### InnoDB
+innodb_buffer_pool_size = 512M
+innodb_thread_concurrency = 16
+innodb_flush_log_at_trx_commit = 2
+innodb_log_buffer_size = 32M
+innodb_log_file_size = 1024M
+innodb_log_files_in_group = 4
+innodb_max_dirty_pages_pct = 90
+innodb_lock_wait_timeout = 120
+#innodb_force_recovery=1
+
+[mysqldump]
+quick
+max_allowed_packet = 64M
+[client]
+character-set-server = utf8mb4
+[mysql]
+no-auto-rehash
+
+[myisamchk]
+key_buffer = 16M
+sort_buffer_size = 16M
+read_buffer = 8M
+write_buffer = 8M
+
+[mysqlhotcopy]
+interactive-timeout
+
+[mysqld_safe]
+open-files-limit = 65535
+```
+
+4、MySQL8常用指令  
+```bash
+#1、MySQL字符集
+配置my.cnf添加参数及验证
+character-set-server = utf8mb4         #show variables like 'character_set%';
+collation-server = utf8mb4_unicode_ci  #show variables like 'collation%';
+
+create  database ecology character set utf8mb4 collate utf8mb4_unicode_ci; 
+
+#2、MySQL变量查询
+mysql -uroot -pSnT_oPs#2024inkKRD  -e "show variables like '%log%';"
+mysql -uroot -pSnT_oPs#2024inkKRD  -e "show variables like 'slave_skip_errors';"
+select * from sys.schema_table_lock_waits;
+select * from sys.metrics where variable_name like 'slave%delay%';
+
+
+#3、MySQL锁表备份解锁
+show engines; #存储引擎 MyISAM使用--lock-all-tables  InnoDB使用--single-transaction
+
+flush tables with read lock;  #show variables like '%lock%';
+set global read_only = ON;    #show variables like '%read_only%';
+
+mysqldump -uroot -pSnT_oPs#2024inkKRD -A --master-data=2 --single-transaction --routines --triggers --flush-logs --events --all-databases   > all.sql
+mysqldump -uroot -pSnT_oPs#2024inkKRD -q --single-transaction --flush-logs -E -R  --triggers -B performance_check > all.sql
+mysqldump -uroot -pSnT_oPs#2024inkKRD -q --default-character-set=utf8mb4 --single-transaction --compress --flush-logs -E -R  --triggers -B ecology > all.sql #-B和--no-create-db互斥 
+
+unlock tables;
+set global read_only = OFF;
+
+#4、MySQL主从同步日志
+mysqlbinlog -v mysql-bin.000005  测试binlog日志
+
+
+
+#5、MySQL中查数据库大小与表大小
+
+#MySQL中查数据库大小
+use mysql;
+SELECT table_schema "ecology",sum(data_length + index_length) / 1024 / 1024 /1024 "Size(GB)" from information_schema.TABLES GROUP BY table_schema; 
+
+
+#mysql中查数据库表的大小
+use mysql;
+SELECT 
+    table_name AS 'cc',
+    ROUND(data_length/1024/1024/1024, 2) AS '数据大小(MB)',
+    ROUND(index_length/1024/1024/1024, 2) AS '索引大小(MB)',
+    ROUND((data_length + index_length)/1024/1024/1024, 2) AS '总大小(GB)',
+    table_rows AS '行数'
+FROM 
+    information_schema.tables
+WHERE 
+    table_schema = 'ecology'
+ORDER BY 
+    (data_length + index_length) DESC;
+```
+
+
+
+See https://www.toutiao.com/article/7189143834964656643/  for xx
+
+
+
+---
+
+## 三、环境介绍  
+
+2023-01-16 15:09·潇洒sword  
+MySQL8.0.31主从复制配置(单机环境下的一主两从架构)
+
  
 通过在单机环境下三个不同的目录和端口3306、3307、3308来搭建。
 
