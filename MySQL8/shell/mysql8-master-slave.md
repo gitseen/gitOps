@@ -8,10 +8,7 @@ MySQL的主从复制中主要有三个线程: master(binlog dump thread)、slave
 
 - slave服务器会在一定时间间隔内对master二进制日志进行探测其是否发生改变,如果发生改变,则开始一个I/OThread请求master二进制事件   
 
-- 同时主节点为每个I/O线程启动一个dump线程,用于向其发送二进制事件,并保存至从节点本地的中继日志中;
-  从节点启动SQL线程从中继日志中读取二进制日志,在本地重放,使得其数据和主节点的保持一致;
-  最后I/OThread和SQLThread将进入睡眠状态,等待下一次被唤醒     
-
+- 同时主节点为每个I/O线程启动一个dump线程,用于向其发送二进制事件,并保存至从节点本地的中继日志中;从节点启动SQL线程从中继日志中读取二进制日志,在本地重放,使得其数据和主节点的保持一致;最后I/OThread和SQLThread将进入睡眠状态,等待下一次被唤醒     
 
 ## 二、MySQL8主从部署
 
@@ -113,7 +110,7 @@ show processlist;
 mysql -uroot -pSnT_oPs#2024inkKRD  -e "show slave status\G" |grep -E "Slave_IO_Running|Slave_SQL_Running|Seconds_Behind_Master|Exec_Master_Log_Pos" #主从同步状态
 ```
 
->网络测试
+>网络测试  
 Last_IO_Error: error connecting to master 'repl@26.64.60.1:13306' - retry-time: 60  retries: 3  
 mysql -h26.64.60.1 -P13306 -urepl -psNt_repl@2MySQL #测试连通性  
 
@@ -311,6 +308,9 @@ mysqldump -uroot -pSnT_oPs#2024inkKRD -q --default-character-set=utf8mb4 --singl
 
 unlock tables;
 set global read_only = OFF;
+
+#MySQL导入数据库报错问题："MySQL8使用mysqldump导出后导入数据库报错Unknown command '\''. " #系统识别\为命令,使用系统字符来解决如：LANG=en_US.UTF-8
+
 
 #4、MySQL主从同步日志
 mysqlbinlog -v mysql-bin.000005  测试binlog日志
