@@ -1,3 +1,4 @@
+
 #from:https://www.toutiao.com/article/7171673677871088135/
 #from:https://www.toutiao.com/article/7172130129995661824/
 
@@ -44,9 +45,9 @@ include
 这个其实在上一篇介绍过了，这里是导入了MIME的支持，关于MIME的类型介绍，单独写了篇（搞web技术绕不过去的小知识点MIME类型），有兴趣的可前往查看。
 
 default_type
-语法: 	default_type mime-type;
-默认: 	default_type text/plain;
-上下文: 	http, server, location
+语法:   default_type mime-type;
+默认:   default_type text/plain;
+上下文:         http, server, location
 设定该Http服务默认的MIME类型。
 
 如果返回html：default_type text/html，或者json：default_type text/json;
@@ -54,11 +55,11 @@ default_type
 access_log
 和access_log相关的还有2个配置：log_format、open_log_file_cache，放在一起介绍。
 
-语法:	
+语法: 
 1、access_log path [format [buffer=size] [gzip[=level]] [flush=time] [if=condition]];
 2、access_log off;
-默认:	access_log logs/access.log combined;
-上下文:	http, server, location, if in location, limit_except
+默认:   access_log logs/access.log combined;
+上下文: http, server, location, if in location, limit_except
 用于设定访问日志的路径、格式和缓存。
 
 例如：
@@ -157,25 +158,25 @@ accept_mutex
 项目中，如果服务的QPS很大，那么默认的off会提高性能，但QPS小时，off会引发“惊群效应”，虽然不是很严重，但却是对性能有些影响。
 
 accept_mutex_delay
-语法:	accept_mutex_delay time;
-默认:	accept_mutex_delay 500ms;
-上下文:	events
+语法:   accept_mutex_delay time;
+默认:   accept_mutex_delay 500ms;
+上下文: events
 当设置accept_mutex off后，一个连接到达时，所有工作进程都会尝试获取该连接，但最终只有一个工作进程会取得连接。那么其他的工作进程将继续进入休眠状态，那么多久才能再次尝试获取新连接？就是该指令配置的，默认500ms。
 
 accept_mutex实际上会激活mutex锁功能，获取连接的work process会持有该锁，其他work process获取不到锁会立即返回（即非阻塞），平均多久尝试一次获取mutex锁，就是这个指令的作用。
 
 daemon
-语法:	daemon on | off;
-默认:	daemon on;
-上下文:	main
+语法:   daemon on | off;
+默认:   daemon on;
+上下文: main
 是否启用守护模式。
 
 守护进程大家都比较了解，nginx也是一样的原理，都是不受终端控制的后台进程。
 
 include
-语法:	include file | mask;
-默认:	—
-上下文:	any
+语法:   include file | mask;
+默认:   —
+上下文: any
 导入其他文件，要求其他文件中的内容必须是由正确的指令或指令块构成，如前文中内外配置文件分离时，就是通过该指令导入内层server配置：
 
 include /etc/nginx/conf.d/*.conf;
@@ -186,9 +187,9 @@ user
 在前文介绍过，指定启动nginx进程的用户和组，默认是nginx，有时候会出现403异常，是因为nginx用户没有文件或目录权限导致，修改为 user root即可解决。
 
 work_processes
-语法:	worker_processes number | auto;
-默认:	worker_processes 1;
-上下文:	main
+语法:   worker_processes number | auto;
+默认:   worker_processes 1;
+上下文: main
 可见，该配置是配置在main中的，也就是全局的，影响nginx整体的配置。
 
 用于配置工作进程的个数，大家都了解，nginx由控制工作进程的master process和N个work processes构成，真正处理请求的是work process，该指令就是配置wp的数量。
@@ -208,9 +209,9 @@ ps -ef|grep nginx
 对于cpu密集型项目，一般也会设置为CPU的数量或者CPU内核数量。
 
 worker_connections
-语法:	worker_connections number;
-默认:	worker_connections 512;
-上下文:	events
+语法:   worker_connections number;
+默认:   worker_connections 512;
+上下文: events
 该指令用于设置工作进程最大允许打开的连接数。什么意思呢？一个nginx有多个work processess，但是每个work processes又可以同时处理多个请求，就好比一个进程下允许启用多少线程。
 
 这个连接数不仅仅指的客户端发来的连接请求，还包括代理服务之间的请求，也就是上下游请求都会被统计到。
@@ -225,9 +226,9 @@ worker_rlimit_core
 该值不能超过linux的最大文件限制。
 
 error_log
-语法:	error_log file [level];
-默认:	error_log logs/error.log error;
-上下文:	main, http, mail, stream, server, location
+语法:   error_log file [level];
+默认:   error_log logs/error.log error;
+上下文: main, http, mail, stream, server, location
 很显然，是配置错误日志。
 
 file：指定日志文件存储的文件
@@ -299,5 +300,484 @@ server {
     }
 }
 ```
+
+
+----
+
+
+user root root;
+worker_processes auto;
+#worker_processes 8;
+#worker_cpu_affinity 00000001 00000010 00000100 0000100000010000 00100000 01000000 10000000;
+
+load_module /usr/local/nginx/modules/ngx_stream_module.so;
+
+error_log  logs/error.log;
+#error_log  logs/error.log  notice;
+#error_log  logs/error.log  info;
+pid        logs/nginx.pid;
+
+worker_rlimit_nofile 65535;
+
+events {
+    use epoll;
+    worker_connections  65535;
+    multi_accept on;
+}
+
+
+include /usr/local/nginx/conf/tcp.d/*.conf;
+
+http {
+    upstream ecologycluster{
+		server 25.63.60.1:18989;
+        server 25.63.60.2:18989;
+		ip_hash;
+    }
+
+   upstream emcluster{
+                server 25.63.60.1:18999;
+                server 25.63.60.2:18999;
+                ip_hash;
+    }
+
+
+    server_tokens off;
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+    access_log  logs/access.log main;
+
+    sendfile        on;
+    #tcp_nopush     on;
+
+    #keepalive_timeout  0;
+    keepalive_timeout  65;
+    tcp_nodelay on;
+    client_header_buffer_size 4k;
+    open_file_cache max=102400 inactive=20s;
+    open_file_cache_valid 30s;
+    open_file_cache_min_uses 1;
+    client_header_timeout 15;
+    client_body_timeout 15;
+    reset_timedout_connection on;
+    send_timeout 15;
+
+    #gzip  on;
+    client_max_body_size 1000M;
+    client_body_buffer_size 128K;
+
+
+    # HTTPS server
+    #
+    server {
+        listen       80;
+        server_name  ylw.sc.wood.com.cn 25.63.60.3;
+         #ssl                  on;
+         #ssl_certificate      ca.crt;
+         #ssl_certificate_key  ca.key;
+         #ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+         #ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;
+	 #ssl_protocols  TLSv1 TLSv1.1 TLSv1.2;
+         #ssl_ciphers  ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP;
+         #ssl_prefer_server_ciphers   on;
+
+	location / {
+            root   html;
+            index  index.html index.htm index.jsp;
+            proxy_pass  http://ecologycluster;
+            #proxy_pass  http://emcluster;
+            proxy_redirect http:// $scheme://;
+     	    proxy_set_header  X-Forwarded-For  $proxy_add_x_forwarded_for;
+     	    proxy_set_header  X-Real-IP  $remote_addr;
+     	    proxy_set_header  Host $http_host;
+	    #access_log	off;
+
+        }
+
+        location  /em/ {
+            root   html;
+            #root /usr/emp/appsvr/tomcat/webapps/ROOT;
+            index  index.html index.htm index.jsp;
+            proxy_pass  http://emcluster;
+            proxy_redirect http:// $scheme://;
+            proxy_set_header  X-Forwarded-For  $proxy_add_x_forwarded_for;
+            proxy_set_header  X-Real-IP  $remote_addr;
+            proxy_set_header  Host $http_host;
+       }
+               location /ekapp {
+            alias   /data/KT/ekhx/ui/app;
+            try_files  $uri $uri/  /index.html;
+            index  index.html index.htm;
+
+        }
+
+        location ^~/ekhxapi/ {
+            add_header 'Access-Control-Allow-Origin' '*';
+            add_header 'Access-Control-Allow-Credentials' 'true';
+            add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
+            add_header 'Access-Control-Allow-Headers' 'DNT,web-token,app-token,Authorization,Accept,Origin,Keep-Alive,User-Agent,X-Mx-ReqToken,X-Data-Type,X-Auth-Token,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
+            add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
+      	  proxy_pass http://127.0.0.1:9999/;
+       proxy_set_header Host $http_host;
+       proxy_connect_timeout 150s;
+       proxy_send_timeout 150s;
+       proxy_read_timeout 150s;
+       proxy_set_header X-Forwarded-Proto http;
+       proxy_set_header X-Real-IP $remote_addr;
+       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+       add_header Set-Cookie "Path=/; HttpOnly; Secure";
+       }
+
+   }
+    include /usr/local/nginx/conf/conf.d/*.conf;
+}
+
+
+
+
+
+cat << nginx-config >> EOF
+#user  nobody;
+worker_processes  auto;
+
+error_log  logs/error.log;
+
+#pid        logs/nginx.pid;
+
+worker_rlimit_nofile 65535;
+
+events {
+    use epoll;
+    worker_connections  65535;
+    multi_accept on;
+}
+
+
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+    access_log  logs/access.log;
+
+    sendfile        on;
+    keepalive_timeout  60;
+
+    gzip  on;
+    gzip_min_length  1k;
+    gzip_buffers     4 16k;
+    gzip_http_version 1.0;
+    gzip_comp_level 4;
+    gzip_types       text/plain application/x-javascript text/css application/xml;
+    gzip_vary on;
+
+    #定义域名映射关系
+        map $host $new_domian {
+                "portal.sc.wood.com.cn"         "newweb.rmt.sc.wood.com.cn";
+                "portal.ab.sc.wood.com.cn"      "newweb.ab.sc.wood.com.cn";
+                "portal.bz.sc.wood.com.cn"      "newweb.bz.sc.wood.com.cn";
+                "portal.cd.sc.wood.com.cn"      "newweb.cd.sc.wood.com.cn";
+                "portal.cgyjg.sc.wood.com.cn"   "newweb.js.sc.wood.com.cn";
+                "portal.cgyyj.sc.wood.com.cn"   "newweb.cgy.sc.wood.com.cn";
+                #"portal.dlyy.sc.wood.com.cn"   "newweb.dlyy.sc.wood.com.cn";
+                "portal.dy.sc.wood.com.cn"      "newweb.dy.sc.wood.com.cn";
+                "portal.dz.sc.wood.com.cn"      "newweb.dz.sc.wood.com.cn";
+                "portal.ga.sc.wood.com.cn"      "newweb.ga.sc.wood.com.cn";
+                "portal.ghzx.sc.wood.com.cn"    "newweb.jyy.sc.wood.com.cn";
+                "portal.gpzx.sc.wood.com.cn"    "newweb.gpzx.sc.wood.com.cn";
+                "portal.gy.sc.wood.com.cn"      "newweb.gy.sc.wood.com.cn";
+                "portal.gz.sc.wood.com.cn"      "newweb.gz.sc.wood.com.cn";
+                "portal.jl.sc.wood.com.cn"      "newweb.jl.sc.wood.com.cn";
+                "portal.kjhszx.sc.wood.com.cn"  "newweb.zhfwzx.sc.wood.com.cn";
+                "portal.ls.sc.wood.com.cn"      "newweb.les.sc.wood.com.cn";
+                "portal.lz.sc.wood.com.cn"      "newweb.lz.sc.wood.com.cn";
+                "portal.ms.sc.wood.com.cn"      "newweb.ms.sc.wood.com.cn";
+                "portal.my.sc.wood.com.cn"      "newweb.my.sc.wood.com.cn";
+                "portal.nc.sc.wood.com.cn"      "newweb.nc.sc.wood.com.cn";
+                "portal.nj.sc.wood.com.cn"      "newweb.nj.sc.wood.com.cn";
+                "portal.pzh.sc.wood.com.cn"     "newweb.pzh.sc.wood.com.cn";
+                "portal.sbd.sc.wood.com.cn"     "newweb.sbd.sc.wood.com.cn";
+                "portal.sn.sc.wood.com.cn"      "newweb.sn.sc.wood.com.cn";
+                "portal.syy.sc.wood.com.cn"     "newweb.dky.sc.wood.com.cn";
+                "portal.tgyzlzx.sc.wood.com.cn" "newweb.zlzx.sc.wood.com.cn";
+                "portal.tzzx.sc.wood.com.cn"    "newweb.xt.sc.wood.com.cn";
+                "portal.wljt.sc.wood.com.cn"    "newweb.wz.sc.wood.com.cn";
+                "portal.xc.sc.wood.com.cn"      "newweb.ls.sc.wood.com.cn";
+                "portal.xy.sc.wood.com.cn"      "newweb.jpzx.sc.wood.com.cn";
+                "portal.ya.sc.wood.com.cn"      "newweb.ya.sc.wood.com.cn";
+                "portal.yb.sc.wood.com.cn"      "newweb.yb.sc.wood.com.cn";
+                "portal.yjzx.sc.wood.com.cn"    "newweb.yjzx.sc.wood.com.cn";
+                "portal.yxdc.sc.wood.com.cn"    "newweb.yxw.sc.wood.com.cn";
+                #"portal.yxjkzx.sc.wood.com.cn" "newweb.yxjkzx.sc.wood.com.cn";
+                "portal.zg.sc.wood.com.cn"      "newweb.zg.sc.wood.com.cn";
+                "portal.zy.sc.wood.com.cn"      "newweb.zy.sc.wood.com.cn";
+                "iscmanage.sc.wood.com.cn"      "http://25.64.3.218:8080/isc_mp";
+                "iscsso.sc.wood.com.cn"         "http://25.64.3.217:80/isc_sso";
+                "newportal.sc.wood.com.cn"      "http://25.214.209.100/up/";
+                "cms.sc.wood.com.cn"            "http://25.64.40.163:8080/cms";
+                "cmscd.sc.wood.com.cn"          "http://25.64.38.141:8081/cms/login.htm";
+                "xjcms.sc.wood.com.cn"          "http://25.64.36.248:8081/cms/logon.jsp";
+                "cwgk.sc.wood.com.cn"           "http://25.64.36.176:80/YGFMISWeb";
+                "dlcj.sc.wood.com.cn"           "http://25.64.34.145:80/index.jsp";
+                "mas.sc.wood.com.cn"            "http://25.64.38.249:80/web";
+
+                }
+        #通用重定向配置
+    server {
+        listen 80;
+        server_name  
+                        portal.sc.wood.com.cn
+                        portal.ab.sc.wood.com.cn
+                        portal.bz.sc.wood.com.cn
+                        portal.cd.sc.wood.com.cn
+                        portal.cgyjg.sc.wood.com.cn
+                        portal.cgyyj.sc.wood.com.cn
+                        portal.dlyy.sc.wood.com.cn
+                        portal.dy.sc.wood.com.cn
+                        portal.dz.sc.wood.com.cn
+                        portal.ga.sc.wood.com.cn
+                        portal.ghzx.sc.wood.com.cn
+                        portal.gpzx.sc.wood.com.cn
+                        portal.gy.sc.wood.com.cn
+                        portal.gz.sc.wood.com.cn
+                        portal.jl.sc.wood.com.cn
+                        portal.kjhszx.sc.wood.com.cn
+                        portal.ls.sc.wood.com.cn
+                        portal.lz.sc.wood.com.cn
+                        portal.ms.sc.wood.com.cn
+                        portal.my.sc.wood.com.cn
+                        portal.nc.sc.wood.com.cn
+                        portal.nj.sc.wood.com.cn
+                        portal.pzh.sc.wood.com.cn
+                        portal.sbd.sc.wood.com.cn
+                        portal.sn.sc.wood.com.cn
+                        portal.syy.sc.wood.com.cn
+                        portal.tgyzlzx.sc.wood.com.cn
+                        portal.tzzx.sc.wood.com.cn
+                        portal.wljt.sc.wood.com.cn
+                        portal.xc.sc.wood.com.cn
+                        portal.xy.sc.wood.com.cn
+                        portal.ya.sc.wood.com.cn
+                        portal.yb.sc.wood.com.cn
+                        portal.yjzx.sc.wood.com.cn
+                        portal.yxdc.sc.wood.com.cn
+                        portal.yxjkzx.sc.wood.com.cn
+                        portal.zg.sc.wood.com.cn
+                        portal.zy.sc.wood.com.cn
+                        iscmanage.sc.wood.com.cn
+                        iscsso.sc.wood.com.cn
+                        newportal.sc.wood.com.cn
+                        cms.sc.wood.com.cn
+                        cmscd.sc.wood.com.cn
+                        xjcms.sc.wood.com.cn
+                        cwgk.sc.wood.com.cn
+                        dlcj.sc.wood.com.cn
+                        mas.sc.wood.com.cn;
+
+    if ( $host = 'iscmanage.sc.wood.com.cn') {
+            return 301 http://25.64.3.218:8080/isc_mp;
+    }      
+    if ( $host = 'iscsso.sc.wood.com.cn') {
+            return 301 http://25.64.3.217:80/isc_sso;
+    }
+    if ( $host = 'newportal.sc.wood.com.cn') {
+            return 301 http://25.214.209.100/up/user/desk/index;
+    }
+    if ( $host = 'cms.sc.wood.com.cn') {
+            return 301 http://25.64.40.163:8080/cms;
+    }
+    if ( $host = 'cmscd.sc.wood.com.cn') {
+            return 301 http://25.64.38.141:8081/cms/login.htm;
+    }
+    if ( $host = 'xjcms.sc.wood.com.cn') {
+            return 301 http://25.64.36.248:8081/cms/logon.jsp;
+    }
+    if ( $host = 'cwgk.sc.wood.com.cn') {
+            return 301 http://25.64.36.176:80/YGFMISWeb;
+    }
+        if ( $host = 'dlcj.sc.wood.com.cn') {
+            return 301 http://25.64.34.145:80/index.jsp;
+    }
+    if ( $host = 'mas.sc.wood.com.cn') {
+            return 301 http://25.64.38.249:80/web;
+    }
+    
+    location  = / {
+           return 301 http://$new_domian;
+        }
+    location ~^(/|/ab/?)$ {
+            return 301 http://$new_domian;
+        }
+        location ~^(/|/bz/?)$ {
+           return 301 http://$new_domian;
+        }
+    location ~^(/|/cgyjg/?)$ {
+           return 301 http://$new_domian;
+        }
+        location ~^(/|/cgyyj/?)$ {
+           return 301 http://$new_domian;
+        }
+        location ~^(/|/dlyy/?)$ {
+           return 301 http://$new_domian;
+        }
+        location ~^(/|/dy/?)$ {
+           return 301 http://$new_domian;
+        }
+        location ~^(/|/dz/?)$ {
+           return 301 http://$new_domian;
+        }
+        location ~^(/|/ga/?)$ {
+           return 301 http://$new_domian;
+        }
+        location ~^(/|/ghzx/?)$ {
+           return 301 http://$new_domian;
+        }
+        location ~^(/|/pxzx/?)$ {
+           return 301 http://$new_domian;
+        }
+        location ~^(/|/gy/?)$ {
+           return 301 http://$new_domian;
+        }
+        location ~^(/|/gz/?)$ {
+           return 301 http://$new_domian;
+        }
+        location ~^(/|/jl/?)$ {
+           return 301 http://$new_domian;
+        }
+        location ~^(/|/kjhszx/?)$ {
+           return 301 http://$new_domian;
+        }
+        location  ~^(/|/ls/?)$ {
+           return 301 http://$new_domian;
+        }
+        location ~^(/|/lz/?)$ {
+           return 301 http://$new_domian;
+        }
+        location ~^(/|/ms/?)$ {
+           return 301 http://$new_domian;
+        }
+        location ~^(/|/my/?)$ {
+           return 301 http://$new_domian;
+        }
+        location ~^(/|/nc/?)$ {
+           return 301 http://$new_domian;
+        }
+        location ~^(/|/nj/?)$ {
+           return 301 http://$new_domian;
+        }
+        location ~^(/|/pzh/?)$ {
+           return 301 http://$new_domian;
+        }
+        location ~^(/|/sbd/?)$ {
+           return 301 http://$new_domian;
+        }
+        location ~^(/|/sn/?)$ {
+           return 301 http://$new_domian;
+        }
+        location ~^(/|/syy/?)$ {
+           return 301 http://$new_domian;
+        }
+        location ~^(/|/tgyzlzx/?)$ {
+           return 301 http://$new_domian;
+        }
+        location ~^(/|/tzzx/?)$ {
+           return 301 http://$new_domian;
+        }
+        location ~^(/|/wljt/?)$ {
+           return 301 http://$new_domian;
+        }
+        location ~^(/|/xc/?)$ {
+           return 301 http://$new_domian;
+        }
+        location ~^(/|/xy/?)$ {
+           return 301 http://$new_domian;
+        }
+        location ~^(/|/ya/?)$ {
+           return 301 http://$new_domian;
+        }
+        location ~^(/|/yb/?)$ {
+           return 301 http://$new_domian;
+        }
+        location ~^(/|/yjzx/?)$ {
+           return 301 http://$new_domian;
+        }
+        location ~^(/|/yxdc/?)$ {
+           return 301 http://$new_domian;
+        }
+        location ~^(/|/yxjkzx/?)$ {
+           return 301 http://$new_domian;
+        }
+        location ~^(/|/zg/?)$ {
+           return 301 http://$new_domian;
+        }
+        location ~^(/|/zy/?)$ {
+           return 301 http://$new_domian;
+        }
+
+    
+}
+}
+
+
+验证
+curl -IS portal.sc.wood.com.cn
+HTTP/1.1 301 Moved Permanently
+Server: nginx/1.26.3
+Date: Fri, 25 Apr 2025 01:37:22 GMT
+Content-Type: text/html
+Content-Length: 169
+Connection: keep-alive
+Location: http://newweb.rmt.sc.wood.com.cn
+
+--------location ~^(/|/zy/?)$ -----------
+curl -I portal.zy.sc.wood.com.cn/zy
+HTTP/1.1 301 Moved Permanently
+Server: nginx/1.26.3
+Date: Fri, 25 Apr 2025 01:38:49 GMT
+Content-Type: text/html
+Content-Length: 169
+Connection: keep-alive
+Location: http://newweb.zy.sc.wood.com.cn
+
+
+--------location ~^(/|/dy/?)$ -----------
+curl -I  portal.dy.sc.wood.com.cn/dy
+HTTP/1.1 301 Moved Permanently
+Server: nginx/1.26.3
+Date: Fri, 25 Apr 2025 01:25:57 GMT
+Content-Type: text/html
+Content-Length: 169
+Connection: keep-alive
+Location: http://newweb.dy.sc.wood.com.cn
+
+
+
+
+-------curl test-sh --------
+cat 1.txt 
+portal.sc.wood.com.cn
+portal.ab.sc.wood.com.cn
+portal.bz.sc.wood.com.cn
+portal.cd.sc.wood.com.cn
+portal.cgyjg.sc.wood.com.cn
+portal.cgyyj.sc.wood.com.cn
+portal.dlyy.sc.wood.com.cn
+portal.dy.sc.wood.com.cn
+portal.dz.sc.wood.com.cn
+-------------------------------
+for i in `cat 1.txt`;
+   do 
+   echo -e "--$i--" && curl -I ${i};
+   for j in $(cat 1.txt |cut -d'.' -f2);
+      do 
+      echo -e "--$i/$j--" && curl -I ${i}/${j}
+      done
+done
+
+awk '{print $4}' access.log |cut -d: -f1,15 |sort | uniq -c
+awk '{print $6}' access.log |sort | uniq -c
+awk '{sum+=$10} END {print sum/1024/1024}' access.lo
 
 
