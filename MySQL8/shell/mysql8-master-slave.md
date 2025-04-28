@@ -115,60 +115,84 @@ Last_IO_Error: error connecting to master 'repl@26.64.60.1:13306' - retry-time: 
 mysql -h26.64.60.1 -P13306 -urepl -psNt_repl@2MySQL #测试连通性  
 
 
-3、 MySQL8配置文件my.ccnf  
+3、 MySQL8-master-slave配置文件my.ccnf  
 ```bash
-#master-my.cnf
+#MySQL-MASTER-config
 [mysqld]
-user=mysql
+user = mysql
 port = 13306
 socket = /tmp/mysql.sock
 datadir = /mysql/mysql/data
-character-set-server=utf8
-server-id = 1
+character-set-server = utf8
+transaction_isolation = READ-COMMITTED
+symbolic-links = 0
+key_buffer_size = 256M
 max_connections = 10000
-group_concat_max_len = 102400
 max_connect_errors = 10
+max_allowed_packet = 64M
+tmp_table_size = 1G
+max_heap_table_size = 1G
+thread_stack = 512k
+thread_cache_size = 300
+#query_cache_limit = 32M
+#query_cache_size = 256M
+
+group_concat_max_len = 102400
 table_open_cache = 4096
 event_scheduler = ON
-skip_name_resolve = ON
+skip-name-resolve = ON
 lower_case_table_names = 1
-max_allowed_packet = 64M
-binlog_cache_size = 32M
-max_heap_table_size = 256M
-read_rnd_buffer_size = 64M
+read_buffer_size = 32M
+read_rnd_buffer_size = 256M
 sort_buffer_size = 256M
 join_buffer_size = 512M
-thread_cache_size = 300
-log_bin_trust_function_creators=1
-key_buffer_size = 256M
-read_buffer_size = 32M
-read_rnd_buffer_size = 128M
 bulk_insert_buffer_size = 512M
-sql_mode=NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES
-#READ-UNCOMMITTED, READ-COMMITTED, REPEATABLE-READ, SERIALIZABLE
-transaction_isolation = READ-COMMITTED
-tmp_table_size = 512M
-log-bin=mysql-bin
-binlog_format=mixed
-sync_binlog = 1
-binlog_expire_logs_seconds = 604800  #expire_logs_days = 7
-max_binlog_size = 256M
-binlog_group_commit_sync_delay = 100
-#binlog-do-db = xxl  #指定同步
-slow_query_log = 1
-slow_query_log_file = /mysql/mysql/logs/slow.log
-long_query_time = 5
 
-####### InnoDB
-innodb_buffer_pool_size = 512M
+sql_mode=NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES
+#sql_mode=STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION,NO_ZERO_DATE,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER
+
+#######InnoDB-configuration########
+innodb_file_per_table = 1
+innodb_buffer_pool_size = 16G
 innodb_thread_concurrency = 16
 innodb_flush_log_at_trx_commit = 2
-innodb_log_buffer_size = 32M
+innodb_flush_method = O_DIRECT
+innodb_log_buffer_size = 64M
 innodb_log_file_size = 1024M
 innodb_log_files_in_group = 4
 innodb_max_dirty_pages_pct = 90
 innodb_lock_wait_timeout = 120
-#innodb_force_recovery=1
+#innodb_force_recovery = 1
+
+#######Master--configuration########
+server-id = 1
+log-bin = mysql-bin
+binlog_format = mixed
+#log_slave_updates = ON
+sync_binlog = 1
+binlog_group_commit_sync_delay = 100
+binlog_cache_size = 32M
+binlog_expire_logs_seconds = 604800
+log_bin_trust_function_creators = 1
+max_binlog_size = 256M
+
+#binlog-do-db = xxl  #指定同步xxl库
+
+#relay_log = localhost-relay-bin
+#relay_log_info_file = /mysql/mysql/logs/localhost-relay-bin.info
+#relay_log_purge = ON
+#relay_log_recovery = ON
+#read_only = ON
+#max_relay_log_size = 256M
+
+#######logs--configuration########
+slow_query_log = 1
+slow_query_log_file = /mysql/mysql/logs/slow.log
+long_query_time = 5
+log-error = /mysql/mysql/logs/mysql-error.log
+general_log = 1
+general_log_file = /mysql/mysql/logs/mysql-query.log
+#pid-file = /mysql/mysql/logs/master.pid
 
 [mysqldump]
 quick
@@ -189,81 +213,102 @@ interactive-timeout
 [mysqld_safe]
 open-files-limit = 65535
 log-error=/mysql/mysql/logs/mysqld.log
-pid-file=/mysql/mysql/logs/mysqld.pid
+#pid-file=/mysql/mysql/logs/master.pid
 
 
-----
-#Slave-my.cnf
+----------
+#MySQL-SLAVE-config
 [mysqld]
-user=mysql
+user = mysql
 port = 13306
 socket = /tmp/mysql.sock
 datadir = /mysql/mysql/data
 character-set-server = utf8
-server-id = 2
+transaction_isolation = READ-COMMITTED
+symbolic-links = 0
+key_buffer_size = 256M
 max_connections = 10000
-group_concat_max_len = 102400
 max_connect_errors = 10
+max_allowed_packet = 64M
+tmp_table_size = 1G
+max_heap_table_size = 1G
+thread_stack = 512k
+thread_cache_size = 300
+
+group_concat_max_len = 102400
 table_open_cache = 4096
 event_scheduler = ON
+skip-name-resolve = ON
 lower_case_table_names = 1
-max_allowed_packet = 64M
-binlog_cache_size = 32M
-max_heap_table_size = 256M
-read_rnd_buffer_size = 64M
+read_buffer_size = 32M
+read_rnd_buffer_size = 256M
 sort_buffer_size = 256M
 join_buffer_size = 512M
-thread_cache_size = 300
-log_bin_trust_function_creators=1
-key_buffer_size = 256M
-read_buffer_size = 32M
-read_rnd_buffer_size = 128M
 bulk_insert_buffer_size = 512M
+
 sql_mode=NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES
-#READ-UNCOMMITTED, READ-COMMITTED, REPEATABLE-READ, SERIALIZABLE
-transaction_isolation = READ-COMMITTED
-tmp_table_size = 512M
-log-bin=mysql-slave-bin
-binlog_format=mixed
-binlog_expire_logs_seconds = 604800  #expire_logs_days = 7
-log-error = /mysql/mysql/logs/mysql-error.log  #error LOG
-general_log = 1
-general_log_file = /mysql/mysql/logs/mysql-query.log #query LOG
-slow_query_log = 1
-slow_query_log_file = /mysql/mysql/logs/mysql-slow.log
-long_query_time = 5
-sync_binlog = 0
+#sql_mode=STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION,NO_ZERO_DATE,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER
+
+
+#######InnoDB-configuration########
+innodb_file_per_table = 1
+innodb_buffer_pool_size = 16G
+innodb_thread_concurrency = 16
+innodb_flush_log_at_trx_commit = 2
+innodb_flush_method = O_DIRECT
+innodb_log_buffer_size = 64M
+innodb_log_file_size = 1024M
+innodb_log_files_in_group = 4
+innodb_max_dirty_pages_pct = 90
+innodb_lock_wait_timeout = 120
+#innodb_force_recovery = 1
+
+
+#######SLAVE--configuration########
+server-id = 2
+log-bin = mysql-slave-bin
+binlog_format = mixed
+#master-slave
+sync_binlog = 0 #级联slave-slave sync_binlog = 1
+log_slave_updates = ON
+binlog_group_commit_sync_delay = 100
+binlog_cache_size = 32M
+binlog_expire_logs_seconds = 604800
+log_bin_trust_function_creators = 1
+max_binlog_size = 256M
+
 relay_log = ylw-mysql-relay-bin
 relay_log_info_file = /mysql/mysql/logs/mysql-relay-log.info
 relay_log_purge = ON
 relay_log_recovery = ON
 read_only = ON
-#replicate-do-db = xxl
-replicate-ignore-db = mysql,sys,information_schema,performance_schema
-log_slave_updates = ON
-slave_skip_errors = all
+max_relay_log_size = 256M
+#slave_skip_errors = all
 slave_net_timeout = 60
-skip_name_resolve = ON
 slave_parallel_workers = 8
 slave_parallel_type = LOGICAL_CLOCK
 slave_preserve_commit_order = 1
+#replicate-do-db = xxl  #指定同步xxl库
+replicate-ignore-db = mysql,sys,information_schema,performance_schema
 
-####### InnoDB
-innodb_buffer_pool_size = 512M
-innodb_thread_concurrency = 16
-innodb_flush_log_at_trx_commit = 2
-innodb_log_buffer_size = 32M
-innodb_log_file_size = 1024M
-innodb_log_files_in_group = 4
-innodb_max_dirty_pages_pct = 90
-innodb_lock_wait_timeout = 120
-#innodb_force_recovery=1
+
+#######logs--configuration########
+slow_query_log = 1
+slow_query_log_file = /mysql/mysql/logs/mysql-slow.log
+long_query_time = 5
+log-error = /mysql/mysql/logs/mysql-error.log
+general_log = 1
+general_log_file = /mysql/mysql/logs/mysql-query.log
+#pid-file = /mysql/mysql/logs/slave.pid
+
 
 [mysqldump]
 quick
 max_allowed_packet = 64M
+
 [client]
 character-set-server = utf8mb4
+
 [mysql]
 no-auto-rehash
 
