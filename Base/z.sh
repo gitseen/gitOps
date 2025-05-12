@@ -406,6 +406,7 @@ curl ip.sb
 curl -s http://httpbin.org/ip
 curl icanhazip.com
 curl http://ip.3322.net
+curl -sS --connect-timeout 10 -m 60 https://www.bt.cn/Api/getIpAddress
 
 ps -ef |grep nginx |egrep -cv "grep|$$"
 /usr/sbin/nginx -c /etc/nginx/nginx.conf  > /dev/null 2>&1 &
