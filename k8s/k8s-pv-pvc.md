@@ -236,3 +236,18 @@ kubectl get pvc
 [kubernetes中的存储卷-Volume](https://m.toutiao.com/is/iB1F3rv/)  
 
 [Kubernetes中的PV、PVC、Configmap介绍](https://m.toutiao.com/is/ikQnFBU/)
+
+
+```bash
+# 查看 PVC 信息
+kubectl get pvc my-pvc
+
+# 查看 PVC 绑定的 PV
+kubectl get pvc my-pvc -o jsonpath='{.spec.volumeName}'
+
+# 查看 PV 容量
+kubectl get pv <pv-name>
+
+# 进入 Pod 查看实际使用
+kubectl exec -it <pod-name> -- df -Th
+```
