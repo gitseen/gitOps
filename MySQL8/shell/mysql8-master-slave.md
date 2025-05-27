@@ -178,13 +178,6 @@ max_binlog_size = 256M
 
 #binlog-do-db = xxl  #指定同步xxl库
 
-#relay_log = localhost-relay-bin
-#relay_log_info_file = /mysql/mysql/logs/localhost-relay-bin.info
-#relay_log_purge = ON
-#relay_log_recovery = ON
-#read_only = ON
-#max_relay_log_size = 256M
-
 #######logs--configuration########
 slow_query_log = 1
 slow_query_log_file = /mysql/mysql/logs/slow.log
