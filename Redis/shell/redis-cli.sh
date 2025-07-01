@@ -12,6 +12,13 @@
 #redis-cli -a 'passwd' -p port info memory
 #redis-cli -a 'passwd' -p port info cpu
 #redis-cli -a 'passwd' -p port info clients
+#redis-cli -a 'passwd' -p port info sever
+#redis-cli -a 'passwd' -p port info persistence 
+#redis-cli -a 'passwd' -p port client list 
+#redis-cli -a 'passwd' -p port keys *
+#redis-cli -a 'passwd' -p port dbszie
+#redis-cli -a 'passwd' -p port ping
+#redis-cli -a 'passwd' -p port monitor
 #redis-cli -a 'passwd' -p port slowlog get 10 
 #redis-cli -a 'passwd' -p port --cluster  ...
 
@@ -27,3 +34,14 @@ else
     rate=$(echo "scale=4; $hits*100/$total" | bc)
     echo "命中率: $rate%"
 fi
+
+#-------------------------------------------------------------#
+
+#!/bin/bash
+while true; do
+    echo "=== Redis 状态 ==="
+    redis-cli info memory | grep -E 'used_memory|maxmemory'
+    redis-cli info stats | grep -E 'keyspace_hits|keyspace_misses|total_commands_processed'
+    redis-cli info clients | grep connected_clients
+    sleep 5
+done
