@@ -389,9 +389,64 @@ See https://www.toutiao.com/article/7119094134296281635/?channel=&source=search_
 See https://segmentfault.com/a/1190000023775512  for details  
 
 
+
+
 ---
 
-## 三、环境介绍  
+## 三、查询指标
+```bash
+
+#当前总连接数
+show status like 'Threads_connected';
+#SELECT MAX_CONNECTIONS() AS max_connections, VARIABLE_VALUE AS current_connections  FROM information_schema.GLOBAL_STATUS  WHERE VARIABLE_NAME = 'THREADS_CONNECTED';
+
+#活跃会话
+select * from  information_schema.processlist where command  != 'Sleep';  #SELECT * FROM information_schema.PROCESSLIST WHERE COMMAND != 'Sleep';
+#show full processlist; #SHOW FULL PROCESSLIST;
+
+#查看最大允许连接数配置
+show variables like 'max_connections'  #SHOW VARIABLES LIKE 'max_connections';
+
+#MySQL状态指标-性能监控
+show global status; #SHOW GLOBAL STATUS;
+
+#QPS每秒查询数
+SHOW GLOBAL STATUS LIKE 'Queries'; 
+SHOW GLOBAL STATUS LIKE 'Uptime';
+
+#TPS每秒事务数
+SHOW GLOBAL STATUS LIKE 'Com_commit';
+SHOW GLOBAL STATUS LIKE 'Com_rollback';
+SHOW GLOBAL STATUS LIKE 'Uptime';
+
+
+#MySQL配置参数查看
+SHOW GLOBAL VARIABLES;
+
+#MySQL配置参数查看某个具体参数
+SHOW VARIABLES LIKE 'max_connections';
+SELECT VARIABLE_NAME, VARIABLE_VALUE FROM information_schema.GLOBAL_VARIABLES WHERE VARIABLE_NAME IN ('max_connections', 'wait_timeout');
+
+
+#查看慢查询是否开启
+SHOW VARIABLES LIKE 'slow_query_log';
+SHOW VARIABLES LIKE 'long_query_time';
+
+#查看当前使用的存储引擎
+SELECT ENGINE, COUNT(*) TABLES, 
+       CONCAT(ROUND(SUM(data_length)/(1024*1024), 2), ' MB') AS size 
+FROM information_schema.TABLES 
+GROUP BY ENGINE;
+
+#查看数据库大小(按库分组)
+SELECT table_schema AS DatabaseName,
+       SUM(data_length + index_length) / 1024 / 1024 AS Size_MB
+FROM information_schema.TABLES
+GROUP BY table_schema;
+
+```  
+--- 
+## 四、环境介绍  
 
 2023-01-16 15:09·潇洒sword  
 MySQL8.0.31主从复制配置(单机环境下的一主两从架构)
