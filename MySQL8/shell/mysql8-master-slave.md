@@ -444,6 +444,50 @@ SELECT table_schema AS DatabaseName,
 FROM information_schema.TABLES
 GROUP BY table_schema;
 
+
+
+#查看所有全局状态指标
+SHOW GLOBAL STATUS; 
+
+#查询具体常用指标
+SHOW GLOBAL STATUS LIKE 'Threads_connected';  #当前已连接线程数
+SHOW GLOBAL STATUS LIKE 'Threads_running'; #当前正在执行的线程数
+SHOW GLOBAL STATUS LIKE 'Slow_queries'; #慢查询数量
+SHOW GLOBAL STATUS LIKE 'Connections'; #累计连接数
+
+#各类SQL语句执行次数
+SHOW GLOBAL STATUS LIKE 'Com_select';
+SHOW GLOBAL STATUS LIKE 'Com_insert';
+SHOW GLOBAL STATUS LIKE 'Com_update';
+SHOW GLOBAL STATUS LIKE 'Com_delete';
+
+#InnoDB缓冲池相关
+SHOW GLOBAL STATUS LIKE 'Innodb_buffer_pool_read%'; 
+SHOW GLOBAL STATUS LIKE 'Innodb_data_reads';
+SHOW GLOBAL STATUS LIKE 'Innodb_data_writes';
+
+#查询缓存相关
+SHOW GLOBAL STATUS LIKE 'Qcache_hits';
+SHOW GLOBAL STATUS LIKE 'Qcache_inserts';
+
+#表锁等待
+SHOW GLOBAL STATUS LIKE 'Table_locks_waited';
+#查看配置参数
+SHOW VARIABLES LIKE 'max_connections';
+SHOW VARIABLES LIKE 'innodb_buffer_pool_size';
+SHOW VARIABLES LIKE 'query_cache_size';
+#一次性查询多个指标
+SHOW GLOBAL STATUS WHERE Variable_name IN (
+  'Threads_connected',
+  'Threads_running',
+  'Slow_queries',
+  'Connections',
+  'Com_select',
+  'Com_insert',
+  'Com_update',
+  'Com_delete'
+);
+
 ```  
 --- 
 ## 四、环境介绍  
