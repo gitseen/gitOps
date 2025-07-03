@@ -18,6 +18,9 @@ dmesg|grep -i dmi:
 dmidecode -s system-product-name
 
 
+hostname -I | sed 's/^\([0-9\.]*\).*/\1/'
+hostname -I | sed 's/^\([0-9]\{1,3\}\(\.[0-9]\{1,3\}\)\{3\}\).*/\1/'
+
 tree  -L 2|grep 'Dockerfile' -C 2
 tree -d -L 3
 tree -d -N  -L 3
