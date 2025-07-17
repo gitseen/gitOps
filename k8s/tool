@@ -165,3 +165,49 @@ Linux Foundation是一个致力于推动开源技术发展的非营利组织,在
 
 ```
 
+
+K8s系统组件（如 kubelet、containerd）预留资源配置参考https://www.toutiao.com/article/7526844470365667882  
+```bash
+systemReserved:
+  cpu: 500m        # 为系统组件预留0.5核CPU
+  memory: 1Gi      # 为系统组件预留1GB内存
+  ephemeral-storage: 10Gi  # 为临时存储预留10GB磁盘空间
+kubeReserved:
+  cpu: 100m        # 为K8s组件预留0.1核CPU
+  memory: 256Mi    # 为K8s组件预留256MB内存
+evictionHard:
+  memory.available:  "500Mi"  # 当节点可用内存低于500Mi时，立即驱逐Pod
+  nodefs.available:  "10%"    # 当节点根目录可用空间低于10%时，立即驱逐Pod
+  imagefs.available: "15%"    # 当容器镜像存储可用空间低于15%时，立即驱逐Pod
+
+kubectl get --raw /api/v1/nodes/$(hostname)/proxy/configz | jq '.kubeletconfig|.systemReserved, .kubeReserved'
+journalctl -u kubelet | grep -i "systemReserved"
+
+
+#通过kubelet配置文件设置预留资源
+apiVersion: kubelet.config.k8s.io/v1beta1
+kind: KubeletConfiguration
+systemReserved:
+  cpu: "1"
+  memory: "1Gi"
+kubeReserved:
+  cpu: "500m"
+  memory: "500Mi"
+systemReservedCgroup: "/system.slice"
+kubeReservedCgroup: "/kubelet.service"
+enforceNodeAllocatable: ["pods", "system-reserved", "kube-reserved"]
+
+#kubeadm-init设置预留资源
+使用kubeadm初始化集群，可以在kubeadm-config.yaml中引用kubelet配置
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: ClusterConfiguration
+kubernetesVersion: stable
+networking:
+  podSubnet: "10.244.0.0/16"
+nodeRegistration:
+  kubeletExtraArgs:
+    config: "/var/lib/kubelet/config.yaml"
+```
+
+
+
