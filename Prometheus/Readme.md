@@ -58,23 +58,26 @@ https://blog.csdn.net/qing_dan_mo_cai/article/details/123938464
   - agent 
   - http 
   - icmp
-  - ....  
+  - .... 
+ 
 **存储(存储系统)**
-   - 关系型数据库: MySQL、PostgreSQL、...... 
-   - TiDB、...... 
-   - RRD (cacti) 
-   - TSDB: Time Series DB 
-   - NoSQL: KV、Document、......   
+  - 关系型数据库: MySQL、PostgreSQL、...... 
+  - TiDB、...... 
+  - RRD (cacti) 
+  - TSDB: Time Series DB 
+  - NoSQL: KV、Document、......   
+
 **展示**   
   - Web 
-  - GUI     
+  - GUI  
+   
 **告警**  
-    - 告警媒介    
+  - 告警媒介    
       - email 
       - sms 
       - wechat 
       - dingtalk   
-    - 告警升级  
+  - 告警升级  
       - 告警路由  
 
 **Prometheus系统的组件**    
