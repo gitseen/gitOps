@@ -53,20 +53,22 @@ https://blog.csdn.net/qing_dan_mo_cai/article/details/123938464
 ![Prometheus-Architecture](pic/Prometheus-Arch.png)  
 
 **监控系统的功能**  
-  **采集:(周期性)** 
+**采集(周期性)** 
   - snmp 
   - agent 
   - http 
   - icmp
   - ....
-  **存储**:(存储系统)   
+**存储(存储系统)**
    - 关系型数据库: MySQL、PostgreSQL、...... 
    - TiDB、...... 
    - RRD (cacti) 
    - TSDB: Time Series DB 
    - NoSQL: KV、Document、...... 
-  **展示**: Web GUI   
-  **告警**  
+**展示**   
+  - Web 
+  - GUI   
+**告警**  
     - 告警媒介  
       - email -
       - sms 
