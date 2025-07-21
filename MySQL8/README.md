@@ -44,3 +44,25 @@ initial_hosts= 172.16.216.184:88,172.16.216.183:88
 ```
 
 ## 3、连接驱动jar包使用mysql-connector-java-5.1.49.jar or 官网
+
+## mysql-cli
+**mysql8新建数据库账号user_yyjc,赋予test数据库中edc_uf_table1186_dt1表查询权限,仅IP 192.168.100.11、192.168.100.14可访问**
+```bash
+#创建账号
+CREATE USER 'user_yyjc'@'192.168.100.11' IDENTIFIED BY 'YourStrongPassword123';
+CREATE USER 'user_yyjc'@'192.168.100.14' IDENTIFIED BY 'YourStrongPassword123';
+#仅授权查询功能
+GRANT SELECT ON test.edc_uf_table1186_dt1 TO 'user_yyjc'@'192.168.100.11';
+GRANT SELECT ON test.edc_uf_table1186_dt1 TO 'user_yyjc'@'192.168.100.14';
+FLUSH PRIVILEGES;
+
+SELECT User, Host FROM mysql.user WHERE User = 'user_yyjc';
+SHOW GRANTS FOR 'user_yyjc'@'192.168.100.11';
+SHOW GRANTS FOR 'user_yyjc'@'192.168.100.14';
+
+#删除
+DROP USER 'user_yyjc'@'192.168.100.11';
+DROP USER 'user_yyjc'@'192.168.100.14';
+```
+
+
