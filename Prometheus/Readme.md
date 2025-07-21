@@ -58,23 +58,23 @@ https://blog.csdn.net/qing_dan_mo_cai/article/details/123938464
   - agent 
   - http 
   - icmp
-  - ....
+  - ....  
 **存储(存储系统)**
    - 关系型数据库: MySQL、PostgreSQL、...... 
    - TiDB、...... 
    - RRD (cacti) 
    - TSDB: Time Series DB 
-   - NoSQL: KV、Document、...... 
+   - NoSQL: KV、Document、......   
 **展示**   
   - Web 
-  - GUI   
+  - GUI     
 **告警**  
-    - 告警媒介  
-      - email -
+    - 告警媒介    
+      - email 
       - sms 
       - wechat 
-      - dingtalk 
-    - 告警升级 
+      - dingtalk   
+    - 告警升级  
       - 告警路由  
 
 **Prometheus系统的组件**    
@@ -82,15 +82,15 @@ https://blog.csdn.net/qing_dan_mo_cai/article/details/123938464
   - TSDB 
   - Retrieval(Scraper) <-- Target 
     - Exporters 
-    - Instrumentation 
-  - Service Discovery
-      - Kubernetes: Node、Pod、Endpoints、Service、Ingress 
+    - Instrumentation   
+  - Service Discovery  
+      - Kubernetes: Node、Pod、Endpoints、Service、Ingress   
       - Consul 
       - File 
-      - DNS ...... 
-- Grafana  
+      - DNS ......   
+- Grafana   
 - AlertManager  
-- PushGateway   
+- PushGateway     
 
 **Prometheus指标类型**   
 - Counter 计数器 用于保存单调递增型数据(站点访问次数;不能为负值、也不支持减少、但可发重置回0)  
