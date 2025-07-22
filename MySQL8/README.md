@@ -56,10 +56,11 @@ GRANT SELECT ON test.edc_uf_table1186_dt1 TO 'user_yyjc'@'192.168.100.11';
 GRANT SELECT ON test.edc_uf_table1186_dt1 TO 'user_yyjc'@'192.168.100.14';
 FLUSH PRIVILEGES;
 
+#验证授权
 SELECT User, Host FROM mysql.user WHERE User = 'user_yyjc';
 SHOW GRANTS FOR 'user_yyjc'@'192.168.100.11';
 SHOW GRANTS FOR 'user_yyjc'@'192.168.100.14';
-
+show grants for 'user_yyjc'@'%';
 #删除
 DROP USER 'user_yyjc'@'192.168.100.11';
 DROP USER 'user_yyjc'@'192.168.100.14';
