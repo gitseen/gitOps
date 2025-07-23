@@ -253,7 +253,9 @@ kubectl get po -L pod-template-hash
 kubectl get pods -l app=nginx -o jsonpath='{range .items[*]}{.metadata.labels.pod-template-hash}{"\n"}{end}' | sort | uniq -c    
 
 ## 参考
-[Recommended Labels](https://kubernetes.io/zh-cn/docs/concepts/overview/working-with-objects/common-labels/) 
+[Recommended Labels](https://kubernetes.io/zh-cn/docs/concepts/overview/working-with-objects/common-labels/)   
 [Labels and Selectors](https://kubernetes.io/zh-cn/docs/concepts/overview/working-with-objects/labels/)  
+
+
 
  
