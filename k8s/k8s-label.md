@@ -248,7 +248,7 @@ status: {}
 pod-template-hash是k8s自动为控制器(Deployment、RS等)生成的一个标签用于**确保控制器只管理"自己模板创建的Pod",防止不同版本的Pod混淆**  
 这个label的值是一个基于Pod模板(spec.template)内容计算出的哈希值   
 kubectl get po --show-labels   
-kubectl get po -L pod-template-hash 
+kubectl get po -L pod-template-hash   
 #查看不同版本的Pod数量  
 kubectl get pods -l app=nginx -o jsonpath='{range .items[*]}{.metadata.labels.pod-template-hash}{"\n"}{end}' | sort | uniq -c    
 
