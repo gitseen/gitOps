@@ -163,8 +163,7 @@ kubectl label pods <pod-name> version=v1  #添加label
 kubectl label pods <pod-name> version=v2 --overwrite #修改label(覆盖)
 kubectl label pods <pod-name> version-   #删除 label
 kubectl label nodes node-1 zone=beijing  #给节点打label
-``` 
-
+```
 ## Yaml操作Label实例
 ```yaml
 先通过命令生成yaml模板;#生成mynginx.yaml然后改造
@@ -199,7 +198,7 @@ spec:
 status: {}
 
 
-#执行
+#执行 
 kubectl apply -f mynginx.yaml
 
 #查看
@@ -243,6 +242,11 @@ spec:
         resources: {}
 status: {}
 ```
+
+>Q、kubectl  get po -l pod-template为什么是hash值？
+pod-template-hash是k8s自动为控制器(Deployment、ReplicaSet、...等)生成的一个标签用于**确保控制器只管理"自己模板创建的Pod"，防止不同版本的Pod混淆**  
+这个label的值是一个基于Pod模板(spec.template)内容计算出的哈希值  
+kubectl get pods -l app=nginx -o jsonpath='{range .items[*]}{.metadata.labels.pod-template-hash}{"\n"}{end}' | sort | uniq -c  #查看不同版本的Pod数量  
 
 ## 参考
 [Recommended Labels](https://kubernetes.io/zh-cn/docs/concepts/overview/working-with-objects/common-labels/) 
