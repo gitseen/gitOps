@@ -260,7 +260,7 @@ kubectl get po pod-template-hash=xxx
 grep -iA 10 'template'  ./*.yaml
 ```
 
-## k8s(Control、Svc、Endpoints)关系
+## k8s-labels(Control、Svc、Endpoints)关系
 ```mermaid
 graph LR
     A[Deployment] -->|selector| B[Pod Template]
