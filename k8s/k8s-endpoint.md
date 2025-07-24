@@ -7,6 +7,10 @@ Endpoints保存了某个Service所对应的所有后端Pod的IP和端口信息;�
   - 每个Service都会自动(或手动)关联一个同名的Endpoints对象  
   - Endpoints的作用是：将Service的抽象逻辑访问地址(ClusterIP)映射到具体的Pod网络地址(IP:Port)  
 
+```yaml
+kubectl get po,svc,endpoints
+```
+
 ## k8s-Endpoints的作用
 - 1、服务发现：
     - Endpoints使得Service能够找到后端的Pod,即使这些Pod是动态变化的。当Pod被创建或删除时,Endpoints会自动更新,以确保Service总是指向正确的Pod。
