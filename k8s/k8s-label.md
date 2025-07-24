@@ -254,6 +254,15 @@ kubectl get pods -l app=nginx -o jsonpath='{range .items[*]}{.metadata.labels.po
 
 ## k8s(Control、Svc、Endpoints)关系
 ```mermaid
+graph LR
+    A[Deployment] -->|selector| B[Pod Template]
+    B --> C[Pod<br>labels: app=nginx]
+    D[Service<br>selector: app=nginx] --> E[Endpoints]
+    C -->|label match| E
+```
+
+**lable(one)**  
+```mermaid
 graph TD
     A[Deployment<br>selector: app=nginx] --> B[Pod Template<br>labels: app=nginx]
     B --> C[Pod<br>labels: app=nginx]
@@ -269,6 +278,7 @@ graph TD
     classDef default stroke:#000,stroke-width:1px
 ```
 
+**lableis(2+)**  
 ```mermaid
 graph TD
     A[Deployment<br>selector:<br>  app = nginx<br>  version = v1] --> B[Pod Template<br>labels:<br>  app = nginx<br>  version = v1]
@@ -285,6 +295,7 @@ graph TD
     classDef default stroke:#000,stroke-width:1px
 ```
 
+**ctr-->svc-->endpoints**    
 ```mermaid
 graph TD
     subgraph KP [Kubernetes Control Plane]
