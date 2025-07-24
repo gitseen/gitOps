@@ -278,7 +278,7 @@ graph TD
     classDef default stroke:#000,stroke-width:1px
 ```
 
-**lableis(2+)**  
+**labels(2+)** 
 ```mermaid
 graph TD
     A[Deployment<br>selector:<br>  app = nginx<br>  version = v1] --> B[Pod Template<br>labels:<br>  app = nginx<br>  version = v1]
