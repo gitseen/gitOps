@@ -253,7 +253,7 @@ kubectl get po -L pod-template-hash
 #查看不同版本的Pod数量  
 kubectl get pods -l app=nginx -o jsonpath='{range .items[*]}{.metadata.labels.pod-template-hash}{"\n"}{end}' | sort | uniq -c    
 
-```bash
+```yaml
 kubectl get po --show-labels |grep XX
 kubectl get po -l xx=YY,xx1=YY1
 kubectl get po pod-template-hash=xxx
