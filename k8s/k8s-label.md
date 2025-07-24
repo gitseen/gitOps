@@ -255,7 +255,7 @@ kubectl get pods -l app=nginx -o jsonpath='{range .items[*]}{.metadata.labels.po
 ## k8s(Control、Svc、Endpoints)关系
 ```mermaid
 graph TD
-    A[Deployment<br>selector:<br>  app = nginx<br>  version = v1] --> B[Pod Template<br>labels:\n  app = nginx<br>  version = v1]
+    A[Deployment<br>selector:<br>  app = nginx<br>  version = v1] --> B[Pod Template<br>labels:<br>  app = nginx<br>  version = v1]
     B --> C[Pod<br>labels:<br>  app = nginx<br>  version = v1]
     D[Service<br>selector:<br>  app = nginx] --> E[Endpoints<br>自动维护<br>后端Pod列表]
     C --> E
