@@ -163,13 +163,8 @@ kubectl label pods <pod-name> version=v1  #添加label
 kubectl label pods <pod-name> version=v2 --overwrite #修改label(覆盖)
 kubectl label pods <pod-name> version-   #删除 label
 kubectl label nodes node-1 zone=beijing  #给节点打label
-
-
-kubectl get po --show-labels |grep XX
-kubectl get po -l xx=YY,xx1=YY1
-kubectl get po pod-template-hash=xxx
-grep -iA 10 'template'  ./*.yaml
 ```
+
 ## Yaml操作Label实例
 ```yaml
 先通过命令生成yaml模板;#生成mynginx.yaml然后改造
@@ -258,6 +253,12 @@ kubectl get po -L pod-template-hash
 #查看不同版本的Pod数量  
 kubectl get pods -l app=nginx -o jsonpath='{range .items[*]}{.metadata.labels.pod-template-hash}{"\n"}{end}' | sort | uniq -c    
 
+```bash
+kubectl get po --show-labels |grep XX
+kubectl get po -l xx=YY,xx1=YY1
+kubectl get po pod-template-hash=xxx
+grep -iA 10 'template'  ./*.yaml
+```
 
 ## k8s(Control、Svc、Endpoints)关系
 ```mermaid
