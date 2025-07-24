@@ -1,7 +1,8 @@
 # k8s-Endpoints
 
 ## Endpoints是什么
-Endpoints是k8s资源对象,是实现服务发现和服务通信;它连接了Service和Pod,SVC能够动态感知后端Pod的变化(如扩缩容、故障重启),实现无缝的服务访问  
+Endpoints是k8s资源对象,是实现服务发现和服务通信;它连接了Service和Pod;  
+         SVC能够动态感知后端Pod的变化(如扩缩容、故障重启),实现无缝的服务访问    
 Endpoints(端点)通常是一组Pod的IP地址和端口,用于实现Service到Pod的网络流量转发   
 Endpoints保存了某个Service所对应的所有后端Pod的IP和端口信息;换句话说(它记录了"这个服务实际可以访问到哪些Pod")  
   - 每个Service都会自动(或手动)关联一个同名的Endpoints对象  
