@@ -255,6 +255,22 @@ kubectl get pods -l app=nginx -o jsonpath='{range .items[*]}{.metadata.labels.po
 ## k8s(Control、Svc、Endpoints)关系
 ```mermaid
 graph TD
+    A[Deployment<br>selector: app=nginx] --> B[Pod Template<br>labels: app=nginx]
+    B --> C[Pod<br>labels: app=nginx]
+    D[Service<br>selector: app=nginx] --> E[Endpoints]
+    C --> E
+
+    %% 添加说明
+    style A fill:#4CAF50,color:white
+    style D fill:#2196F3,color:white
+    style E fill:#FFC107,color:black
+    style C fill:#9E9E9E,color:white
+
+    classDef default stroke:#000,stroke-width:1px
+```
+
+```mermaid
+graph TD
     A[Deployment<br>selector:<br>  app = nginx<br>  version = v1] --> B[Pod Template<br>labels:<br>  app = nginx<br>  version = v1]
     B --> C[Pod<br>labels:<br>  app = nginx<br>  version = v1]
     D[Service<br>selector:<br>  app = nginx] --> E[Endpoints<br>自动维护<br>后端Pod列表]
@@ -269,6 +285,32 @@ graph TD
     classDef default stroke:#000,stroke-width:1px
 ```
 
+```mermaid
+graph TD
+    subgraph KP [Kubernetes Control Plane]
+        A[Deployment、ds、sts...] --> B[Pod Template]
+        B --> C[Pod]
+    end
+
+    subgraph SD [Service & Endpoints]
+        D[Service] --> E[Endpoints]
+        C --> E
+    end
+
+    A -.->|selector| B
+    D -.->|selector| C
+    C -->|labels| E
+
+    classDef controller fill:#4CAF50,color:white;
+    classDef service fill:#2196F3,color:white;
+    classDef endpoints fill:#FFC107,color:black;
+    classDef pod fill:#9E9E9E,color:white;
+
+    class A,KP controller
+    class D,SD service
+    class E endpoints
+    class C,B pod
+```
 
 ## 参考
 [Recommended Labels](https://kubernetes.io/zh-cn/docs/concepts/overview/working-with-objects/common-labels/)   
