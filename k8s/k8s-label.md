@@ -261,7 +261,7 @@ graph LR
     C -->|label match| E
 ```
 
-**lable(one)**  
+**label(one)**  
 ```mermaid
 graph TD
     A[Deployment<br>selector: app=nginx] --> B[Pod Template<br>labels: app=nginx]
