@@ -252,6 +252,24 @@ kubectl get po -L pod-template-hash
 #查看不同版本的Pod数量  
 kubectl get pods -l app=nginx -o jsonpath='{range .items[*]}{.metadata.labels.pod-template-hash}{"\n"}{end}' | sort | uniq -c    
 
+## k8s(Control、Svc、Endpoints)关系
+```mermaid
+graph TD
+    A[Deployment\nselector:\n  app = nginx\n  version = v1] --> B[Pod Template\nlabels:\n  app = nginx\n  version = v1]
+    B --> C[Pod\nlabels:\n  app = nginx\n  version = v1]
+    D[Service\nselector:\n  app = nginx] --> E[Endpoints\n自动维护\n后端Pod列表]
+    C --> E
+
+    %% 样式
+    style A fill:#4CAF50,color:white
+    style D fill:#2196F3,color:white
+    style E fill:#FFC107,color:black
+    style C fill:#9E9E9E,color:white
+
+    classDef default stroke:#000,stroke-width:1px
+```
+
+
 ## 参考
 [Recommended Labels](https://kubernetes.io/zh-cn/docs/concepts/overview/working-with-objects/common-labels/)   
 [Labels and Selectors](https://kubernetes.io/zh-cn/docs/concepts/overview/working-with-objects/labels/)  
