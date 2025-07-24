@@ -273,7 +273,7 @@ graph LR
 graph TD
     A[Deployment<br>selector: app=nginx] --> B[Pod Template<br>labels: app=nginx]
     B --> C[Pod<br>labels: app=nginx]
-    D[Service<br>selector: app=nginx] --> E[Endpoints]
+    D[Service<br>selector: app=nginx] --> E[Endpoints<br>自动关联<br>匹配的Pod]
     C --> E
 
     %% 添加说明
