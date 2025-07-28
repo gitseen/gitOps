@@ -79,10 +79,8 @@ metadata:
 这就要使用到Label Selector(标签选择器),即Label用于给某个资源对象定义标识,Label Selector用于查询和筛选拥有某些标签的资源对象   
 K8s支持两种类型的选择器  
 - 1、等值选择器(Equality-based Selector)基于等式的Label Selector即 **=、==、!=**  
-     - name = slave  
-       选择所有包含Label中key="name"且value="slave"的对象 
-     - env != production 
-       选择所有包括Label中的key="env"且value不等于"production"的对象     
+     - name = slave       #选择所有包含Label中key="name"且value="slave"的对象   
+     - env != production  #选择所有包括Label中的key="env"且value不等于"production"的对象   
 ```yaml
 #kubectl get pod -l name=slave,env!=prod  #等值选择器,name=slave,env!=production  
 selector:
@@ -95,10 +93,8 @@ selector:
 ```
 
 - 2、集合选择器(Set-based Selector)基于集合的Label Selector即 **in、notin、exists**    
-     - name in (master, slave)  
-       选择所有包含Label中的key="name"且value="master"或"slave"的对象  
-     - name not in (frontend)
-       选择所有包含Label中的key="name"且value不等于"frontend"的对象    
+     - name in (master, slave)  #选择所有包含Label中的key="name"且value="master"或"slave"的对象  
+     - name not in (frontend)   #选择所有包含Label中的key="name"且value不等于"frontend"的对象    
 ```yaml
 #标签的选择条件可以使用多个,此时将多个LabelSelector进行组合,使用逗号","进行分隔即可。例如:
 selector:
