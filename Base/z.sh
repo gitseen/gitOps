@@ -108,6 +108,7 @@ find ./ -name "*.sh" | awk -F "." '{print $2}' | xargs -i -t mv ./{}.sh  ./{}.tx
 #Linux 服务器安全加固: https://blog.51cto.com/wzlinux/2359251
 
 #升级ssd固件方法
+#https://www.intel.com/content/www/us/en/products/overview.html #官方查询CPU价格
 #https://downloadcenter.intel.com/download/29720?v=t  #isdct命令下载：isdct  show -intelssd
 #dpkg -i isdct_3.0.26.400-1_amd64.deb
 #isdct show-intelssd
