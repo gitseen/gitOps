@@ -102,8 +102,8 @@ EOF
 
 docker build -t redis ./ &&  docker run -dit -e REDIS_PASSWORD=78904321 -p 6379:6379 --name=tt redis
 
-sleep 20
-docker ps -a |grep "tt"
+sleep 100
+docker ps -a |grep "tt" |grep "Health"
 
 
 
