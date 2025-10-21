@@ -108,6 +108,94 @@ docker ps -a |grep "tt" |grep "Health"
 #docker inspect redis | grep -A 10 -B 5 'Health'
    
 #docker inspect redis | grep -C 5  'Health'  
+```bash
+1. 查看容器 IP 地址
+#查看容器在bridge网络中的 IP
+docker inspect -f '{{.NetworkSettings.IPAddress}}'  tt
+
+#查看所有网络的IP（推荐）
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' tt
+
+#查看指定网络（如 mynet）的 IP
+docker inspect -f '{{.NetworkSettings.Networks.mynet.IPAddress}}' tt
+
+
+2. 查看容器挂载的卷（Volumes）
+#查看所有挂载点
+docker inspect -f '{{json .Mounts}}' tt | jq .
+
+#仅查看源路径和目标路径
+docker inspect -f '{{range .Mounts}}{{.Source}} -> {{.Destination}}{{"\n"}}{{end}}' tt
+
+#查看卷（Volume）的宿主机路径
+docker inspect -f '{{.Mountpoint}}' myvol #输出：/var/lib/docker/volumes/myvol/_data
+
+3. 查看容器端口映射
+#查看端口映射（宿主机:容器）
+docker inspect -f '{{.HostConfig.PortBindings}}' tt
+
+#更清晰的格式（需 jq|yq）
+docker inspect tt | jq '.[0].NetworkSettings.Ports' 
+docker inspect tt | yq '.[0].NetworkSettings.Ports' 
+docker inspect tt | jq 
+
+1. 查看容器状态（运行、退出、健康）
+#查看运行状态
+docker inspect -f '{{.State.Status}}' tt  #输出running、 exited、paused
+
+#查看退出码（如果已退出）
+docker inspect -f '{{.State.ExitCode}}' tt
+
+#查看健康状态
+docker inspect -f '{{.State.Health.Status}}' tt #输出healthy、unhealthy、starting
+
+
+5. 查看容器启动命令和环境变量
+#查看启动命令（CMD）
+docker inspect -f '{{.Config.Cmd}}' tt
+
+#查看ENTRYPOINT
+docker inspect -f '{{.Config.Entrypoint}}' tt
+
+#查看所有环境变量
+docker inspect -f '{{.Config.Env}}' tt
+
+#查看特定环境变量（如 PATH）
+docker inspect -f '{{range .Config.Env}}{{println .}}{{end}}' tt | grep PATH
+
+6. 查看镜像的详细信息
+#查看镜像的CMD
+docker inspect -f '{{.Config.Cmd}}' redis
+
+#查看镜像暴露的端口
+docker inspect -f '{{.Config.ExposedPorts}}' redis
+
+# 查看镜像大小
+docker inspect -f '{{.Size}}' redis| numfmt --to=iec-i --suffix=B
+
+7. 查看网络详情
+# 查看bridge网络的子网
+docker inspect -f '{{.IPAM.Config}}' bridge
+
+# 查看自定义网络 mynet 的网关
+docker inspect -f '{{(index .IPAM.Config 0).Gateway}}' bridge
+
+---
+# 查看所有容器的名称和状态
+docker inspect -f '{{.Name}} {{.State.Status}}' $(docker ps -aq)  
+
+docker inspect -f ' {{if eq .State.Status "running"}} IP: {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}} {{else}} stopped {{end}} ' tt
+```
+
+**快速参考表**  
+| 需求    | CLI |
+| --------- | :-------: | 
+| 容器IP | docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' container |
+| 端口映射 | docker inspect -f '{{.HostConfig.PortBindings}}' container |
+| 挂载卷 | docker inspect -f '{{json .Mounts}}' container |
+| 健康状态 | docker inspect -f '{{.State.Health.Status}}' container |
+| 镜像大小 | docker inspect -f '{{.Size}}' image |
+| 卷路径 | docker inspect -f '{{.Mountpoint}}' volume_name |
 
 
 
