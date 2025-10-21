@@ -108,6 +108,8 @@ docker ps -a |grep "tt" |grep "Health"
 #docker inspect redis | grep -A 10 -B 5 'Health'
    
 #docker inspect redis | grep -C 5  'Health'  
+
+
 ```bash
 1. 查看容器 IP 地址
 #查看容器在bridge网络中的 IP
