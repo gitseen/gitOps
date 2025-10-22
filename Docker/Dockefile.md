@@ -140,4 +140,4 @@ CMD ["/etc/nginx/nginx.conf"] # 变参
 #不传参运行: docker run  nginx:test 容器内会默认启动主进程nginx -c /etc/nginx/nginx.conf
 #传参运行  : docker run  nginx:test -c /etc/nginx/new.conf 容器内会默认启动主进程nginx -c /etc/nginx/new.conf
 
-
+[DOC](https://dockerdocs.xuanyuan.me/guide/dockerfile)  
