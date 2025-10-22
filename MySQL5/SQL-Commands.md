@@ -118,3 +118,17 @@ SQL语句主要可以分为三个类别，分别如下：
 
 3、DCL(Data Control Language)：数据控制语言，用于控制不同数据段直接的许可和访问级别的语句。这些语句定义了数据库、表、字段、用户的访问权限和安全级别。用于语句主要是DBA用来管理系统中的对象权限时使用的，一般开发人员很少使用。主要的语句关键字包括：grant、revoke等。在默认状态下，只有sysadmin,dbcreator,db_owner或db_securityadmin等人员才有权力执行DCL。
 ```
+
+--- 
+# MySQL权限 
+
+![MySQL权限](pic/Mysqlgrants.png) 
+
+[MySQL权限](https://blog.csdn.net/O0o_Or_not/article/details/109468242) 
+  
+[MySQL grant用户权限总结](https://blog.csdn.net/wulantian/article/details/38230635)  
+  
+
+
+
+
