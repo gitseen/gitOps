@@ -1,6 +1,7 @@
 # [docker官网](https://www.docker.com/)
 ## Dockerfile文件的格式
-一是：# comment。二是：INSTRUCTION arguments 指令和参数,其中约定俗成是指令使用大写,参数小写,但是dockerfile文件本身不区分大小写。  
+一是：# comment。  
+二是：INSTRUCTION arguments 指令和参数,其中约定俗成是指令使用大写,参数小写,但是dockerfile文件本身不区分大小写。  
 
 dockerfile文件内的指令是自上而下一次顺序执行,通常是一行一个指令,如果指令有相互依赖关系一定要注意指令的先后顺序  
 
@@ -31,3 +32,4 @@ docker build通过读取Dockerfile文件来制作镜像,打上标签推到仓库
    ${变量名:+字符串}:如果parameter没被赋值或其值为空,就什么都不做,否则用string替换变量内容  
 [运维技术站-Dockerfile详解](https://www.toutiao.com/article/7205007091323748921)  
 
+[Docker架构原理及简单使用](https://www.cnblogs.com/zhangxingeng/p/11236968.html)  
