@@ -172,22 +172,27 @@ docker inspect -f '{{.Config.Cmd}}' redis
 #查看镜像暴露的端口
 docker inspect -f '{{.Config.ExposedPorts}}' redis
 
-# 查看镜像大小
+#查看镜像大小
 docker inspect -f '{{.Size}}' redis| numfmt --to=iec-i --suffix=B
 
 7. 查看网络详情
-# 查看bridge网络的子网
+#查看bridge网络的子网
 docker inspect -f '{{.IPAM.Config}}' bridge
 
-# 查看自定义网络 mynet 的网关
+#查看自定义网络 mynet 的网关
 docker inspect -f '{{(index .IPAM.Config 0).Gateway}}' bridge
 
----
-# 查看所有容器的名称和状态
+#查看所有容器的名称和状态
 docker inspect -f '{{.Name}} {{.State.Status}}' $(docker ps -aq)  
 
 docker inspect -f ' {{if eq .State.Status "running"}} IP: {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}} {{else}} stopped {{end}} ' tt
+
+
+8. 查看最终生效的命令
+docker inspect --format='{{.Config.Entrypoint}}' image
+docker inspect --format='{{.Config.Cmd}}' image
 ```
+---  
 
 **快速参考表**  
 | 需求    | CLI |
