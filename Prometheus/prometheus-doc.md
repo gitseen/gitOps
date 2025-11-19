@@ -6,4 +6,5 @@
 - [构建企业级监控平台](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI0MDQ4MTM5NQ==&action=getalbum&album_id=3095510929230036998&scene=173&from_msgid=2247544752&from_itemidx=2&count=3&nolastread=1#wechat_redirect)  
  
 - [民工哥技术之路-blog](https://blog.csdn.net/mingongge/article/details/134389494)  
+- [Prometheus 中文文档](https://icloudnative.io/prometheus) 
    

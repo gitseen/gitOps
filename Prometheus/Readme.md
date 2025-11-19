@@ -38,16 +38,6 @@
 ![架构关系](https://p3.toutiaoimg.com/large/tos-cn-i-jcdsk5yqko/a2362d25d8654f95976fc8820e3fd8d7)  
 
 
-
-# CPU_usagerate_total
-```bash
-https://www.cnblogs.com/Hackerman/p/16084360.html  #常规
-https://www.cnblogs.com/t-road/p/15604040.html  
-https://wu.run/posts/promql-calculate-cpu-utilization/   #公式计算
-https://zhuanlan.zhihu.com/p/511620387
-https://blog.csdn.net/qing_dan_mo_cai/article/details/123938464 
-```
-
 # Prometheus监控系统概念  
  
 ![Prometheus-Architecture](pic/Prometheus-Arch.png)  
@@ -94,6 +84,16 @@ https://blog.csdn.net/qing_dan_mo_cai/article/details/123938464
 - Grafana   
 - AlertManager  
 - PushGateway     
+
+**Prometheus数据格式标准形式**  
+```bash
+<metric name>{<label key>=<label value>, ...} <value> <timestamp>
+``` 
+- <metric name>：指标名称，表示监控项（如 CPU 使用率、内存占用等）  
+- {...}：标签集合，用于描述该指标的维度信息（K/V 对）  
+- <value>：浮点数值，当前时刻的指标值  
+- <timestamp>：可选，时间戳（毫秒级），通常由服务端自动添加  
+
 
 **Prometheus指标类型**   
 - Counter 计数器 用于保存单调递增型数据(站点访问次数;不能为负值、也不支持减少、但可发重置回0)  
@@ -152,4 +152,14 @@ https://blog.csdn.net/qing_dan_mo_cai/article/details/123938464
     + Prometheus认为只有最近的监控数据才有查询的需要,其本地存储的设计初衷只是**保存短期数据**,因而不支持针对大量的历史数据进行存储; 
       - 若需要存储长期的历史数据,建议基于远端存储机制将数据保存于InfluxDB或OpenTSDB等系统中; 
     + Prometheus的集群机制成熟度不高,即便基于Thanos亦是如此;
+
+
+# CPU_usagerate_total
+```bash
+https://www.cnblogs.com/Hackerman/p/16084360.html  #常规
+https://www.cnblogs.com/t-road/p/15604040.html
+https://wu.run/posts/promql-calculate-cpu-utilization/   #公式计算
+https://zhuanlan.zhihu.com/p/511620387
+https://blog.csdn.net/qing_dan_mo_cai/article/details/123938464
+```
 
