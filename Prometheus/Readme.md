@@ -29,7 +29,8 @@
   ```
 - 分布式追踪(Trace)
   ```
-  Trace是带请求追踪的事件,例如一次调用远程服务的RPC执行过程、一次实际的SQL查询语句、一次HTTP请求等等。开源解决方案有Skywalking、Pinpoint、Cat等等
+  Trace是带请求追踪的事件,例如一次调用远程服务的RPC执行过程、一次实际的SQL查询语句、一次HTTP请求等等。  
+  开源解决方案有Skywalking、Pinpoint、Cat等等 
   ```
 - 日志(Log)
   ```
