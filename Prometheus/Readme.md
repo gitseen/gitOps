@@ -19,7 +19,7 @@
 - 一个日志到底是WARNING还是ERROR,需要根据自己的业务决定,并且可以调整
 >注意：日志不是摆设,而是专门用来解决问题
 
-
+---
 
 # 监控
 **应用系统三维监控**
@@ -37,31 +37,31 @@
   ```
 ![架构关系](https://p3.toutiaoimg.com/large/tos-cn-i-jcdsk5yqko/a2362d25d8654f95976fc8820e3fd8d7)  
 
+---
 
 # Prometheus监控系统概念  
  
 ![Prometheus-Architecture](pic/Prometheus-Arch.png)  
 
-**监控系统的功能**  
-**采集(周期性)** 
+## 监控系统的功能-采集(周期性) 
   - snmp 
   - agent 
   - http 
   - icmp
   - .... 
  
-**存储(存储系统)**
+## 存储(存储系统)
   - 关系型数据库: MySQL、PostgreSQL、...... 
   - TiDB、...... 
   - RRD (cacti) 
   - TSDB: Time Series DB 
   - NoSQL: KV、Document、......   
 
-**展示**   
+## 展示   
   - Web 
   - GUI  
    
-**告警**  
+## 告警  
   - 告警媒介    
       - email 
       - sms 
@@ -70,7 +70,7 @@
   - 告警升级  
       - 告警路由  
 
-**Prometheus系统的组件**    
+## Prometheus系统的组件    
 - Prometheus Server   
   - TSDB 
   - Retrieval(Scraper) <-- Target 
@@ -85,17 +85,16 @@
 - AlertManager  
 - PushGateway     
 
-**Prometheus数据格式标准形式**  
-```bash
-<metric name>{<label key>=<label value>, ...} <value> <timestamp>
-``` 
+## Prometheus数据格式标准形式
+
+**<metric name>{<label key>=<label value>, ...} <value> <timestamp>**  
 - <metric name>：指标名称，表示监控项（如 CPU 使用率、内存占用等）  
 - {...}：标签集合，用于描述该指标的维度信息（K/V 对）  
 - <value>：浮点数值，当前时刻的指标值  
 - <timestamp>：可选，时间戳（毫秒级），通常由服务端自动添加  
 
 
-**Prometheus指标类型**   
+## Prometheus指标类型   
 - Counter 计数器 用于保存单调递增型数据(站点访问次数;不能为负值、也不支持减少、但可发重置回0)  
 - Gauge   仪表盘 用于存储有着起伏特征的指标数据(如内存空闲大小)  
     - Gauge是Counter的超集,但存在指标数据丢失的可能时,Counter能让用户确切了指标随时间的变化状态,而Gauge则可能随时间流逝而精准度越来越低
@@ -107,7 +106,7 @@
     Histogram的扩展类型,但它是直接由被监测端自行聚合计算出分位数,并将计算结果响应给Prometheus-Server的样本采集请求;因而,其分位数计算是由由监控端完成;
 
 
-**作业(Job)和实例(Instance)**  
+## 作业(Job)和实例(Instance)  
   - Instance: 能够接收Prometheus-Server数据Scrape操作的每个网络端点(endpoint),即为一个Instance(实例);
   - 通常,具有类似功能的Instance的集合称为一个Job,例如一个MySQL主从复制集群中的所有MySQL进程;
   ```bash
@@ -116,29 +115,29 @@
   cpu_usage {job="kafka", instance="128.0.0.3"} 16.03
   ```
 
-**PromQL**   
+## [PromQL](https://icloudnative.io/prometheus/3-prometheus/basics.html)    
   - Prometheus提供了内置的数据查询语言PromQL(全称为Prometheus Query Language),支持用户进行实时的数据查询及聚合操作; 
   - PromQL支持处理两种向量,并内置提供了一组用于数据处理的函数
       + 即时向量：最近一次的时间戳上跟踪的数据指标;
       + 时间范围向量：指定时间范围内的所有时间戳上的数据指标;
  
-**Instrumentation(程序仪表)**  
+## Instrumentation(程序仪表)
   - 任何能够支持Scrape指标数据的应用程序都首先要具有一个测量系统;
   - 在Prometheus的语境中,Instrumentation是指附加到应用程序中的那些用于暴露程序指标数据的客户端库;
       + 程序员借助于这些客户端库编写代码生成可暴露的指标数
   
-**Exporters**  
+## Exporters
   - 对于那些未内建Instrumentation,且也不便于自行添加该类组件以暴露指标数据的应用程序来说,常用的办法是于待监控的目标应用程序外部运行一个独立指标暴露程序,该类型的程序即统称为Exporter;
   - 换句话说,Exporter负责从目标应用程序上采集和聚合原始格式的数据,并转换或聚合为Prometheus格式的指标向外暴露;
   - Prometheus站点上提供了大量的Exporter
 
-**Alerts**  
+## Alerts  
   - 抓取到异常值后,Prometheus支持通过**告警(Alert)**机制向用户发送反馈或警示,以触发用户能够及时采取应对措施;
   - Prometheus Server 仅负责生成告警指示,具体的告警行为由另一个独立的应用程序AlertManager负责;
       - 告警指示由 Prometheus Server 基于用户提供的**告警规则**周期性计算生成;
       - Alertmanager 接收到Prometheus Server发来的告警指示后,基于用户定义的**告警路由(route)**向告警**接收人(receivers)**发送告警信息;
 
-**Prometheus的特性**  
+## Prometheus的特性  
   + 关键特性 
     - 多维护数据模型：以指标名称及附加的label标识时间序列 
     - 特有的数据查询语言：PromQL 
@@ -153,7 +152,7 @@
       - 若需要存储长期的历史数据,建议基于远端存储机制将数据保存于InfluxDB或OpenTSDB等系统中; 
     + Prometheus的集群机制成熟度不高,即便基于Thanos亦是如此;
 
-
+---
 # CPU_usagerate_total
 ```bash
 https://www.cnblogs.com/Hackerman/p/16084360.html  #常规
