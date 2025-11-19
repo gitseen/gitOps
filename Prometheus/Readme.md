@@ -87,8 +87,9 @@
 - PushGateway     
 
 ## Prometheus数据格式标准形式
-
-**<metric name>{<label key>=<label value>, ...} <value> <timestamp>**  
+```bash
+<metric name>{<label key>=<label value>, ...} <value> <timestamp>
+```
 - <metric name>：指标名称，表示监控项（如 CPU 使用率、内存占用等）  
 - {...}：标签集合，用于描述该指标的维度信息（K/V 对）  
 - <value>：浮点数值，当前时刻的指标值  
