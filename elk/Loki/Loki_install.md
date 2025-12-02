@@ -322,4 +322,4 @@ rsyslogd -v  #查看编译时支持的模块（静态信息）
 [自学编程之道-Loki-轻量级日志聚合系统](https://www.toutiao.com/article/7204064333653869111) 
 [轻量级日志采集系统loki](https://www.toutiao.com/article/7233780316522152483) 
 [轻量级日志系统新贵Loki到底该如何玩转](https://m.toutiao.com/is/yYXEBbC/)
-
+[Promtail+Loki+Grafana搭建轻量级日志管理平台](https://www.cnblogs.com/cao-lei/p/16848665.html)

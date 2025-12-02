@@ -24,4 +24,5 @@ EOF
 
 
 sh   install_rsyslog.sh  #执行即可
+#https://www.cnblogs.com/littlecc/p/17690890.html
 ```
