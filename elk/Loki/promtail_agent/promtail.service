@@ -1,0 +1,22 @@
+[Unit]
+Description=Promtail log shipper for Loki
+Documentation=https://grafana.com/docs/loki/latest/send-data/promtail/
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=promtail
+Group=promtail
+ExecStart=/usr/local/promtail/promtail-linux-amd64 -config.file=/usr/local/promtail/promtail.yaml
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=10
+TimeoutStopSec=30
+LimitNOFILE=65536
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=promtail
+
+[Install]
+WantedBy=multi-user.target

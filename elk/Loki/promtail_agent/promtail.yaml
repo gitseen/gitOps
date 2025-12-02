@@ -1,0 +1,54 @@
+server:
+  http_listen_port: 19080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://172.16.219.234:13100/loki/api/v1/push
+
+scrape_configs:
+- job_name: agent-promtail-x.x.x.x
+  static_configs:
+  - targets:
+      - x.x.x.x
+    labels:
+      job: syslog
+      hosts: x.x.x.x
+      __path__: /var/log/*
+      stream: stdout
+  - targets:
+      - x.x.x.x
+    labels:
+      job: grafana
+      hosts: x.x.x.x
+      __path__: /usr/local/grafana/data/log/grafana.log
+      stream: stdout
+
+  pipeline_stages:
+    - match:
+        selector: '{job="syslog"}' #  jobäarlogs?.»¥?¹é
+        stages:
+        - multiline:
+            firstline: '^LOG'  # LOG开头è¡.?è.å        - regex:
+            expression: '.*(?P<level>INFO|WARN|ERROR).*' # 正å¹é§£ælevel 
+        - timestamp:
+            format: RFC3339Nano
+            source: timestamp
+        - labels:
+            timestamp:
+            level:  # åevel ä¸º以ä¸..ç,label lokiä»ºç´¢å??.¿«?¥è    
+    - match:
+        selector: '{job="grafana"}'
+        stages:
+        - multiline:
+            firstline: '^LOG'  
+        - regex:
+            expression: '.*(?P<level>INFO|WARN|ERROR).*'
+        - timestamp:
+            format: RFC3339Nano
+            source: timestamp
+        - labels:
+            timestamp:
+            level: 
