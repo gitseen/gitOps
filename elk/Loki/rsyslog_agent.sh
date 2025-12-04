@@ -25,4 +25,5 @@ EOF
 
 sh   install_rsyslog.sh  #执行即可
 #https://www.cnblogs.com/littlecc/p/17690890.html
+#https://www.srebro.cn/archives/1735894737958   #记录系统操作命令变量
 ```
