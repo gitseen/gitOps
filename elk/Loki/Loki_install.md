@@ -313,6 +313,62 @@ lsof -p $(pgrep rsyslog) | grep '\.so'   #imfile.so就会显示自定义的加�
 rsyslogd -v  #查看编译时支持的模块（静态信息）
 ```
 
+<details>
+  <summary>promtail_agent示例</summary>
+  <pre><code>
+server:
+  http_listen_port: 19080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://172.16.219.234/loki/api/v1/push 
+scrape_configs:
+- job_name: agentlogs  
+  static_configs:
+  - targets:
+      - 172.16.219.232  
+    labels: 
+      job: dmesg-232
+      __path__: /var/log/dmesg
+  - targets:
+      - 172.16.219.232  
+    labels: 
+      job: mysql-232
+      __path__: /www/server/data/mysql-slow.log
+  pipeline_stages:
+    - match:
+        selector: '{job="dmesg-232"}'
+        stages:
+        - multiline:
+            firstline: '^LOG'
+        - regex:
+            expression: '.*(?P<level>INFO|WARN|ERROR).*' 
+        - timestamp:
+            format: RFC3339Nano
+            source: timestamp
+        - labels:
+            timestamp:
+            level:  
+    - match:
+        selector: '{job="mysql-232"}'
+        stages:
+        - multiline:
+            firstline: '^LOG'  
+        - regex:
+            expression: '.*(?P<level>INFO|WARN|ERROR).*'
+        - timestamp:
+            format: RFC3339Nano
+            source: timestamp
+        - labels:
+            timestamp:
+            level: 
+  </code></pre>
+</details>
+
+
 ## 参考部署文档
 [loki-官方](https://github.com/grafana/loki)  
 [loki-csdn](https://www.cnblogs.com/xiangpeng/p/18127120)  
@@ -322,4 +378,7 @@ rsyslogd -v  #查看编译时支持的模块（静态信息）
 [自学编程之道-Loki-轻量级日志聚合系统](https://www.toutiao.com/article/7204064333653869111) 
 [轻量级日志采集系统loki](https://www.toutiao.com/article/7233780316522152483) 
 [轻量级日志系统新贵Loki到底该如何玩转](https://m.toutiao.com/is/yYXEBbC/)
+[rsyslog for windows](https://www.cnblogs.com/xiaozi/p/11754511.html)
+[rsyslog for win-doc](https://www.cnblogs.com/simendavid/p/15180650.html)
+
 [Promtail+Loki+Grafana搭建轻量级日志管理平台](https://www.cnblogs.com/cao-lei/p/16848665.html)
