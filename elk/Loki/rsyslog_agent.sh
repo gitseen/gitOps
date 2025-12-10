@@ -1,7 +1,8 @@
 ```bash
 cat > install_rsyslog.sh <<'EOF'
 #!/bin/bash
-rpm -qa|grep rsyslog
+#rpm -qa|grep rsyslog
+rpm -qa rsyslog
 
 if [[ $? -eq 0 ]];then
         echo "Rsyslog was installed"
@@ -26,4 +27,6 @@ EOF
 sh   install_rsyslog.sh  #执行即可
 #https://www.cnblogs.com/littlecc/p/17690890.html
 #https://www.srebro.cn/archives/1735894737958   #记录系统操作命令变量
+#export PROMPT_COMMAND='{ msg=$(history 1 | { read x y; echo $y; });logger "[euid=$(whoami)]":$(who am i):[`pwd`]"$msg"; }'
+
 ```
