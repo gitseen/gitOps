@@ -262,6 +262,9 @@ ps -ef|grep lotus-seal-worker |egrep -cv "grep|$$"
 
 traceroute registry.cn-hangzhou.aliyuncs.com
 
+grep -c 5 "XX" #大文件时慢使用如下代替
+tac file |grep -c "XX"
+
 #不会这些题目，你好意思说会linux吗？ https://www.toutiao.com/a6736349756664054284/
 1 使用Linux命令查询file1中空行所在的行号
   awk '/^$/{print NR}' file
@@ -297,6 +300,7 @@ ps -ef|grep java|grep -v grep |sort -k2nr |awk '{print $1,$2}' |head -n 1
 sed -i "s/abcd/higk/g" `grep -rl abcd /home/xy/`
 
 sed -i '/=yes/d' example.txt
+
 
 ###docker build方式 -f指定dockerfile文件
 docker build -t  -f iot-ui_dockerfile iot-ui v2.0 ./
