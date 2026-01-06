@@ -39,6 +39,7 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
+#cp /root/calico.yaml{,.bak-$time}
 cp /etc/bashrc /etc/bashrc.bak 2>/dev/null || true
 cat >> /etc/bashrc << 'EOF'
 export PROMPT_COMMAND='{ msg=$(history 1 | { read x y; echo $y; }); logger "[euid=$(whoami)]":$(who am i):[`pwd`] "$msg"; }'
