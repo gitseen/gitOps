@@ -75,3 +75,4 @@
 - [Weave Scope](https://www.weave.works/oss/scope/)
 - [kuboard.cn](https://kuboard.cn/install/install-k8s.html#kuboard-spray)  
 - [Rainbond](https://rainbond.cn/docs/)
+- [kubePolaris ](https://github.com/clay-wangzhi/KubePolaris)  
