@@ -268,3 +268,79 @@ echo "$PROCESS_LIST"
     - 行锁等待时间：SHOW GLOBAL STATUS LIKE 'Innodb_row_lock_time';
     - 行锁等待时间平均值：SHOW GLOBAL STATUS LIKE 'Innodb_row_lock_time_avg';  
 
+
+```shell
+#!/bin/bash
+###backup info
+db_host=172.16.216.102
+user=ecology
+passwd=ecology123
+
+keepdate=`date +%Y%m%d --date="-7 month"`
+expirdate=`date +%Y%m%d --date="-15 month"`
+
+#keepdate=`date +%Y%m%d --date="-20 days"`
+#expirdate=`date +%Y%m%d --date="-20 days"`
+
+####MySQL info
+
+backdate=`date +%Y%m%d`
+datadir="/data/mysql_back"
+backdir="${datadir}/${backdate}"
+mysqldir="/usr/local/mysql/bin/mysql"
+dumpdir="/usr/local/mysql/bin/mysqldump"
+errlog="${datadir}/mysqldump.log"
+backlog="${datadir}/back_info.log"
+
+####check backup directory && backup all database
+test ! -d "${backdir}" && mkdir  "${backdir}"
+
+for db_list in `${mysqldir} -u${user} -p${passwd} -h${db_host} -e 'show databases'|egrep -v "Database|information_schema|performance_schema|mysql|sys"`   
+  do
+     ${dumpdir} -h${db_host} -u${user} -p${passwd} --default-character-set=utf8 --single-transaction  --set-gtid-purged=OFF -f -R ${db_list} --log-error=${errlog} > ${backdir}/${db_list}.sql
+ done
+
+####handle backupfile 
+cd ${datadir}
+tar zcvf ${backdate}.tar.gz ${backdate}
+rm -rf ${backdir}
+
+####backup info
+
+echo 'backup date: '`date "+%Y-%m-%d %H:%m:%S"` >> ${backlog}
+
+if [ ! -f "${keepdate}.tar.gz" ];then
+echo "old backup not found !" >> ${backlog}
+
+else
+if [ `du -k ${keepdate}.tar.gz |awk '{print $1}'` -gt 102400 ]
+then
+rm -rf ${expirdate}.tar.gz
+else
+echo 'backup file size is less than 100M, please check if the backup is successful!' >> ${backlog}
+fi
+fi
+
+####send mail
+#[ -s ${errlog} ] && /bin/mail -s "DB Backup Error on MySQL Server" -a ${errlog} test1@mail.com,test2@mail.com < ${backlog}
+
+if [ -s ${errlog} ];then
+echo 'back not compalete or error!'
+else
+echo 'backup successd!' >> ${backlog}
+
+echo "###############################################"
+echo ""
+echo 'backup successd !!! '
+echo ""
+echo "###############################################"
+
+fi
+
+cat ${errlog} >> ${errlog}.old
+rm -rf ${errlog}
+
+#15days
+find ${datadir} -name "*.tar.gz" -mtime +15 -print
+find ${datadir} -name "*.tar.gz" -mtime +15 -delete
+```
