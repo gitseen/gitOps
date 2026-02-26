@@ -1,5 +1,7 @@
 #!/bin/bash
 #!/usr/bin/env bash
+
+echo 'export PS1='"'"'\[\e[1;32m\]\u@\h_\[\e[1;33m\]$(ip -4 addr show eth0 | grep 172.30 | grep -oP "(?<=inet ).*(?=/)")\[\e[m\] \[\e[1;34m\]\w\[\e[m\] \$ '"'" | tee -a ~/.bashrc >/dev/null
 =================================================
 github hosts: https://ping.chinaz.com/github.com
 
