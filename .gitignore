@@ -1,2 +1,5 @@
 Base/*.tgz
 Base/netdata.tgz
+.git.backup
+*.tgz
+Base/*.tgz
